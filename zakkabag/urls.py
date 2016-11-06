@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from zakkabag.views import handleRequest
+from .menu import handleMenuRequest
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -9,6 +10,7 @@ urlpatterns = patterns('',
     # Examples:
 	url(r'^$', handleRequest),
     url(r'^weixin', handleRequest),
+    url(r'^menu', handleMenuRequest, name='handleMenuRequest'),
     url(r'^debug', 'debug.views.handleDebug', name='handleDebug'),
 
     # url(r'^$', 'zakkabag.views.home', name='home'),
