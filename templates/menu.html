@@ -6,6 +6,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<title>微信调试器 微信开发调试工具</title>
 
 		<script type="text/javascript" src={% static "js/require.js" %}></script>
@@ -18,7 +19,7 @@
 		<div class="container-fluid">
 			<div class="clearfix">
 				<div class="col-sm-8">
-					<form action="" method="get" class="form-horizontal form">
+					<form action="" method="get" class="form-horizontal form" {% csrf_token %}>
 						<div class="page-header">
 							<h4>微信公众平台开发菜单调试</h4>
 							<div class="form-group">
@@ -81,11 +82,14 @@
 				var appsecret = $('#appsecret').val();
 				var get_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret;
 				console.log(get_token_url);
-				$.ajax(get_token_url,{
-					type: "GET",
-					// dataType: "text",
+				$.ajax('',{
+					type: "POST",
+					dataType: "json",
 					data : {
-					},
+						appid: appid,
+						appsecret: appsecret,
+						purpose:'get_token'
+					},					
 					beforeSend : function(){
 						if ($('#appid').val() == "" || $('#appsecret').val() == ""){
 							alert("appid或appsecret未填写");
@@ -95,17 +99,9 @@
 					},
 					success: function(s) {
 						console.log("success");
-						var xmlobject = getxml(s);
-						if(xmlobject){
-							var xmlobj = xmlobject.getElementsByTagName("xml");
-							if(xmlobj.length){
-								var xmls = xmlobj.item(0);
-								var xml = xmls;
-								var access_token = xml.getElementsByTagName("access_token")[0].firstChild.nodeValue;
-								var expires_in = xml.getElementsByTagName("expires_in")[0].firstChild.nodeValue;
-							}
-						}
-						$('#receive').text(access_token);
+						$('#access_token').val(s.access_token);
+						$('#receive').text("access_token:"+s.access_token);
+						//$('#receive').text(json2str(s);
 					},
 					error: function() {
 						alert("接口无响应或超时！");
@@ -117,14 +113,16 @@
 			function deleteMenu() {
 				var appid = $('#appid').val();
 				var appsecret = $('#appsecret').val();
-				var token = $('#token').val();
+				var token = $('#access_token').val();
 				var appsecret = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=" + token;
 				console.log(appsecret);
-				$.ajax(appsecret,{
-					type: "GET",
-					// dataType: "text",
-					// data : {
-					// },
+				$.ajax('',{
+					type: "POST",
+					dataType: "json",
+					data : {
+						access_token: token,
+						purpose:'delete_menu'
+					},
 					beforeSend : function(){
 						if ($('#token').val() == ""){
 							alert("token未填写");
@@ -134,17 +132,7 @@
 					},
 					success: function(s) {
 						console.log("success");
-						var xmlobject = getxml(s);
-						if(xmlobject){
-							var xmlobj = xmlobject.getElementsByTagName("xml");
-							if(xmlobj.length){
-								var xmls = xmlobj.item(0);
-								var xml = xmls;
-								var access_token = xml.getElementsByTagName("access_token")[0].firstChild.nodeValue;
-								var expires_in = xml.getElementsByTagName("expires_in")[0].firstChild.nodeValue;
-							}
-						}
-						$('#receive').text(access_token);
+						$('#receive').text(json2str(s);
 					},
 					error: function() {
 						alert("接口无响应或超时！");
@@ -166,7 +154,17 @@
 					}
 				}catch(e){alert("您的浏览器不支持模拟测试");}
 				return xmlobject;
-			}					
+			}	
+
+	        // function json2str(o) {
+	        //     var arr = [];
+	        //     var fmt = function(s) {
+	        //         if (typeof s == 'object' && s != null) return json2str(s);
+	        //         return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s;
+	        //     }
+	        //     for (var i in o) arr.push("'" + i + "':" + fmt(o[i]));
+	        //         return '{' + arr.join(',') + '}';
+	        // }							
 		</script>
 	</body>
 </html>
