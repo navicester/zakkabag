@@ -2,7 +2,7 @@ bin/
 include/
 lib/
 
-static/static_root
+#static/static_root
 
 pip-selfcheck.json
 *.sqlite3
