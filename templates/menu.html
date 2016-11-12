@@ -27,6 +27,7 @@
 								<div class="col-sm-10">
 									<input name="submit" type="button" onclick="getToken()" value="获取token" class="btn btn-primary">
 									<input name="submit" type="button" onclick="deleteMenu()" value="删除菜单" class="btn btn-primary">
+									<input name="submit" type="button" onclick="addMenu()" value="添加菜单" class="btn btn-primary">
 								</div>
 							</div>
 							<div class="form-group">
@@ -77,6 +78,16 @@
 		</div>
 
 		<script type="text/javascript">
+			function json2str(o) {
+			    var arr = [];
+			    var fmt = function(s) {
+			        if (typeof s == 'object' && s != null) return json2str(s);
+			        return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s;
+			    }
+			    for (var i in o) arr.push("'" + i + "':" + fmt(o[i]));
+			        return '{' + arr.join(',') + '}';
+			}		
+					
 			function getToken() {
 				var appid = $('#appid').val();
 				var appsecret = $('#appsecret').val();
@@ -111,10 +122,7 @@
 			}
 
 			function deleteMenu() {
-				var appid = $('#appid').val();
-				var appsecret = $('#appsecret').val();
 				var token = $('#access_token').val();
-				var appsecret = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=" + token;
 				console.log(appsecret);
 				$.ajax('',{
 					type: "POST",
@@ -132,7 +140,37 @@
 					},
 					success: function(s) {
 						console.log("success");
-						$('#receive').text(json2str(s);
+						$('#receive').text(json2str(s));
+					},
+					error: function() {
+						alert("接口无响应或超时！");
+					},
+					timeout:10000
+				})
+			}	
+
+			function addMenu() {
+				var token = $('#access_token').val();	
+				var menu_json = $('#menu-json').val();	
+				console.log(menu_json);
+				$.ajax('',{
+					type: "POST",
+					dataType: "json",
+					data : {
+						access_token: token,
+						menu_json: menu_json,
+						purpose:'add_menu'
+					},
+					beforeSend : function(){
+						if ($('#token').val() == ""){
+							alert("token未填写");
+							return;
+						}
+						$('#receive').text('加载中。。。');
+					},
+					success: function(s) {
+						console.log("success");
+						$('#receive').text(json2str(s));
 					},
 					error: function() {
 						alert("接口无响应或超时！");
@@ -156,15 +194,7 @@
 				return xmlobject;
 			}	
 
-	        // function json2str(o) {
-	        //     var arr = [];
-	        //     var fmt = function(s) {
-	        //         if (typeof s == 'object' && s != null) return json2str(s);
-	        //         return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s;
-	        //     }
-	        //     for (var i in o) arr.push("'" + i + "':" + fmt(o[i]));
-	        //         return '{' + arr.join(',') + '}';
-	        // }							
+					
 		</script>
 	</body>
 </html>

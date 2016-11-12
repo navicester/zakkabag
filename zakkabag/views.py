@@ -46,7 +46,6 @@ def checkSignature(request):
 	if tmpstr == signature:
 		return echoStr
 	else:
-		#return None
 		return "checkSignature fail"
 
 def responseMsg(request):
