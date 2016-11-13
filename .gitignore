@@ -18,7 +18,7 @@ pip-selfcheck.json
 #static_in_env/
 
 security_setting.py
-settings_security.py
+#settings_security.py
 dev_server.py
 
 *.sublime-project

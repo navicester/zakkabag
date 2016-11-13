@@ -168,6 +168,8 @@ EMAIL_HOST = 'smtp.sina.com'
 EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 
+SERVER_EMAIL = DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 '''
 EMAIL_HOST = 'smtp.sina.com'
 EMAIL_PORT = 25
@@ -192,6 +194,7 @@ SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/'
 REGISTRATION_EMAIL_SUBJECT_PREFIX = '[Django Registration zakkabag]'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'sae.ext.django.mail.backend.EmailBackend'
 SEND_ACTIVATION_EMAIL = True
 
