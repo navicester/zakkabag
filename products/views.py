@@ -6,9 +6,9 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView, CreateView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from .forms import ProductCreateForm
-from .models import Category
-
+from .forms import ProductCreateForm, ProductImageForm
+from .models import Category, ProductImage
+from django.utils.text import slugify
 
 from django_filters import FilterSet, CharFilter, NumberFilter
 # Create your views here.
@@ -178,11 +178,17 @@ def product_detail_view_func(request, id):
 
     return render(request, template, context)
 
+
 class ProductCreateView(CreateView):
     template_name = 'products/product_create.html'
     form_class = ProductCreateForm
     success_url = "/products"
 
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProductCreateView, self).get_context_data(*args, **kwargs)
+        context["image_form"] = ProductImageForm()
+        return context
 
     def get_form(self, *args, **kwargs):
         form = super(ProductCreateView, self).get_form(*args, **kwargs)
@@ -191,3 +197,36 @@ class ProductCreateView(CreateView):
         form.fields['default'].queryset  = Category.objects.all()
 
         return form
+
+    def post(self, request, *args, **kwargs):
+        postresult = super(ProductCreateView, self).post(request, *args, **kwargs)
+
+        if 0:
+            filename=request.FILES['image']
+            from PIL import Image 
+            if filename:
+                img=Image.open(filename)
+                title = self.object.title
+                slug = slugify(title)
+                basename, file_extension = filename.name.split(".")
+                new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)
+                from django.conf import settings
+                import os
+                photoname = os.path.join("products", slug, new_filename)
+                photopath = os.path.join(settings.MEDIA_ROOT, "products", slug)
+                if not os.path.exists(photopath):
+                    os.makedirs(photopath)
+                img.save(os.path.join(settings.MEDIA_ROOT, photoname))
+                ProductImage.objects.create(product = self.object, 
+                    image = photoname)
+
+        # BELOW ALSO WORKS
+        else:
+            imageForm = ProductImageForm(request.POST, request.FILES)
+            if imageForm.is_valid():
+                productImage = imageForm.save(commit=False) 
+                productImage.product = self.object
+                productImage.save()
+                return postresult
+
+        return postresult        

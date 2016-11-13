@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import modelformset_factory
-from .models import Variation, Category, Product
+from .models import Variation, Category, Product, ProductImage
 
 class ProductFilterForm(forms.Form):
 	q = forms.CharField(label='Search', required=False)
@@ -47,3 +47,24 @@ class ProductCreateForm(forms.ModelForm):
 	# 		empty_label = None #not show enmpty
 	# 		)
 
+class ProductImageForm(forms.ModelForm):
+	class Meta:
+		model = ProductImage
+		fields = [
+			'image',
+			# 'product'
+		]
+
+	def clean_image(self):
+		if self.cleaned_data.get("image") != None:
+			return self.cleaned_data.get("image")
+		elif self.data.get("image") == None:	
+			raise forms.ValidationError("image can't be empty.")
+		else:
+			self.cleaned_data['image'] = self.data.get("image")
+			return self.data.get("image")
+
+	def is_valid(self):
+		if self.clean_image != None:
+			return True
+		return False
