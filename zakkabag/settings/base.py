@@ -194,7 +194,7 @@ SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/'
 REGISTRATION_EMAIL_SUBJECT_PREFIX = '[Django Registration zakkabag]'
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'sae.ext.django.mail.backend.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'sae.ext.django.mail.backend.EmailBackend'
 SEND_ACTIVATION_EMAIL = True
 
