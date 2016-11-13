@@ -5,13 +5,20 @@ lib/
 #static/static_root
 
 pip-selfcheck.json
-*.sqlite3
+#*.sqlite3
 .DS_STORE
 .Python
 *.py[cod]
 
 .pydevproject
 .project
+.settings/
+
+
+#static_in_env/
+
+security_setting.py
+settings_security.py
 
 *.sublime-project
 *.sublime-workspace

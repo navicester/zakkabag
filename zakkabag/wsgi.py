@@ -14,6 +14,10 @@ framework.
 
 """
 import os
+import sys
+
+root = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(root, '..', 'site-packages'))
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use
@@ -27,6 +31,3 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zakkabag.settings")
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
-# Apply WSGI middleware here.
-# from helloworld.wsgi import HelloWorldApplication
-# application = HelloWorldApplication(application)

@@ -4,6 +4,7 @@ from django.template import RequestContext, Template
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import smart_str, smart_unicode
 from translate import paraseMsgXml,paraseYouDaoXml,getReplyXml
+from django.shortcuts import render
 
 import xml.etree.ElementTree as ET
 import urllib,urllib2,hashlib
@@ -70,3 +71,5 @@ def responseMsg(request):
 
 	return getReplyXml(msg,replyContent)
 
+def about(request):
+	return render(request, "about.html", {})
