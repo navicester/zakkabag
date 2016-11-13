@@ -1,8 +1,8 @@
 from .base import *
 
 heroku = False
-mysql = False
-sae = True
+mysql = True
+sae = False
 
 
 if 'SERVER_SOFTWARE' in os.environ: 

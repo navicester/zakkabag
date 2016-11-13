@@ -3,8 +3,11 @@ from django.db.models import Q
 from django.http import Http404
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.views.generic.edit import FormView, CreateView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from .forms import ProductCreateForm
+from .models import Category
 
 
 from django_filters import FilterSet, CharFilter, NumberFilter
@@ -174,3 +177,17 @@ def product_detail_view_func(request, id):
     }
 
     return render(request, template, context)
+
+class ProductCreateView(CreateView):
+    template_name = 'products/product_create.html'
+    form_class = ProductCreateForm
+    success_url = "/products"
+
+
+    def get_form(self, *args, **kwargs):
+        form = super(ProductCreateView, self).get_form(*args, **kwargs)
+
+        form.fields['categories'].queryset  = Category.objects.all()
+        form.fields['default'].queryset  = Category.objects.all()
+
+        return form
