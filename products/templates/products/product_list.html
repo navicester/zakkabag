@@ -3,6 +3,7 @@
 
 {% block content %}
 
+
 <div class='col-sm-2'>
 	<form method="GET" action="{% url 'products' %}">
 		{{ filter_form|crispy }}
@@ -15,12 +16,24 @@
 
 <div class='col-sm-10'>
 
-	<h1>All Products <small><a href='{% url "categories" %}'>Categories</a></small> <small><a href='{% url "products_create" %}'>Create New Product</a></small> </h1>
+	<h1><a href="{% url 'products' %}">All Products</a> <small><a href='{% url "categories" %}'>Categories</a></small> <small><a href='{% url "products_create" %}'>Create New Product</a></small> </h1>
+	<div class="row">
+		{% for category in categories%}
+		<div class='col-xs-2 thumbnail text-center' style="margin-right: 12px;padding: 5px 8px; background-color: #D6CCCC;">
+			<a href="{% url 'products' %}?category_id={{category.id}}" class="text-decoration: none; outline: none;">{{category}}</a>
+		</div>
+		{% cycle '' '' '</div><div class="row">'%} 
+		{% endfor %}
+	</div>
+
+	<div class="row">
 	{% if object_list.count == 0 %}
 		Nothing found
 	{% else %}
 		{% include "products/products.html" with object_list=object_list %}
 	{% endif %}
+	</div>
 
 </div>
+
 {% endblock %}

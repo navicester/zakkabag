@@ -15,7 +15,7 @@ pip-selfcheck.json
 .settings/
 
 
-#static_in_env/
+static_in_env/media_root
 
 security_setting.py
 #settings_security.py

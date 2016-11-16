@@ -34,6 +34,7 @@ class CategoryDetailView(DetailView):
         default_products = obj.default_category.all()
         products = ( product_set | default_products ).distinct()
         context["products"] = products
+        context["categories"] = Category.objects.all()
         return context
 
 
@@ -128,7 +129,8 @@ class ProductListView(FilterMixin, ListView):
         context = super(ProductListView, self).get_context_data(*args, **kwargs)
         context["now"] = timezone.now()
         context["query"] = self.request.GET.get("q") #None
-        context["filter_form"] = ProductFilterForm(data=self.request.GET or None)
+        context["filter_form"] = ProductFilterForm(data=self.request.GET or None)        
+        context["categories"] = Category.objects.all()       
         return context
 
     def get_queryset(self, *args, **kwargs):
