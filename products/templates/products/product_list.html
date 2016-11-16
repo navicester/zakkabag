@@ -22,7 +22,7 @@
 		<div class='col-xs-2 thumbnail text-center' style="margin-right: 12px;padding: 5px 8px; background-color: #D6CCCC;">
 			<a href="{% url 'products' %}?category_id={{category.id}}" class="text-decoration: none; outline: none;">{{category}}</a>
 		</div>
-		{% cycle '' '' '</div><div class="row">'%} 
+		{% cycle '' '' '' '' '' '</div><div class="row">'%} 
 		{% endfor %}
 	</div>
 
