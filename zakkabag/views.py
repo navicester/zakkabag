@@ -4,10 +4,16 @@ from django.template import RequestContext, Template
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import smart_str, smart_unicode
 from translate import paraseMsgXml,paraseYouDaoXml,getReplyXml
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 
 import xml.etree.ElementTree as ET
 import urllib,urllib2,hashlib
+from django.core.urlresolvers import reverse
+
+#python-weixin==0.1.6.1 HOW to handle if two lib have same name
+from weixin.client import WeixinMpAPI
+from weixin.oauth2 import OAuth2AuthExchangeError
 
 TOKEN = "zakkabag"
 
@@ -73,3 +79,12 @@ def responseMsg(request):
 
 def about(request):
 	return render(request, "about.html", {})
+
+APP_ID = 'wxe90ebbe29377e650'
+APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
+
+def wechatlogin(request):
+	REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("products", kwargs={}))
+	api = WeixinMpAPI(appid=APP_ID, app_secret=APP_SECRET,redirect_uri=REDIRECT_URI)
+	redirect_uri = api.get_authorize_login_url(scope=("snsapi_userinfo",))
+	return redirect(redirect_uri)

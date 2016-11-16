@@ -49,6 +49,8 @@ urlpatterns = patterns('',
     url(r'^checkout/address/$', AddressSelectFormView.as_view(), name='order_address'),   
     url(r'^checkout/address/add/$', UserAddressCreateView.as_view(), name='user_address_create'), 
     url(r'^checkout/final/$', CheckoutFinalView.as_view(), name='checkout_final'),   	
+
+    url(r'^wechatlogin/$', 'zakkabag.views.wechatlogin', name='wechatlogin'),      
 )
 
 '''
