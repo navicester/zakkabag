@@ -3,20 +3,34 @@
 
 {% block content %}
 
+<div class='col-sm-3 col-md-2'>
+	<nav class="navbar navbar-default">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">Search</a>
+	    </div>
 
-<div class='col-sm-2'>
-	<form method="GET" action="{% url 'products' %}">
-		{{ filter_form|crispy }}
-		<input type='hidden' name='q' value='{{ request.GET.q }}' />
-		<input type='submit' value='Apply Filter' class='btn btn-default'>
-	</form>
-
-	<a href="{% url 'products' %}">Clear Filters</a>
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<form method="GET" action="{% url 'products' %}">
+				{{ filter_form|crispy }}
+				<input type='hidden' name='q' value='{{ request.GET.q }}' />
+				<input type='submit' value='Apply Filter' class='btn btn-default'>
+			</form>
+			<a href="{% url 'products' %}">Clear Filters</a>    
+	    </div>
+	</nav>
 </div>
 
-<div class='col-sm-10'>
+<div class='col-sm-9 col-md-10'>
 
-	<h1><a href="{% url 'products' %}">All Products</a> <small><a href='{% url "categories" %}'>Categories</a></small> <small><a href='{% url "products_create" %}'>Create New Product</a></small> </h1>
+	<h1><small><a href="{% url 'products' %}">All Products</a></small> 
+	<small><a href='{% url "categories" %}'>Categories</a></small><br>
+	<small><a href='{% url "products_create" %}'>New Product</a></small> </h1>
 	<div class="row">
 		{% for category in categories%}
 		<div class='col-xs-2 thumbnail text-center' style="margin-right: 12px;padding: 5px 8px; background-color: #D6CCCC;">

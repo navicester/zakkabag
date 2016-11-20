@@ -5,7 +5,17 @@ from django.shortcuts import render
 
 from products.models import ProductFeatured,Product
 from .forms import SignUpForm,ContactForm
-from .models import SignUp
+from .models import SignUp, UserWechat
+
+from django.core.urlresolvers import reverse
+
+from weixin.client import WeixinMpAPI
+from weixin.oauth2 import OAuth2AuthExchangeError
+APP_ID = 'wxe90ebbe29377e650'
+APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
+
+from django.contrib.auth.models import User
+#http://www.cnblogs.com/smallcoderhujin/p/3193103.html
 
 def home(request):    
 
@@ -13,6 +23,33 @@ def home(request):
     featured_image = ProductFeatured.objects.filter(active=True).order_by("?").first()
     products = Product.objects.all().order_by("?")[:6]
     products2 = Product.objects.all().order_by("?")[:6]
+    userwehcat = None
+
+    REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
+    try:
+        code = request.GET.get('code')
+        if code:
+            api = WeixinMpAPI(appid=APP_ID, 
+                        app_secret=APP_SECRET,
+                        redirect_uri=REDIRECT_URI)
+            auth_info = api.exchange_code_for_access_token(code=code)
+            api = WeixinMpAPI(access_token=auth_info['access_token'])
+            user = api.user(openid=auth_info['openid'])
+
+            userwehcat = UserWechat.objects.create(
+                openid = user['openid'],
+                unionid = user['unionid'],
+                city = user['city'],
+                country = user['country'],
+                headimgurl = user['headimgurl'],
+                language = user['language'],
+                sex = user['sex'],
+                privilege = user['privilege'],
+                nickname = user['nickname']
+                )
+    except:
+        pass
+
 
     form = SignUpForm(request.POST or None)
     context = {
@@ -21,6 +58,7 @@ def home(request):
         "featured_image":featured_image,
         "products":products,
         "products2":products2,
+        'userwehcat':userwehcat,
 
     }
     #print request
