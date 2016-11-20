@@ -1,8 +1,7 @@
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.shortcuts import render
-
+from django.shortcuts import render, redirect
 from products.models import ProductFeatured,Product
 from .forms import SignUpForm,ContactForm
 from .models import SignUp, UserWechat
@@ -23,9 +22,9 @@ def home(request):
     featured_image = ProductFeatured.objects.filter(active=True).order_by("?").first()
     products = Product.objects.all().order_by("?")[:6]
     products2 = Product.objects.all().order_by("?")[:6]
-    userwehcat = None
 
     REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
+
     try:
         code = request.GET.get('code')
         if code:
@@ -36,7 +35,20 @@ def home(request):
             api = WeixinMpAPI(access_token=auth_info['access_token'])
             user = api.user(openid=auth_info['openid'])
 
-            userwehcat = UserWechat.objects.create(
+            try:
+                obj = UserWechat.objects.filter(
+                openid = user['openid'],
+                unionid = user['unionid'],
+                city = user['city'],
+                country = user['country'],
+                headimgurl = user['headimgurl'],
+                language = user['language'],
+                sex = user['sex'],
+                privilege = user['privilege'],
+                nickname = user['nickname']
+                )[0]
+            except UserWechat.DoesNotExist:
+                obj = UserWechat(
                 openid = user['openid'],
                 unionid = user['unionid'],
                 city = user['city'],
@@ -47,9 +59,28 @@ def home(request):
                 privilege = user['privilege'],
                 nickname = user['nickname']
                 )
+                obj.save()
+
+            # MUST have a unique param, then we can use get or get_or_create function
+            # change openid to be unqiue if it's confirmed
+            # userwehcat, created = UserWechat.objects.get_or_create(
+            #     openid = user['openid'],
+            #     unionid = user['unionid'],
+            #     city = user['city'],
+            #     country = user['country'],
+            #     headimgurl = user['headimgurl'],
+            #     language = user['language'],
+            #     sex = user['sex'],
+            #     privilege = user['privilege'],
+            #     nickname = user['nickname']
+            #     )
+            request.session['openid'] = user['openid']
     except:
         pass
 
+    cuserwechat = None
+    if request.session.get('openid'):
+        cuserwechat = UserWechat.objects.filter(openid = request.session.get('openid'))[0]
 
     form = SignUpForm(request.POST or None)
     context = {
@@ -58,7 +89,7 @@ def home(request):
         "featured_image":featured_image,
         "products":products,
         "products2":products2,
-        'userwehcat':userwehcat,
+        'userwechat': cuserwechat,
 
     }
     #print request
@@ -81,6 +112,10 @@ def home(request):
         }
 
     return render(request, "home.html", context)
+
+def logout(request):
+    del request.session['openid']
+    return redirect(reverse("home", kwargs={}))
 
 def contact(request):
     title = 'Contact Us'    

@@ -45,14 +45,16 @@
 
           <ul class="nav navbar-nav navbar-right">            
             <li><a href='{% url "cart" %}'><i class="fa fa-shopping-cart fa-navbar-cart"></i> <span id="cart-count-badge" class='badge'>{{ request.session.cart_item_count }}</span></a></li>
-            {% if request.user.is_authenticated  or userwehcat %}
+            {% if request.user.is_authenticated  or userwechat %}
               <li><a href="{% url 'orders' %}">Orders</a></li> 
               {% if request.user.is_authenticated %}
               <li><a href="#">{{request.user}}</a></li> 
-              {% else %}
-              <li><a href="#">{{userwehcat}}</a></li> 
-              {% endif %}
               <li><a href="{% url 'auth_logout' %}">Logout</a></li>
+              {% else %}
+              <li><a href="#">{{userwechat}}</a></li> 
+              <li><a href="{% url 'logout' %}">Logout</a></li>
+              {% endif %}
+              
             {% else %}
               <li><a href="{% url 'registration_register' %}">Register</a></li>
               <li><a href='{% url "wechatlogin" %}'><i class="fa fa-weixin" aria-hidden="true"></i></a></li>

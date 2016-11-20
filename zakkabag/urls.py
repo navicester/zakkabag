@@ -50,7 +50,8 @@ urlpatterns = patterns('',
     url(r'^checkout/address/add/$', UserAddressCreateView.as_view(), name='user_address_create'), 
     url(r'^checkout/final/$', CheckoutFinalView.as_view(), name='checkout_final'),   	
 
-    url(r'^wechatlogin/$', 'zakkabag.views.wechatlogin', name='wechatlogin'),      
+    url(r'^wechatlogin/$', 'zakkabag.views.wechatlogin', name='wechatlogin'), 
+    url(r'^logout/$', 'newsletter.views.logout', name='logout'), 
 )
 
 '''
