@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'products',
     'carts',
     'orders',
+    'personalcenter',
     'crispy_forms',
     'registration',
     'django_filters'

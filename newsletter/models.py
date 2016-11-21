@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 # Create your models here.
 class SignUp(models.Model):
@@ -31,3 +32,6 @@ class UserWechat(models.Model):
 			return str(self.user.id)
 		else:
 			return "None" 
+
+	def get_absolute_url(self):
+		return reverse("personalcenter", kwargs={"id": self.id })
