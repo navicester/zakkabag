@@ -35,3 +35,5 @@ class UserWechat(models.Model):
 
 	def get_absolute_url(self):
 		return reverse("personalcenter", kwargs={"id": self.id })
+
+		

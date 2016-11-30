@@ -9,7 +9,7 @@ DATABASES = settings.DATABASES
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'zakkabag',
+        'NAME':     'zakkabag2',
         'USER':     'root',
         'PASSWORD': '123',
         'HOST':     '',

@@ -52,6 +52,7 @@ urlpatterns = patterns('',
 
     url(r'^wechatlogin/$', 'zakkabag.views.wechatlogin', name='wechatlogin'), 
     url(r'^logout/$', 'newsletter.views.logout', name='logout'), 
+    url(r'^login/$', 'newsletter.views.login', name='login'), 
 
     url(r'^personalcenter/', include('personalcenter.urls')),
 )

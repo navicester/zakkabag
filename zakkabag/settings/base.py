@@ -50,19 +50,20 @@ INSTALLED_APPS = (
     'personalcenter',
     'crispy_forms',
     'registration',
-    'django_filters'
+    'django_filters',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',    
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'zakkabag.middleware.openidmiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',    
 )
 
 ROOT_URLCONF = 'zakkabag.urls'
@@ -83,6 +84,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'zakkabag.wsgi.application'
 
@@ -199,3 +201,12 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_BACKEND = 'sae.ext.django.mail.backend.EmailBackend'
 SEND_ACTIVATION_EMAIL = True
 
+AUTHENTICATION_BACKENDS = (    
+    
+    # 'zakkabag.backends.auth.SettingsBackend',
+    #'personalcenter.backends.auth.AdminBackend',
+    'personalcenter.backends.auth.WechatBackend',
+    'personalcenter.backends.auth.MyBackend',       
+    'django.contrib.auth.backends.ModelBackend', 
+    )
+AUTH_USER_MODEL = 'personalcenter.MyUser'

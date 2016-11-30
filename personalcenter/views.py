@@ -1,13 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from newsletter.models import UserWechat
 
+from django.contrib.auth import get_user_model
+UserModel = get_user_model()
+
 # Create your views here.
 def personalcenterhome(request,id):
 
-    wechatuser = get_object_or_404(UserWechat, id=id)
+    wechatuser = get_object_or_404(UserModel, id=id)
     try:
-        wechatuser = UserWechat.objects.get(id=id)
-    except UserWechat.DoesNotExist:
+        wechatuser = UserModel.objects.get(id=id)
+    except UserModel.DoesNotExist:
         raise Http404
     except:
         raise Http404

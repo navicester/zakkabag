@@ -109,6 +109,7 @@ def image_upload_to(instance, filename):
 	new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
 	#print title, slug, basename, file_extension, new_filename
 	#print instance,filename
+	basename = basename
 	return "products/%s/%s" %(slug, new_filename)
 
 
@@ -138,6 +139,7 @@ def image_upload_to_featured(instance, filename):
 	slug = slugify(title)
 	basename, file_extension = filename.split(".")
 	new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
+	basename = basename
 	return "products/%s/featured/%s" %(slug, new_filename)
 
 class ProductFeatured(models.Model):
