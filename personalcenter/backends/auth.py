@@ -22,6 +22,8 @@ class MyBackend(object):
         user = None
         if username is None:
             username = kwargs.get(UserModel.USERNAME_FIELD)
+            if username is None:
+                return None
         try:
             #user = UserModel.objects.filter(username=username).first()  #fail, why?
             #user = UserModel.objects.get(username=username)  #fail, why?
@@ -45,80 +47,48 @@ class MyBackend(object):
             return None
 
 
-class AdminBackend(object):
-
-    def authenticate(self, username=None, password=None):
-        login_valid = ('bhe001' == username)
-        pwd_valid = ('123' == password)
-        if login_valid and pwd_valid:
-            try:
-                user = UserModel.objects.get(username=username)
-            except UserModel.DoesNotExist:
-                # Create a new user. There's no need to set a password
-                # because only the password from settings.py is checked.
-                user = UserModel(username=username)
-                user.is_staff = True
-                user.is_superuser = True
-                user.save()
-            return user
-        return None
-
-    def get_user(self, user_id): 
-        try:
-            return UserModel.objects.get(pk=user_id)
-        except UserModel.DoesNotExist:
-            return None
-
-    # def has_perm(self, user_obj, perm, obj=None):
-    #     return user_obj.username == settings.ADMIN_LOGIN
-
 class WechatBackend(object):
 
-    def authenticate(self, request, code, app_id=None, app_secret=None, redirect_uri=None):
+    def authenticate(self, request, user):
 
-        REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
+        obj = None
+        profile = None
 
-        if code:
-            obj = None
-            api = WeixinMpAPI(appid=APP_ID, 
-                        app_secret=APP_SECRET,
-                        redirect_uri=REDIRECT_URI)
-            auth_info = api.exchange_code_for_access_token(code=code)
-            api = WeixinMpAPI(access_token=auth_info['access_token'])
-            user = api.user(openid=auth_info['openid'])
-            # if username is None:
-            #     username = kwargs.get(UserModel.USERNAME_FIELD)
+        try:
+            profile = WechatUserProfile.objects.get(openid = user['openid'])
+            if profile:
+                obj = profile.user
+            # obj = UserModel._default_manager.get_by_natural_key(user['openid'])
+        except WechatUserProfile.DoesNotExist:
+            # email = '%s@example.com' % user['openid']
+            # password = user['openid']
+            # obj = MyUser.objects.create_user(
+            #     username = user['openid'],
+            #     account_type = 'wechat',
+            #     email = email,
+            #     password = password,
+            #     )
+            # obj.is_staff = True
 
-            try:
-                obj = UserModel._default_manager.get_by_natural_key(user['openid'])
-            except UserModel.DoesNotExist:
-                email = '%s@example.com' % user['openid']
-                password = user['openid']
-                obj = MyUser.objects.create_user(
-                    username = user['openid'],
-                    account_type = 'wechat',
-                    email = email,
-                    password = password,
-                    )
-                obj.is_staff = True
-                # obj.save()
-                profile = WechatUserProfile.objects.create(
-                    user = obj)
-                profile.openid = user['openid']
-                profile.unionid = user['unionid']
-                profile.privilege = user['privilege']
-                profile.city = user['city']
-                profile.country = user['country']
-                profile.language = user['language']
-                profile.sex = user['sex']
-                profile.nickname = user['nickname']
-                profile.headimgurl = user['headimgurl']
+            profile = WechatUserProfile.objects.create(
+                user = None, openid = user['openid'])
+            profile.unionid = user['unionid']
+            #profile.privilege = user['privilege'] #privilege is list
+            profile.city = user['city']
+            profile.country = user['country']
+            profile.language = user['language']
+            if 1 == user['sex']:
+                profile.sex = 'male'
+            else:
+                profile.sex = 'female'
+            profile.nickname = user['nickname']
+            profile.headimgurl = user['headimgurl']
+            profile.save()
 
-            # request.session['wechat_id'] = obj.id
-            # request._cached_user = obj
-            request.user = obj
-            return obj
-        return None
+        request.session['wechat_id'] = profile.id
+        # request._cached_user = obj
+        request.user = obj
+        return obj
 
     def get_user(self, user_id):
         try:

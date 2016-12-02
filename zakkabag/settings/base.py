@@ -171,7 +171,7 @@ EMAIL_HOST = 'smtp.sina.com'
 EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 
-SERVER_EMAIL = DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+#SERVER_EMAIL = DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 '''
 EMAIL_HOST = 'smtp.sina.com'
@@ -203,8 +203,6 @@ SEND_ACTIVATION_EMAIL = True
 
 AUTHENTICATION_BACKENDS = (    
     
-    # 'zakkabag.backends.auth.SettingsBackend',
-    #'personalcenter.backends.auth.AdminBackend',
     'personalcenter.backends.auth.WechatBackend',
     'personalcenter.backends.auth.MyBackend',       
     'django.contrib.auth.backends.ModelBackend', 

@@ -131,11 +131,13 @@ class WechatUserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        blank = True,
+        null = True
     )
     openid = models.CharField(max_length=120, blank=True, null=True) #wechat only
     unionid = models.CharField(max_length=120, blank=True, null=True) #wechat only
     privilege = models.CharField(max_length=120, blank=True, null=True) #wechat only    
-    headimgurl = models.CharField(max_length=120, blank=True, null=True)
+    headimgurl = models.CharField(max_length=500, blank=True, null=True)
     nickname = models.CharField(max_length=120, blank=True, null=True)
     sex = models.CharField(max_length=45, blank=True, null=True)	
     city = models.CharField(max_length=45, blank=True, null=True)
@@ -145,6 +147,10 @@ class WechatUserProfile(models.Model):
     def __unicode__(self):
         if self.nickname:
         	return self.nickname
+        elif self.user:
+        	return self.user.username
         else:
-        	return self.user.username    
+        	return self.openid
 
+    def get_absolute_url(self):
+        return reverse("personalcenter", kwargs={"id": self.id })  

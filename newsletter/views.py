@@ -1,14 +1,19 @@
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from products.models import ProductFeatured,Product
+from django.shortcuts import render, redirect
 from .forms import SignUpForm,ContactForm
 from .models import UserWechat#,SignUp, 
-from django.contrib.auth import authenticate#, login, logout
 from django.contrib import auth
+from django.contrib.auth import authenticate#, login, logout
+from django.contrib.auth import views as auth_views
 
-from django.core.urlresolvers import reverse
+# from django.contrib.auth.forms import AuthenticationForm
+# from django.utils.http import is_safe_url
+# from django.http import HttpResponseRedirect
+
 
 from weixin.client import WeixinMpAPI
 #from weixin.oauth2 import OAuth2AuthExchangeError
@@ -24,52 +29,6 @@ def home(request):
     featured_image = ProductFeatured.objects.filter(active=True).order_by("?").first()
     products = Product.objects.all().order_by("?")[:6]
     products2 = Product.objects.all().order_by("?")[:6]
-
-    # REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
-
-    # try:
-    #     code = request.GET.get('code')
-    #     if code:
-    #         api = WeixinMpAPI(appid=APP_ID, 
-    #                     app_secret=APP_SECRET,
-    #                     redirect_uri=REDIRECT_URI)
-    #         auth_info = api.exchange_code_for_access_token(code=code)
-    #         api = WeixinMpAPI(access_token=auth_info['access_token'])
-    #         user = api.user(openid=auth_info['openid'])
-
-    #         try:
-    #             obj = UserWechat.objects.filter(
-    #             openid = user['openid'],
-    #             unionid = user['unionid'],
-    #             city = user['city'],
-    #             country = user['country'],
-    #             headimgurl = user['headimgurl'],
-    #             language = user['language'],
-    #             sex = user['sex'],
-    #             privilege = user['privilege'],
-    #             nickname = user['nickname']
-    #             )[0]
-    #         except UserWechat.DoesNotExist:
-    #             obj = UserWechat(
-    #             openid = user['openid'],
-    #             unionid = user['unionid'],
-    #             city = user['city'],
-    #             country = user['country'],
-    #             headimgurl = user['headimgurl'],
-    #             language = user['language'],
-    #             sex = user['sex'],
-    #             privilege = user['privilege'],
-    #             nickname = user['nickname']
-    #             )
-    #             obj.save()
-
-    #         request.session['openid'] = user['openid']
-    # except:
-    #     pass
-
-    # cuserwechat = None
-    # if request.session.get('openid'):
-    #     cuserwechat = UserWechat.objects.filter(openid = request.session.get('openid'))[0]
 
     form = SignUpForm(request.POST or None)
     context = {
@@ -101,7 +60,6 @@ def home(request):
     return render(request, "home.html", context)
 
 def logout(request):
-    # del request.session['openid']
     try:
         del request.session['wechat_id']
     except:
@@ -109,37 +67,48 @@ def logout(request):
     auth.logout(request)
     return redirect(reverse("home", kwargs={}))
 
+#refer to django/contrib/auth/views.py
+#http://127.0.0.1:8000/accounts/activate/??
 def login(request):
+    REDIRECT_URI = request.POST.get('next', request.GET.get('next', reverse("home", kwargs={})))
     if request.method == 'GET':
         try:
             code = request.GET.get('code')
             if code:
-                REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
-                user = authenticate(request=request, code=code, app_id=None, app_secret=None, redirect_uri=REDIRECT_URI)
+                redirect_to = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
+                api = WeixinMpAPI(appid=APP_ID, 
+                            app_secret=APP_SECRET,
+                            redirect_uri=redirect_to)
+                auth_info = api.exchange_code_for_access_token(code=code)
+                api = WeixinMpAPI(access_token=auth_info['access_token'])
+                api_user = api.user(openid=auth_info['openid'])                
+                user = authenticate(request=request, user=api_user)
                 if user:
                     auth.login(request, user)
-                    return redirect(REDIRECT_URI)
-                    #return redirect(reverse("home", kwargs={}))
+                    return redirect(redirect_to)
                 else:
                     pass
+                    #return redirect(reverse("registration_register", kwargs={}))
             else:
                 pass
         except:
             pass
 
         return redirect(reverse("auth_login", kwargs={}))
-    else:        
+    else: 
+        REDIRECT_FIELD_NAME = 'next'
+        return auth_views.login(request, redirect_field_name=REDIRECT_FIELD_NAME, extra_context=None)    
+
+        # below method is also OK
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request=request, username=username, password=password)
         if user is not None:
-            auth.login(request, user)
-            # Redirect to a success page.
+            auth.login(request, user)                
         else:
-            # raise forms.ValidationError(self.error_messages['invalid_login'])
-            # Return an 'invalid login' error message.
-            pass
-    return redirect(reverse("home", kwargs={}))
+            return redirect(reverse("auth_login", kwargs={}))
+
+    return auth_views.login(request, redirect_field_name=REDIRECT_URI, extra_context=None)    
 
 #from weixin.client import WeixinMpAPI
 #from weixin.oauth2 import OAuth2AuthExchangeError

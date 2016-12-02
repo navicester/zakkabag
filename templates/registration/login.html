@@ -7,6 +7,9 @@
 {% block content %}
 <div class = "row">
 <div class = "col-sm-3 col-sm-offset-3">
+{% if request.user.is_anonymous and request.wechat %}
+    You need to regist to continue
+{% endif %}
 <form method="post" action="">
     {% csrf_token %}
     {{ form|crispy }}
