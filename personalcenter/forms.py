@@ -46,3 +46,28 @@ class UserChangeForm(forms.ModelForm):
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
         return self.initial["password"]
+
+class MyUserForm(forms.ModelForm):
+    class Meta:
+        model = MyUser
+
+        fields = [
+            'first_name',
+            'last_name',
+            'image',
+        ]
+        
+
+    def clean_image(self):
+        if self.cleaned_data.get("image") != None:
+            return self.cleaned_data.get("image")
+        elif self.data.get("image") == None:    
+            raise forms.ValidationError("image can't be empty.")
+        else:
+            self.cleaned_data['image'] = self.data.get("image")
+            return self.data.get("image")
+
+    def is_valid(self):
+        if self.clean_image != None:
+            return True
+        return False        

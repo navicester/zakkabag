@@ -26,7 +26,7 @@
 				Wechat : {{wechat}} <a href="#">unlink</a><br>
 				{% endif %}
 				<li><a href='{% url "auth_password_change"%}'>Change Password</a></li>
-				<li><a href='{% url "profile_detail" pk=object.id %}'>Change Profile</a></li>
+				<li><a href='{% url "profile_detail" id=object.id %}'>Change Profile</a></li>
 			</div>
 		</div>
 		{% endblock %}

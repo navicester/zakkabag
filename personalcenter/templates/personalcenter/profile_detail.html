@@ -1,7 +1,16 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+
 
 {% block content %}
 
-<h3>{{ object }}</h3>
+<div class='col-sm-6 col-sm-offset-3'>
+	<h3>{{ object }}</h3>
+	<form method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
+		{{form|crispy}}
+		<img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
+		<input type="submit" value='Update' class='btn' />
+	</form>
+</div>
 
 {% endblock %}
