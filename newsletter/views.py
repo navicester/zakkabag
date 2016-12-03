@@ -27,6 +27,7 @@ def home(request):
 
     title = 'Sign Up now'
     featured_image = ProductFeatured.objects.filter(active=True).order_by("?").first()
+    featured_images = ProductFeatured.objects.all()
     products = Product.objects.all().order_by("?")[:6]
     products2 = Product.objects.all().order_by("?")[:6]
 
@@ -35,6 +36,7 @@ def home(request):
         "title": title,
         "form": form,
         "featured_image":featured_image,
+        'featured_images':featured_images,
         "products":products,
         "products2":products2,
         # 'userwechat': cuserwechat,

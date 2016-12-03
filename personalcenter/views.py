@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib import auth
 from .models import WechatUserProfile
+from orders.models import Order
+from products.models import Product
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 
@@ -28,8 +30,31 @@ def personalcenterhome(request,id):
     template = "personalcenter/personalcenterhome.html"
     context = {    
         "object": wechatuser,
-        'wechat': wechat
+        'wechat': wechat,
+        'product' : Product.objects.all()[0],   
     }
+
+    return render(request, template, context)
+
+def myorder(request,id):
+
+    wechatuser = get_object_or_404(UserModel, id=id)
+    try:
+        wechatuser = UserModel.objects.get(id=id)
+    except UserModel.DoesNotExist:
+        raise Http404
+    except:
+        raise Http404
+
+    order_objects = Order.objects.filter(user__id=wechatuser.id)
+
+    template = "personalcenter/myorder.html"
+    context = {    
+        "object": wechatuser,
+        "order_objects" : order_objects,
+
+    }
+
 
     return render(request, template, context)
 

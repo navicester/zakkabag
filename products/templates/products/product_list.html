@@ -28,9 +28,11 @@
 
 <div class='col-sm-9 col-md-10'>
 
+	{% block content-center %}
 	<h1><small><a href="{% url 'products' %}">All Products</a></small> 
 	<small><a href='{% url "categories" %}'>Categories</a></small><br>
-	<small><a href='{% url "products_create" %}'>New Product</a></small> </h1>
+	<small><a href='{% url "products_create" %}'>New Product</a></small> </h1>	
+
 	<div class="row">
 		{% for category in categories%}
 		<div class='col-xs-2 thumbnail text-center' style="margin-right: 12px;padding: 5px 8px; background-color: #D6CCCC;">
@@ -48,6 +50,9 @@
 	{% endif %}
 	</div>
 
+	<small><a href='{% url "exchange_rule" %}'>Exchange Rule</a></small> 
+
+	{% endblock %}
 </div>
 
 {% endblock %}

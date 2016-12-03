@@ -37,13 +37,25 @@
 
     {% block jumbotron %}
     {% endblock %}
+
+    {% block carousel %}  
+    {% endblock %}
       
     <div class="container">
     <!-- <div class="container-fluid"> -->
       {% block content %}
       {% endblock %}
+
+           
     </div>
 
+  <div class='container'>    
+    <hr>
+      <ul class="list-inline">
+          友情链接：
+          <li><a href="http://www.webdog.cn/" target="_blank">发现中国</a></li>   
+      </ul> 
+  </div>      
     {% include "javascript.html" %}
 
     <script>

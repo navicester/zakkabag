@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.utils import six, timezone
 from django.core import validators
 from django.core.urlresolvers import reverse
+from django.utils.text import slugify
 
 # Create your models here.
 
@@ -48,6 +49,14 @@ USER_TYPE = (
 	('phone', 'Phone'),
 )
 
+def image_upload_to(instance, filename):
+    title = instance.username
+    slug = slugify(title)
+    basename, file_extension = filename.split(".")
+    new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
+    basename = basename
+    return "profile/%s/%s" %(slug, new_filename)
+
 #Copy from AbstractUser
 class MyUser(AbstractBaseUser, PermissionsMixin):
 #class MyUser(AbstractUser): 
@@ -83,6 +92,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 	
     # identifier = models.CharField(max_length=50, unique=True, db_index=True, verbose_name='username')
     account_type = models.CharField(max_length=50, blank=True, null=True, choices=USER_TYPE, default = 'username')
+
+    image = models.ImageField(upload_to=image_upload_to)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
@@ -127,6 +138,12 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     def get_absolute_url(self):
         return reverse("personalcenter", kwargs={"id": self.id })  
 
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        else:
+            return '/media/profile/bhe001/bhe001-1.jpg'
+
 class WechatUserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -154,3 +171,6 @@ class WechatUserProfile(models.Model):
 
     def get_absolute_url(self):
         return reverse("personalcenter", kwargs={"id": self.id })  
+
+    def get_image_url(self):
+        return headimgurl #None        

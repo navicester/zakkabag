@@ -2,6 +2,35 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-user:{{object}} <br>
-wechat : {{wechat}}
+
+<div class = "row">
+	<div class = "col-sm-6 col-sm-offset-3">
+		<ul class="nav nav-pills ">
+		  <li role="presentation" class="active"><a href='{{object.get_absolute_url}}'>Profile</a></li>
+		  <li role="presentation"><a href="#">Messages</a></li>
+		  <li role="presentation"><a href="#">Score</a></li>
+		  <li role="presentation"><a href='{% url "myorder" object.id %}'>Order</a></li>
+		  <li role="presentation"><a href="#">Donate</a></li>
+		</ul>
+		<p>
+		{% block subcontent %}
+
+
+		<div class = "row">
+			<div class = "col-sm-3">
+				<img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
+			</div>
+			<div class = "col-sm-9">
+				User Name : {{object}}<br>
+				{% if wechat %}
+				Wechat : {{wechat}} <a href="#">unlink</a><br>
+				{% endif %}
+				<a href='{% url "auth_password_change"%}'>Change Password</a></li>
+			</div>
+		</div>
+		{% endblock %}
+
+	</div>
+</div>
+
 {% endblock%}

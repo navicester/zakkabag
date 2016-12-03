@@ -2,7 +2,9 @@ bin/
 include/
 lib/
 
-#static/static_root
+static/static_root
+static_in_env/media_root
+static_in_pro/our_static/img
 
 pip-selfcheck.json
 #*.sqlite3
@@ -13,9 +15,6 @@ pip-selfcheck.json
 .pydevproject
 .project
 .settings/
-
-
-static_in_env/media_root
 
 security_setting.py
 #settings_security.py
