@@ -11,37 +11,12 @@
   margin-bottom: 0px; 
 }
 
-.jumbotron {
-    margin-bottom: 5px;
-    padding-top: 30px;
-    padding-bottom: 30px;
-
-    background-color: #5ACDFF !important;
-    /*color : #F5F5F5;*/
-    color : #000;
-    {% if featured_image.make_image_background %} 
-    background-image: url("{{ featured_image.image.url }}");
-    background-repeat: no-repeat;
-    background-color: #000;
-    background-size: cover; /*stretch to adapt screen*/
-    background-position-y: -272px;
-    {% endif %}    
-}
-
-/*.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img*/
-
-.jumbotron  .img-responsive {
-    max-height: 200px;
-    text-align: center;  
-    vertical-align: middle;
-    margin: auto;   
-}
 {% endblock %}
 </style>
 
 
 {% block jumbotron %}    
-{% include "featured_img.html" with featured_image=featured_image%}
+{% include "jumbotron.html" with featured_image=featured_image%}
 {% endblock %}
 {% comment %}
 {% endcomment %}

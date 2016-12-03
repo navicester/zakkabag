@@ -5,6 +5,7 @@ from orders.models import Order
 from products.models import Product
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.views.generic.detail import DetailView
 
 from django.contrib.auth import get_user_model
 UserModel = get_user_model()
@@ -72,3 +73,18 @@ def accountlinktowechat(request):
             pass
 
     return redirect(reverse("home", kwargs={}))
+
+
+class ProfileDetailView(DetailView):
+    model = UserModel
+    template_name = "personalcenter/profile_detail.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProfileDetailView, self).get_context_data(*args, **kwargs)
+        obj = self.get_object()
+        # product_set = obj.product_set.all()
+        # default_products = obj.default_category.all()
+        # products = ( product_set | default_products ).distinct()
+        # context["products"] = products
+        # context["categories"] = Category.objects.all()
+        return context

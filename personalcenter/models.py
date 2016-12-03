@@ -8,6 +8,9 @@ from django.core import validators
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 
+from django.contrib.auth import get_user_model
+UserModel = get_user_model()
+
 # Create your models here.
 
 class MyUserManager(BaseUserManager): 
@@ -174,3 +177,15 @@ class WechatUserProfile(models.Model):
 
     def get_image_url(self):
         return headimgurl #None        
+
+# class UserProfile(models.Model): 
+#     user = models.OneToOneField(
+#         UserModel,
+#         on_delete=models.CASCADE,
+#     )
+
+#     score = models.DecimalField(max_digits=10, decimal_places=0, default=100)
+#     level = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+
+#     def __unicode__(self):  
+#         return user
