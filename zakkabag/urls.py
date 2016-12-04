@@ -55,6 +55,8 @@ urlpatterns = patterns('',
     url(r'^login/$', 'newsletter.views.login', name='login'), 
 
     url(r'^personalcenter/', include('personalcenter.urls')),
+
+    url(r'^articles/comments/', include('django_comments.urls')),
 )
 
 '''

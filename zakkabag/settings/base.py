@@ -43,6 +43,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    # 'threadedcomments',
+    'django_comments',
     'newsletter',
     'products',
     'carts',
@@ -51,6 +53,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'registration',
     'django_filters',
+    'mptt',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -208,3 +211,5 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', 
     )
 AUTH_USER_MODEL = 'personalcenter.MyUser'
+
+# COMMENTS_APP = 'threadedcomments'
