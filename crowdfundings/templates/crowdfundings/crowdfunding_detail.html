@@ -1,6 +1,12 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load comments %}
+{% load mptt_tags %}
 
-<script type="text/javascript">
+
+{% include "_ajax_comments.html" %}
+
+<script type="text/javascript" charset="utf-8">
 {% block jquery %}
 
 //http://api.jquery.com/click/
@@ -51,7 +57,98 @@ $("#favorite").click(function(){
 		</p>		
 		<i id="favorite" class="fa fa-heart" style= "color:{% if object.is_favorite %} #9C1010{% else %} #333 {% endif %}" aria-hidden="true"></i>
 
-	</div>
-</div>	
+<hr>
 
+
+<style type="text/css">
+	label{display:inline;float:left;width:20%;}
+	input,textarea{width:80%;}
+	textarea{height:80px;}
+	input[type=submit]{width:20%;margin-left:0%;float:right;}
+
+
+
+</style>
+
+
+<h3>Comments for Crowdfunding - {{ object.title }}:</h3>
+<!-- http://django-mptt.readthedocs.io/en/latest/templates.html -->
+		<div {% if request.REQUEST.c|add:"0" == node.id %}id="newly_posted_comment"{% endif %}>
+			{% full_tree_for_model comments.MPTTComment as genres %}
+			{% for genre,structure in genres|tree_info %}
+				{% if genre.level == 0 %}
+
+				    {% if structure.new_level %}<ul><li >
+				    {% else %}</li><li>
+				    {% endif %}
+				    {{ genre.id }} - {{ genre.name }} <br>
+				    {{ genre.comment }} <br>
+				    {% for level in structure.closed_levels %}</li></ul>{% endfor %}
+				    
+				    {% drilldown_tree_for_node genre as drilldown  %}
+				    {% for node,structure in drilldown|tree_info %}
+						{% if node == genre %}
+					        <!-- <strong>{{ node.name }}</strong> -->
+					    {% else %}
+					        <a href="{{ node.get_absolute_url }}">{{ node.id }} - {{ node.name }}</a>
+					        {% if node.parent_id == genre.pk %}{% endif %}
+					        <br>
+					        {{ node.comment }} <br>
+					    {% endif %}
+					    
+				    	{% for level in structure.closed_levels %}</li></ul>{% endfor %}
+					{% endfor %}
+				{% endif %}
+			{% endfor %}	
+
+<hr>
+			{% get_comment_list for object as comments %}
+			
+			{% if comments %}
+				{% recursetree comments %}
+				<div {% if request.REQUEST.c|add:"0" == node.id %}id="newly_posted_comment"{% endif %}>				
+					<ul>
+						<li>
+							<dl>
+								<dt>
+									<a name="c{{ node.id }}"></a>
+									{{ node.user }}
+									{{ node.submit_date|timesince }} ago
+									<a><i class="fa fa-reply" aria-hidden="true"> Reply</i></a>
+									{% comment %}
+									<a href="{{ object.get_absolute_url }}#c{{ node.id }}">Reply</a>
+									{% endcomment %}
+								</dt>
+								<dd>
+									{{ node.comment }}
+								</dd>
+							</dl>
+						</li>
+						{% get_comment_form for node as form %}
+						{% include "form.html" with form=form node=node%}
+
+						{# recursion! children of a given comment #}
+						{% if not node.is_leaf_node %}
+							<ul class="children">
+							{{ children }}
+							</ul>
+						{% endif %} 
+						<hr>
+					</ul>
+
+				</div>
+				
+				{% endrecursetree %}
+			{% endif %}
+
+		</div>
+
+
+		<hr>
+		{% render_comment_form for object %}
+
+
+
+	</div>
+</div>
 {% endblock %}

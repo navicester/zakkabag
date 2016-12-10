@@ -43,8 +43,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    # 'threadedcomments',
-    'django_comments',
+    'django_comments',   
+    # 'django.contrib.comments',
+    'mptt',
+    'comments',
     'newsletter',
     'products',
     'carts',
@@ -54,7 +56,8 @@ INSTALLED_APPS = (
     'crispy_forms',
     'registration',
     'django_filters',
-    'mptt',
+    # 'threadedcomments',
+     
 )
 
 MIDDLEWARE_CLASSES = (
@@ -75,7 +78,7 @@ ROOT_URLCONF = 'zakkabag.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [os.path.join(BASE_DIR, "templates"), os.path.join(BASE_DIR, "comments","templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -214,3 +217,4 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'personalcenter.MyUser'
 
 # COMMENTS_APP = 'threadedcomments'
+COMMENTS_APP = 'comments'
