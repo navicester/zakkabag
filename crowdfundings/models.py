@@ -32,5 +32,15 @@ class Crowdfunding(models.Model):
 	def __unicode__(self):
 		return self.title
 
+	# def get_absolute_url(self):
+	# 	return reverse("crowdfunding", kwargs={})
+
 	def get_absolute_url(self):
-		return reverse("crowdfunding", kwargs={})
+		return reverse("Crowdfunding_detail", kwargs={"pk": self.pk})
+
+	def get_image_url(self):
+		# img = self.productimage_set.first()
+		img = self.image
+		if img:
+			return img.url
+		return img #None		

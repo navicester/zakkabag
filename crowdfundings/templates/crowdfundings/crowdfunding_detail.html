@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+<script type="text/javascript">
+{% block jquery %}
+
+//http://api.jquery.com/click/
+$("#favorite").click(function(){
+
+	$.ajax('',{
+		type: "GET",
+		dataType: "json",
+		data : {
+			purpose:'addFavorite'
+		},					
+		beforeSend : function(){
+			console.log("beforeSend");
+		},
+		success: function(data) {
+			console.log("success");
+			flash_message = "" 
+			if(data.is_favorite){
+				flash_message = "favorite successfully." 
+				$("#favorite").css("color","#9C1010");
+			}else{
+				flash_message = "cancel favorite successfully." 
+				$("#favorite").css("color","#333");
+			}
+			showFlashMessageX(flash_message,"#favorite");
+		},
+		error: function() {
+			alert("error for add favorite");
+		},
+		timeout:1000
+	})
+})
+
+{% endblock %}
+</script>
+
+{% block content %}
+<div class='row'>
+	<div class='col-sm-8'> 
+		<h2>{{object.title}}</h2>
+		{% if object.get_image_url %}
+		<div>
+			<img  id='img' class= 'img-responsive' src='{{ object.get_image_url }}'/>
+		</div>
+		{% endif %}		
+		<p class='lead'>
+			{{object.detail}}
+		</p>		
+		<i id="favorite" class="fa fa-heart" style= "color:{% if object.is_favorite %} #9C1010{% else %} #333 {% endif %}" aria-hidden="true"></i>
+
+	</div>
+</div>	
+
+{% endblock %}

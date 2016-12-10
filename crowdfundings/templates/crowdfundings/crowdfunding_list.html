@@ -18,7 +18,7 @@
 	{% for object in object_list %}
 		<tr>
 			<td>
-				<a href='{% url "CrowdfundingListView"%}'>View #{{ object.id }}</a>
+				<a href='{% url "Crowdfunding_detail" pk=object.id %}'>View #{{ object.id }}</a>
 			</td>
 			<td>
 				Title: {{ object.title }}

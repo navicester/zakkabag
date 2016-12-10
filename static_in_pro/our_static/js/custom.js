@@ -6,10 +6,27 @@ function showFlashMessage(message) {
 	"<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
 	"<span aria-hidden='true'>&times;</span></button>" 
 	+ message + "</div></div></div>"
-	$("body").append(template);
+	$("body").append(template);	
 	$(".container-alert-flash").fadeIn();
 	setTimeout(function(){ 
 		$(".container-alert-flash").fadeOut();
 	}, 1800);
-
 }
+
+function showFlashMessageX(message, id="") {
+	var template = "<div class='container-alert-flash-x'>" + 
+	"<div class='alert alert-success alert-dismissible' role='alert'>" + 
+	"<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+	"<span aria-hidden='true'>&times;</span></button>" 
+	+ message + "</div></div>"
+	if(id){
+		$(id).after(template);
+	}else{
+		$("body").after(template);	
+	}
+	$(".container-alert-flashx").fadeIn();
+	setTimeout(function(){ 
+		$(".container-alert-flash-x").fadeOut();
+		$(".container-alert-flash-x").remove();
+	}, 1800);
+}	
