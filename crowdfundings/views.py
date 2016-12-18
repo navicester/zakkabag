@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -47,3 +47,16 @@ class CrowdfundingDetailView(DetailView):
                 return JsonResponse(data) 
         else:
             return super(CrowdfundingDetailView, self).get(request, *args, **kwargs) 
+
+from django.views.decorators.csrf import csrf_exempt   
+#@csrf_exempt
+def CommentsShow(request, pk=''):
+    crowdfunding = Crowdfunding.objects.get(id=pk)
+    context={
+        'object': crowdfunding,
+    }
+
+    #return render_to_response('crowdfundings/comments_tree.html', {"object": crowdfunding})
+    return render(request, "crowdfundings/comments_render.html", context)
+    #return render(request, "crowdfundings/comments_tree.html", context)
+    

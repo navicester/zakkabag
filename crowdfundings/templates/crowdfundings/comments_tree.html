@@ -1,0 +1,45 @@
+{% load mptt_tags %}
+{% load comments %}	
+{% load mytags %}
+
+<div id='cmt_show'>
+	<h3>Comments for Crowdfunding - {{ object.title }}:</h3>
+	<hr>
+	{# get_comment_list for object as comments #}
+	{% full_tree_for_model comments.MPTTComment as comments %}
+
+	{% if comments %}
+		{% recursetree comments %}
+			{% if node.level > 0 or node.object_pk == object.id|int2str %}
+				<div {% if request.REQUEST.c|add:"0" == node.id %}id="newly_posted_comment"{% endif %}>	
+					{% get_comment_form for node as form %}
+					<div class="media">
+						<div class="media-left">
+							<a href="#">
+							  <img style="height:35px; width:35px; " class="media-object" src="http://127.0.0.1:8000/media/products/test/test-None.png" alt="...">
+							</a>
+						</div>
+						<div class="media-body">
+						<h5 class="media-heading">{{ node.user }} {{ node.submit_date|timesince }} ago </h5>
+						<a type = "submit"  ><i class="fa fa-reply"  aria-hidden="true"> Reply</i></a>
+						<!-- href="{{ object.get_absolute_url }}#c{{ node.id }}" -->
+						</div>
+					</div>
+					<div class="comment-content">{{ node.comment }}</div>
+						
+					{% include "form.html" with form=form node=node object=object %}
+
+					{# recursion! children of a given comment #}
+					{% if not node.is_leaf_node %}
+						<ul class="children">
+						{{ children }}
+						</ul>
+					{% endif %} 
+					
+				</div>	
+			{% endif %}				
+		{% endrecursetree %}
+	{% endif %}
+
+</div>
+
