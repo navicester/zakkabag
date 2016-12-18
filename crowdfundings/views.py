@@ -2,7 +2,9 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormView, CreateView
 from .models import Crowdfunding
+from .forms import CrowdfundingCreateForm
 from .mixins import StaffRequiredMixin
 import json
 
@@ -48,8 +50,57 @@ class CrowdfundingDetailView(DetailView):
         else:
             return super(CrowdfundingDetailView, self).get(request, *args, **kwargs) 
 
-from django.views.decorators.csrf import csrf_exempt   
-#@csrf_exempt
+class CrowdfundingCreateView(CreateView):
+    template_name = 'crowdfundings/crowdfunding_create.html'
+    form_class = CrowdfundingCreateForm
+    success_url = "/crowdfunding"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(CrowdfundingCreateView, self).get_context_data(*args, **kwargs)
+        # context["image_form"] = ProductImageForm()
+        return context
+
+    def get_form(self, *args, **kwargs):
+        form = super(CrowdfundingCreateView, self).get_form(*args, **kwargs)
+
+        # form.fields['categories'].queryset  = Category.objects.all()
+        # form.fields['default'].queryset  = Category.objects.all()
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+        postresult = super(CrowdfundingCreateView, self).post(request, *args, **kwargs)
+
+        # if 0:
+        #     filename=request.FILES['image']
+        #     from PIL import Image 
+        #     if filename:
+        #         img=Image.open(filename)
+        #         title = self.object.title
+        #         slug = slugify(title)
+        #         basename, file_extension = filename.name.split(".")
+        #         new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)
+        #         from django.conf import settings
+        #         import os
+        #         photoname = os.path.join("products", slug, new_filename)
+        #         photopath = os.path.join(settings.MEDIA_ROOT, "products", slug)
+        #         if not os.path.exists(photopath):
+        #             os.makedirs(photopath)
+        #         img.save(os.path.join(settings.MEDIA_ROOT, photoname))
+        #         ProductImage.objects.create(product = self.object, 
+        #             image = photoname)
+
+        # # BELOW ALSO WORKS
+        # else:
+        #     imageForm = ProductImageForm(request.POST, request.FILES)
+        #     if imageForm.is_valid():
+        #         productImage = imageForm.save(commit=False) 
+        #         productImage.product = self.object
+        #         productImage.save()
+        #         return postresult
+
+        return postresult              
+
 def CommentsShow(request, pk=''):
     crowdfunding = Crowdfunding.objects.get(id=pk)
     context={

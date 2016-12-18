@@ -37,6 +37,12 @@ http://django-mptt.github.io/django-mptt/templates.html
 https://pypi.python.org/pypi/django-threadedcomments
 -->
 
+		<hr>
+		<div id="new_cmt">
+		{# render_comment_form for object #}
+		{% include "crowdfundings/comments_form.html" %}
+		</div>
+
 {% comment %}
 		<div {% if request.REQUEST.c|add:"0" == node.id %}id="newly_posted_comment"{% endif %}>	
 			{% full_tree_for_model comments.MPTTComment as genres %}
@@ -44,16 +50,18 @@ https://pypi.python.org/pypi/django-threadedcomments
 		</div>
 {% endcomment %}
 
+		<hr>
 		{% with object as crowdfunding_obj %}		
 		{% endwith %}
 		{% include "crowdfundings/comments_tree.html" %}
 
 		<hr>
-		<div id="new_cmt">
-		{# render_comment_form for object #}
-		{% include "crowdfundings/comments_form.html" %}
-		</div>
-
+		<div id="report">
+			<p><h4>Report:</h4></p>
+			<form action="{url 'Crowdfunding_create'}" method="post" >{% csrf_token %}
+				<textarea class="input-xlarge form-control" id="id_report" name="report" placeholder="please enter report" required="required"></textarea>
+				<input class='btn btn-default' type="submit" value="submit">
+			</form>
 	</div>
 </div>
 {% endblock %}
