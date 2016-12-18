@@ -24,22 +24,25 @@
                     url: "{% comment_form_target %}",
                     cache: false,
                     dataType: "html",
-                    success: function(html, textStatus) {
-                        // Extract the form from the returned html
+                    success: function(html, textStatus) {                        
                         // window.location.reload();
+
+                        // Extract the form from the returned html
                         postedcomment = $(html).find('#cmt_show');
                         posted_comment_html=postedcomment.html();
                         console.log(posted_comment_html);
                         posted_comment_wrap_html="<div id='cmt_show'>"+posted_comment_html+"</div>";
                         $('#cmt_show').replaceWith(posted_comment_wrap_html);
-                        // this method only replace form with comment
+                        $('.comment-form form').bindPostCommentHandler();
+                        
+                        // this method will only replace form with comment
                         //postedcomment = $(html).find('#newly_posted_comment');
                         //$(commentform).replaceWith(postedcomment.html());
                         //$(commentwrap).hide();
                         //$(commentwrap).slideDown(600);
-                        $(commentwrap).find('.comment-form form').bindPostCommentHandler();
-                        $(".fa-reply").bind("click",function(){bindform($(this));});
-                        $('.comment-form form').bindPostCommentHandler();
+                        //$(commentwrap).find('.comment-form form').bindPostCommentHandler();
+
+                        $(".fa-reply").bind("click",function(){bindform($(this));});                        
                         $('#comment_form form')[0].reset();                        
                     },
 
