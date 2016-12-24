@@ -1,8 +1,9 @@
 from django.shortcuts import render, render_to_response
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, CreateView
+from django.core.urlresolvers import reverse
 from .models import Crowdfunding
 from .forms import CrowdfundingCreateForm
 from .mixins import StaffRequiredMixin
@@ -57,7 +58,7 @@ class CrowdfundingCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(CrowdfundingCreateView, self).get_context_data(*args, **kwargs)
-        # context["image_form"] = ProductImageForm()
+        context["user_id"] = self.request.user.id
         return context
 
     def get_form(self, *args, **kwargs):
@@ -68,8 +69,20 @@ class CrowdfundingCreateView(CreateView):
 
         return form
 
+    # def get_success_url(self):
+    #     return reverse("CrowdfundingListView")
+
     def post(self, request, *args, **kwargs):
-        postresult = super(CrowdfundingCreateView, self).post(request, *args, **kwargs)
+        crowdfundingForm = CrowdfundingCreateForm(request.POST, request.FILES)
+        if crowdfundingForm.is_valid():
+            crowdfunding = crowdfundingForm.save(commit=False)
+            crowdfunding.user = request.user
+            crowdfunding.save()
+            # return self.form_valid(crowdfundingForm)
+            #return HttpResponseRedirect(reverse("CrowdfundingListView"))
+            return HttpResponseRedirect(crowdfunding.get_absolute_url())
+        else:
+            return self.form_invalid(crowdfundingForm)
 
         # if 0:
         #     filename=request.FILES['image']
@@ -100,6 +113,18 @@ class CrowdfundingCreateView(CreateView):
         #         return postresult
 
         return postresult              
+
+# from django.db.models.signals import pre_save
+
+# def crowdfunding_pre_save_receiver(sender, instance, *args, **kwargs):
+#    qty = instance.quantity
+#    if qty >= 1:
+#        price = instance.item.get_price()
+#        line_item_total = Decimal(qty) * Decimal(price)
+#        instance.line_item_total = line_item_total
+
+# pre_save.connect(crowdfunding_pre_save_receiver, sender=Crowdfunding)
+
 
 def CommentsShow(request, pk=''):
     crowdfunding = Crowdfunding.objects.get(id=pk)

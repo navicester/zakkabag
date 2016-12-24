@@ -24,6 +24,8 @@ class Crowdfunding(models.Model):
 	category = models.CharField(max_length=45, choices=Crowdfunding_TYPE)
 	title = models.CharField(max_length=120)
 	detail = models.TextField(blank=True, null=True)
+	amount = models.DecimalField(max_digits=50, decimal_places=0, default=100)
+	deadline = models.DateTimeField(_('deadline'), default=timezone.now)
 	is_favorite = models.BooleanField(_('favorite status'), default=False,
         help_text=_('Designates whether this is favorite.'))
 	image = models.ImageField(upload_to=image_upload_to)

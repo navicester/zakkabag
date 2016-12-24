@@ -1,18 +1,25 @@
 from django import forms
 from .models import Crowdfunding
 
+Crowdfunding_TYPE = (
+	('health', 'Health'),
+	('school', 'School'),
+)
+
 class CrowdfundingCreateForm(forms.ModelForm):
 	class Meta:
 		model = Crowdfunding
 
-		fields = [
-			'title',
-		# 	'description',
-		# 	'price',
-		# 	'active',
-		# 	'categories',
-		# 	'default'
+		exclude = [
+			'is_favorite',
+			'user',
 		]
+
+	category = forms.ChoiceField(
+		choices = Crowdfunding_TYPE,
+		widget = forms.RadioSelect,
+		# empty_label = None,
+		)
 
 # class ProductImageForm(forms.ModelForm):
 # 	class Meta:

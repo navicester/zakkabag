@@ -7,6 +7,7 @@
 	<p class='lead'>
 	You do not currently have crowdfunding.
 	</p>
+	<a href='{% url "Crowdfunding_create" %}'>New Crowdfunding</a>
 
 	</div>
 
@@ -27,7 +28,10 @@
 	{% endfor %}
 
 	</table>
+	<h4><a href='{% url "Crowdfunding_create" %}'><i class="fa fa-plus" aria-hidden="true"></i> New Crowdfunding</a></h4>
 	</div>
 {% endif %}
+
+
 
 {% endblock %}
