@@ -87,23 +87,25 @@ https://pypi.python.org/pypi/django-threadedcomments
 
 {% block jquery %}
 
+	//Method 1
 	function weixinShareTimeline(title,desc,link,imgUrl){
 		WeixinJSBridge.invoke('shareTimeline',{
 			'img_url':imgUrl,
-			'img_width': '640',
-			'img_height':'640',
+			// 'img_width': '640',
+			// 'img_height':'640',
 			'link':link,
 			'desc': desc,
 			'title':title
 		});
 	}
 
-	$("#wechat-share").bind("click",function(){
-	// $("a[name='wechat-share']").click(function(){
+	// $("#wechat-share").bind("click",function(){
+	$("a[name='wechat-share']").click(function(){
 	    weixinShareTimeline("{{object.title}}", "{{object.detail}}", document.URL, window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}');
 	});
 
 
+	//Method 2
 	function onBridgeReady() {
 	    WeixinJSBridge.on('menu:share:appmessage', function(argv){
 	        WeixinJSBridge.invoke('sendAppMessage',{
@@ -138,6 +140,7 @@ https://pypi.python.org/pypi/django-threadedcomments
 	    onBridgeReady();
 	}
 
+	//Method 3
 	//通过config接口注入权限验证配置
 	wx.config({
 		debug: false,

@@ -2,8 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from django.conf.urls import patterns, include, url
-from zakkabag.views import handleRequest
-from .menu import handleMenuRequest
+from wechat.views import handleRequest
+from wechat.menu import handleMenuRequest
 
 
 from django.contrib import admin
@@ -19,9 +19,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-	url(r'^$', handleRequest),
-    url(r'^weixin', handleRequest),
-    url(r'^menu', handleMenuRequest, name='handleMenuRequest'),
+	url(r'^$', 'wechat.views.handleRequest'),
+    url(r'^weixin', 'wechat.views.handleRequest'),
+    url(r'^menu', 'wechat.menu.handleMenuRequest', name='handleMenuRequest'),
     url(r'^debug', 'debug.views.handleDebug', name='handleDebug'),
 
     url(r'^home$', 'newsletter.views.home', name='home'),
@@ -50,7 +50,7 @@ urlpatterns = patterns('',
     url(r'^checkout/address/add/$', UserAddressCreateView.as_view(), name='user_address_create'), 
     url(r'^checkout/final/$', CheckoutFinalView.as_view(), name='checkout_final'),   	
 
-    url(r'^wechatlogin/$', 'zakkabag.views.wechatlogin', name='wechatlogin'), 
+    url(r'^wechatlogin/$', 'wechat.views.wechatlogin', name='wechatlogin'), 
     url(r'^logout/$', 'newsletter.views.logout', name='logout'), 
     url(r'^login/$', 'newsletter.views.login', name='login'), 
 

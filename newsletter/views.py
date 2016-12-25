@@ -112,17 +112,6 @@ def login(request):
 
     return auth_views.login(request, redirect_field_name=REDIRECT_URI, extra_context=None)    
 
-#from weixin.client import WeixinMpAPI
-#from weixin.oauth2 import OAuth2AuthExchangeError
-APP_ID = 'wxe90ebbe29377e650'
-APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
-
-def wechatlogin(request):
-    REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
-    api = WeixinMpAPI(appid=APP_ID, app_secret=APP_SECRET,redirect_uri=REDIRECT_URI)
-    redirect_uri = api.get_authorize_login_url(scope=("snsapi_userinfo",))
-    return redirect(redirect_uri)
-
 def contact(request):
     title = 'Contact Us'    
     title_align_center = True

@@ -6,7 +6,7 @@ from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.utils.encoding import smart_str, smart_unicode
 import xml.etree.ElementTree as ET
-from zakkabag.views import responseMsg
+from wechat.views import responseMsg
 #from curses.has_key import has_key
 
 @csrf_exempt
