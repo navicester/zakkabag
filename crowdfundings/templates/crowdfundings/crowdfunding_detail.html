@@ -88,9 +88,24 @@ https://pypi.python.org/pypi/django-threadedcomments
 
 {% block jquery %}
 
+	function weixinShareTimeline(title,desc,link,imgUrl){
+		WeixinJSBridge.invoke('shareTimeline',{
+			'img_url':imgUrl,
+			'img_width': '640',
+			'img_height':'640',
+			'link':link,
+			'desc': desc,
+			'title':title
+		});
+	}
+
+	$("#test").bind("click",function(){
+	    weixinShareTimeline("{{object.title}}", "{{object.detail}}", document.URL, window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}');
+	});
+
+
 	function onBridgeReady() {
-	    WeixinJSBridge.on('menu:share:appmessage', function(argv) 
-	    {
+	    WeixinJSBridge.on('menu:share:appmessage', function(argv){
 	        WeixinJSBridge.invoke('sendAppMessage',{
 	                    "link":document.URL,
 	                    "desc":"{{object.detail}}",
@@ -99,9 +114,8 @@ https://pypi.python.org/pypi/django-threadedcomments
 	            WeixinJSBridge.log(res.err_msg);
 	        });
 	    });
-	    // WeixinJSBridge.on('menu:share:timeline', function(argv) 
-	    // {
-	    $(".fa-weixin").click(function(){
+	    WeixinJSBridge.on('menu:share:timeline', function(argv){
+	    // $(".fa-weixin").click(function(){
 		    WeixinJSBridge.invoke("shareTimeline",{
 		        "link":document.URL,
 		        "img_url": window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}',
@@ -114,7 +128,6 @@ https://pypi.python.org/pypi/django-threadedcomments
 		        alert(e.err_msg);
 		        })
 	   });
-	    // });
 	}
 	 
 	if (typeof WeixinJSBridge === "undefined"){
