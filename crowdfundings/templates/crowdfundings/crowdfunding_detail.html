@@ -9,8 +9,11 @@
 
 
 {% block content %}
+
+
 <div class='row'>
 	<div class='col-sm-8'> 
+		<!-- {{signPackage}} -->
 		<h2>{{object.title}}</h2>
 		{% if object.get_image_url %}
 		<div>
@@ -21,6 +24,9 @@
 			{{object.detail}}
 		</p>
 		<i id="favorite" class="fa fa-heart" style= "color:{% if object.is_favorite %} #9C1010{% else %} #333 {% endif %}" aria-hidden="true"></i>
+		<br>
+		<a href=""><i class="fa fa-weixin fa-3x"></i></a>
+		<input type="button" id='test'>
 
 		<div> 
 			<br>
@@ -79,7 +85,86 @@ https://pypi.python.org/pypi/django-threadedcomments
 {% endblock %}
 
 <script type="text/javascript" charset="utf-8">
+
 {% block jquery %}
+
+	//通过config接口注入权限验证配置
+	wx.config({
+		debug: true,
+		appId: '{{signPackage.appId}}',
+		timestamp:'{{signPackage.timestamp}}',
+		nonceStr: '{{signPackage.nonceStr}}',
+		signature: '{{signPackage.signature}}',
+		jsApiList: [
+			'checkJsApi',
+			'onMenuShareAppMessage'
+			]
+		});
+
+	wx.ready(function () {
+		// 1 判断当前版本是否支持指定 JS 接口，支持批量判断		
+		wx.checkJsApi({
+			jsApiList: [
+				'onMenuShareAppMessage'
+			],
+			success: function (res) {
+				//alert(JSON.stringify(res));
+				alert('checkJsApi success');
+				console.log("checkJsApi success");
+			}
+		});
+	
+		//获取“分享给朋友”按钮点击状态及自定义分享内容接口
+		$("#test").click(function(){
+		wx.onMenuShareAppMessage({
+			title: "share",
+			desc: "share",
+			link: '{{signPackage.url}}',
+			imgUrl: 'http://127.0.0.1:8000/media/crowdfunding/bhe001/None-test_cgxbsgD.jpg',
+			trigger: function (res) {
+				// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+				alert('trigger');
+				console.log("onMenuShareAppMessage trigger");
+			},
+			success: function (res) {
+				console.log("onMenuShareAppMessage success");
+				$.ajax({
+					url: '/home',
+					data: { name: "temp"},
+					type: 'post',
+					cache:false,
+					success: function(data){
+					},
+					error: function(xhr, type){
+						alert('Ajax error!')
+					}
+				})
+			},
+			complete: function (res) {
+				alert('complete');
+				console.log("onMenuShareAppMessage complete");
+			},
+			cancel: function (res) {
+				alert('cancel');
+				console.log("onMenuShareAppMessage cancel");
+			},
+			fail: function (res) {
+				alert('fail');
+				console.log("onMenuShareAppMessage fail");
+			}
+		});
+		});
+	})
+
+	wx.error(function(res){
+		// config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+		alert('wx.error');
+	});
+
+
+// $("#test").click(function(){
+// 	wx.onMenuShareAppMessage();
+// })
 
 //http://api.jquery.com/click/
 $("#favorite").click(function(){

@@ -27,11 +27,9 @@ class CrowdfundingDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(CrowdfundingDetailView, self).get_context_data(*args, **kwargs)
         obj = self.get_object()
-        # product_set = obj.product_set.all()
-        # default_products = obj.default_category.all()
-        # products = ( product_set | default_products ).distinct()
-        # context["products"] = products
-        # context["categories"] = Category.objects.all()
+        from wechat.client import WechatAPI
+        api = WechatAPI(request = self.request)
+        context["signPackage"] = api.getSignPackage()
         return context        
 
     def get(self, request, *args, **kwargs):
