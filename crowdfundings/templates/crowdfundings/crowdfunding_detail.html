@@ -88,9 +88,46 @@ https://pypi.python.org/pypi/django-threadedcomments
 
 {% block jquery %}
 
+	function onBridgeReady() {
+	    WeixinJSBridge.on('menu:share:appmessage', function(argv) 
+	    {
+	        WeixinJSBridge.invoke('sendAppMessage',{
+	                    "link":document.URL,
+	                    "desc":"{{object.detail}}",
+	                    "title":"{{object.title}}"
+	        }, function(res) {
+	            WeixinJSBridge.log(res.err_msg);
+	        });
+	    });
+	    // WeixinJSBridge.on('menu:share:timeline', function(argv) 
+	    // {
+	    $(".fa-weixin").click(function(){
+		    WeixinJSBridge.invoke("shareTimeline",{
+		        "link":document.URL,
+		        "img_url": window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}',
+		        "img_width":"172",
+		        "img_height":"40",
+		        "desc":"{{object.detail}}",
+		        "title":"{{object.title}}"
+		        },
+		        function(e){
+		        alert(e.err_msg);
+		        })
+	   });
+	    // });
+	}
+	 
+	if (typeof WeixinJSBridge === "undefined"){
+	    if (document.addEventListener){
+	        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+	    }
+	}else{
+	    onBridgeReady();
+	}
+
 	//通过config接口注入权限验证配置
 	wx.config({
-		debug: true,
+		debug: false,
 		appId: '{{signPackage.appId}}',
 		timestamp:'{{signPackage.timestamp}}',
 		nonceStr: '{{signPackage.nonceStr}}',
