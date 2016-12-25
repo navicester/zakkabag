@@ -25,8 +25,7 @@
 		</p>
 		<i id="favorite" class="fa fa-heart" style= "color:{% if object.is_favorite %} #9C1010{% else %} #333 {% endif %}" aria-hidden="true"></i>
 		<br>
-		<a href=""><i class="fa fa-weixin fa-3x"></i></a>
-		<input type="button" id='test'>
+		<a id="wechat-share" name="wechat-share" ><i class="fa fa-weixin fa-3x"></i></a>
 
 		<div> 
 			<br>
@@ -99,7 +98,8 @@ https://pypi.python.org/pypi/django-threadedcomments
 		});
 	}
 
-	$("#test").bind("click",function(){
+	$("#wechat-share").bind("click",function(){
+	// $("a[name='wechat-share']").click(function(){
 	    weixinShareTimeline("{{object.title}}", "{{object.detail}}", document.URL, window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}');
 	});
 
