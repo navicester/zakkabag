@@ -25,7 +25,6 @@ class WechatAPI(object):
         data=urllib.urlencode(data)
         html=urllib.urlopen(url,data)#<addinfourl at 34758208 whose fp = <socket._fileobject object at 0x0212F570>>
         html= html.read()
-        print html
         import json
         json_data = json.loads(html.decode("utf-8"))
         return json_data['access_token']
@@ -63,7 +62,6 @@ class WechatAPI(object):
         req = urllib2.Request(url)
         res_data = urllib2.urlopen(req)
         res = res_data.read()
-        print res
         # res=json_decode(res)
         # return str(res['ticket'])
         import json
@@ -83,6 +81,7 @@ class WechatAPI(object):
         #获取当前页面的url
         # url="{}://{}{}".format(self.request.protocol,self.request.host,self.request.uri)
         url= self.request.get_full_path()
+        url="{}://{}{}".format(self.request.META['wsgi.url_scheme'],self.request.META['HTTP_HOST'],self.request.get_full_path())
 
         #获取timestamp（时间戳）
         import time
@@ -103,5 +102,6 @@ class WechatAPI(object):
             "rawString":string
         }
 
+        print signPackage
 
         return signPackage;

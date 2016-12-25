@@ -108,57 +108,50 @@ https://pypi.python.org/pypi/django-threadedcomments
 				'onMenuShareAppMessage'
 			],
 			success: function (res) {
-				//alert(JSON.stringify(res));
-				alert('checkJsApi success');
-				console.log("checkJsApi success");
+				console.log("checkJsApi res");
 			}
 		});
 	
 		//获取“分享给朋友”按钮点击状态及自定义分享内容接口
-		$("#test").click(function(){
 		wx.onMenuShareAppMessage({
-			title: "share",
-			desc: "share",
-			link: '{{signPackage.url}}',
-			imgUrl: 'http://127.0.0.1:8000/media/crowdfunding/bhe001/None-test_cgxbsgD.jpg',
+			title: "{{object.title}}",
+			desc: "{{object.detail}}",
+			link: document.URL, //'{{signPackage.url}}',
+			imgUrl: window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}',
 			trigger: function (res) {
 				// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
-				alert('trigger');
 				console.log("onMenuShareAppMessage trigger");
 			},
 			success: function (res) {
 				console.log("onMenuShareAppMessage success");
 				$.ajax({
-					url: '/home',
+					url: '',
 					data: { name: "temp"},
 					type: 'post',
 					cache:false,
 					success: function(data){
+						console.log("Ajax success!");
 					},
 					error: function(xhr, type){
-						alert('Ajax error!')
+						console.log("Ajax error!");
 					}
 				})
 			},
 			complete: function (res) {
-				alert('complete');
 				console.log("onMenuShareAppMessage complete");
 			},
 			cancel: function (res) {
-				alert('cancel');
 				console.log("onMenuShareAppMessage cancel");
 			},
 			fail: function (res) {
-				alert('fail');
 				console.log("onMenuShareAppMessage fail");
 			}
-		});
 		});
 	})
 
 	wx.error(function(res){
 		// config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-		alert('wx.error');
+		console.log("wx.error");
 	});
 
 
