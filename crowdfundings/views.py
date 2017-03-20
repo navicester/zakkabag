@@ -71,46 +71,55 @@ class CrowdfundingCreateView(CreateView):
     #     return reverse("CrowdfundingListView")
 
     def post(self, request, *args, **kwargs):
-        crowdfundingForm = CrowdfundingCreateForm(request.POST, request.FILES)
-        if crowdfundingForm.is_valid():
-            crowdfunding = crowdfundingForm.save(commit=False)
-            crowdfunding.user = request.user
-            crowdfunding.save()
-            # return self.form_valid(crowdfundingForm)
-            #return HttpResponseRedirect(reverse("CrowdfundingListView"))
-            return HttpResponseRedirect(crowdfunding.get_absolute_url())
+        if request.is_ajax():
+            id = request.POST['id']
+            f = request.FILES['picture']
+            path = '/var/www/pictures/%s' % id
+            destination = open(path, 'wb+')
+            for chunk in f.chunks():
+                destination.write(chunk)
+            destination.close()
         else:
-            return self.form_invalid(crowdfundingForm)
+            crowdfundingForm = CrowdfundingCreateForm(request.POST, request.FILES)
+            if crowdfundingForm.is_valid():
+                crowdfunding = crowdfundingForm.save(commit=False)
+                crowdfunding.user = request.user
+                crowdfunding.save()
+                # return self.form_valid(crowdfundingForm)
+                #return HttpResponseRedirect(reverse("CrowdfundingListView"))
+                return HttpResponseRedirect(crowdfunding.get_absolute_url())
+            else:
+                return self.form_invalid(crowdfundingForm)
 
-        # if 0:
-        #     filename=request.FILES['image']
-        #     from PIL import Image 
-        #     if filename:
-        #         img=Image.open(filename)
-        #         title = self.object.title
-        #         slug = slugify(title)
-        #         basename, file_extension = filename.name.split(".")
-        #         new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)
-        #         from django.conf import settings
-        #         import os
-        #         photoname = os.path.join("products", slug, new_filename)
-        #         photopath = os.path.join(settings.MEDIA_ROOT, "products", slug)
-        #         if not os.path.exists(photopath):
-        #             os.makedirs(photopath)
-        #         img.save(os.path.join(settings.MEDIA_ROOT, photoname))
-        #         ProductImage.objects.create(product = self.object, 
-        #             image = photoname)
+            # if 0:
+            #     filename=request.FILES['image']
+            #     from PIL import Image 
+            #     if filename:
+            #         img=Image.open(filename)
+            #         title = self.object.title
+            #         slug = slugify(title)
+            #         basename, file_extension = filename.name.split(".")
+            #         new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)
+            #         from django.conf import settings
+            #         import os
+            #         photoname = os.path.join("products", slug, new_filename)
+            #         photopath = os.path.join(settings.MEDIA_ROOT, "products", slug)
+            #         if not os.path.exists(photopath):
+            #             os.makedirs(photopath)
+            #         img.save(os.path.join(settings.MEDIA_ROOT, photoname))
+            #         ProductImage.objects.create(product = self.object, 
+            #             image = photoname)
 
-        # # BELOW ALSO WORKS
-        # else:
-        #     imageForm = ProductImageForm(request.POST, request.FILES)
-        #     if imageForm.is_valid():
-        #         productImage = imageForm.save(commit=False) 
-        #         productImage.product = self.object
-        #         productImage.save()
-        #         return postresult
+            # # BELOW ALSO WORKS
+            # else:
+            #     imageForm = ProductImageForm(request.POST, request.FILES)
+            #     if imageForm.is_valid():
+            #         productImage = imageForm.save(commit=False) 
+            #         productImage.product = self.object
+            #         productImage.save()
+            #         return postresult
 
-        return postresult              
+            return postresult              
 
 # from django.db.models.signals import pre_save
 

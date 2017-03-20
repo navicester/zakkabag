@@ -1,7 +1,31 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
+<script>
+{% block jquery %}
+$("#link>a").click(function(event){
+	event.preventDefault();
+	$.ajax({
+		type: "GET", 
+		url: "{% url 'unlink_from_wechat' %}",
+		data: {},
+		success: function(data) {
+			$('#link>a').html('link');
+		}, 
+		error: function(response, error) {
+			
+		}
+	})
+
+	// $("#add-form").submit() # it will go to the next page
+})
+
+{% endblock %}
+</script>
+
+
 {% block content %}
+
 
 <div class = "row">
 	<div class = "col-sm-6 col-sm-offset-3">
@@ -14,19 +38,18 @@
 		</ul>
 		<p>
 		{% block subcontent %}
-
-
 		<div class = "row">
 			<div class = "col-sm-3">
 				<img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
 			</div>
 			<div class = "col-sm-9">
-				User Name : {{object}}<br>
+			    <div>User Name : {{object}}</div>
+			    <div id='link'>				
 				{% if wechat %}
-				Wechat : {{wechat}} <a href="#">unlink</a><br>
-				{% endif %}
-				<li><a href='{% url "auth_password_change"%}'>Change Password</a></li>
-				<li><a href='{% url "profile_detail" id=object.id %}'>Change Profile</a></li>
+				Wechat : {{wechat}} <a href='{% url "unlink_from_wechat" %}'>unlink</a>
+				{% endif %}</div>
+				<div><a href='{% url "auth_password_change"%}'>Change Password</a></div>
+				<div><a href='{% url "profile_detail" id=object.id %}'>Change Profile</a></div>
 			</div>
 		</div>
 		{% endblock %}

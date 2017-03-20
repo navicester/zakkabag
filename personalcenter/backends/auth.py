@@ -5,12 +5,11 @@ from personalcenter.models import MyUser, WechatUserProfile
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.contrib import auth
+from zakkabag.settings import APP_ID, APP_SECRET
 #from django.core.exceptions import ObjectDoesNotExist
 
 from weixin.client import WeixinMpAPI
 #from weixin.oauth2 import OAuth2AuthExchangeError
-APP_ID = 'wxe90ebbe29377e650'
-APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
 
 #UserModel = 'auth.User' #
 #UserModel = settings.AUTH_USER_MODEL
@@ -50,28 +49,17 @@ class MyBackend(object):
 class WechatBackend(object):
 
     def authenticate(self, request, user):
-
         obj = None
-        profile = None
+        cur_user = auth.get_user(request)
+        profile, created = WechatUserProfile.objects.get_or_create(openid = user['openid'])
 
-        try:
-            profile = WechatUserProfile.objects.get(openid = user['openid'])
-            if profile:
-                obj = profile.user
-            # obj = UserModel._default_manager.get_by_natural_key(user['openid'])
-        except WechatUserProfile.DoesNotExist:
-            # email = '%s@example.com' % user['openid']
-            # password = user['openid']
-            # obj = MyUser.objects.create_user(
-            #     username = user['openid'],
-            #     account_type = 'wechat',
-            #     email = email,
-            #     password = password,
-            #     )
-            # obj.is_staff = True
-
-            profile = WechatUserProfile.objects.create(
-                user = None, openid = user['openid'])
+        if created is False:
+            obj = profile.user            
+            if profile.user is None:
+                if cur_user.is_active and not cur_user.is_anonymous() and cur_user is not None:
+                    profile.user =  cur_user
+                    profile.save()
+        else:
             profile.unionid = user['unionid']
             #profile.privilege = user['privilege'] #privilege is list
             profile.city = user['city']
@@ -83,11 +71,14 @@ class WechatBackend(object):
                 profile.sex = 'female'
             profile.nickname = user['nickname']
             profile.headimgurl = user['headimgurl']
+            if cur_user.is_active and not cur_user.is_anonymous() and cur_user is not None:
+                profile.user = cur_user
             profile.save()
+            obj = request.user
 
         request.session['wechat_id'] = profile.id
         # request._cached_user = obj
-        request.user = obj
+
         return obj
 
     def get_user(self, user_id):

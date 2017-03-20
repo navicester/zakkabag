@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.contrib import auth
 from .models import WechatUserProfile
 from products.models import Product
@@ -74,6 +74,23 @@ def accountlinktowechat(request):
             return redirect(reverse("home", kwargs={}))
         except:
             pass
+
+    return redirect(reverse("home", kwargs={}))
+
+def account_unlink_from_wechat(request):
+    wechat_id = request.session.get("wechat_id")
+    wechat = None
+    if wechat_id:
+        try:
+            wechat = WechatUserProfile.objects.get(pk=wechat_id)
+            wechat.user = None
+            wechat.save()
+        except:
+            pass
+
+    if request.is_ajax():
+        data = {'unlink' : True }
+        return JsonResponse(data)
 
     return redirect(reverse("home", kwargs={}))
 

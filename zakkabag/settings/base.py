@@ -220,3 +220,12 @@ AUTH_USER_MODEL = 'personalcenter.MyUser'
 
 # COMMENTS_APP = 'threadedcomments'
 COMMENTS_APP = 'comments'
+
+'''
+from django.conf import global_settings
+FILE_UPLOAD_HANDLERS = ('uploadprogresscachedhandler.UploadProgressCachedHandler', ) \
+  + global_settings.FILE_UPLOAD_HANDLERS
+'''  
+
+APP_ID = 'wxe90ebbe29377e650'
+APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'

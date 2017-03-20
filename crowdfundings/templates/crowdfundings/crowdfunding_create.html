@@ -13,6 +13,12 @@
 			<input type="hidden" name="user_id" value="{{ user_id }}" />
 			{{ form|crispy }}
 			{{image_form.as_p}}
+			 <form id="form_upload" action="/upload" method="POST">
+			    <input type="file" name="picture" id="picture" />
+			    <input type="hidden" id="X-Progress-ID" name="X-Progress-ID" value=""/>
+			    <input type="hidden" id="id" name="id" value=""/>
+			    <input id="form_submit_button" class="tp-button" type="submit" value="Submit" />
+			</form>
 			<input class = 'btn btn-primary' type='submit' value='Submit' />
 		</form>
 	</div>

@@ -9,6 +9,7 @@ from .models import UserWechat#,SignUp,
 from django.contrib import auth
 from django.contrib.auth import authenticate#, login, logout
 from django.contrib.auth import views as auth_views
+from zakkabag.settings import APP_ID, APP_SECRET
 
 # from django.contrib.auth.forms import AuthenticationForm
 # from django.utils.http import is_safe_url
@@ -17,8 +18,6 @@ from django.contrib.auth import views as auth_views
 
 from weixin.client import WeixinMpAPI
 #from weixin.oauth2 import OAuth2AuthExchangeError
-APP_ID = 'wxe90ebbe29377e650'
-APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
 
 #from django.contrib.auth.models import User
 #http://www.cnblogs.com/smallcoderhujin/p/3193103.html
@@ -72,32 +71,29 @@ def logout(request):
 #refer to django/contrib/auth/views.py
 #http://127.0.0.1:8000/accounts/activate/??
 def login(request):
-    REDIRECT_URI = request.POST.get('next', request.GET.get('next', reverse("home", kwargs={})))
+    REDIRECT_URI = request.POST.get('next', request.GET.get('next', reverse("home", kwargs={}))) #next indicated in templaetes
     if request.method == 'GET':
-        try:
-            code = request.GET.get('code')
-            if code:
-                redirect_to = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={}))
-                api = WeixinMpAPI(appid=APP_ID, 
-                            app_secret=APP_SECRET,
-                            redirect_uri=redirect_to)
-                auth_info = api.exchange_code_for_access_token(code=code)
-                api = WeixinMpAPI(access_token=auth_info['access_token'])
-                api_user = api.user(openid=auth_info['openid'])                
-                user = authenticate(request=request, user=api_user)
-                if user:
-                    auth.login(request, user)
-                    return redirect(redirect_to)
-                else:
-                    pass
-                    #return redirect(reverse("registration_register", kwargs={}))
-            else:
-                pass
-        except:
-            pass
+        print '44444444444'
+        code = request.GET.get('code')
+        if code:
+            print '1111111111111'
+            redirect_to = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={})) # redirection URL after authenticate
+            api = WeixinMpAPI(appid=APP_ID, 
+                        app_secret=APP_SECRET,
+                        redirect_uri=redirect_to)
+            auth_info = api.exchange_code_for_access_token(code=code)
+            api = WeixinMpAPI(access_token=auth_info['access_token'])
+            api_user = api.user(openid=auth_info['openid'])                
+            user = authenticate(request=request, user=api_user)
+            print user
+            if user:
+                print '222222222222'
+                auth.login(request, user)
+                return redirect(redirect_to)
 
         return redirect(reverse("auth_login", kwargs={}))
-    else: 
+    else:  #normal login is POST
+        print '33333333'
         REDIRECT_FIELD_NAME = 'next'
         return auth_views.login(request, redirect_field_name=REDIRECT_FIELD_NAME, extra_context=None)    
 

@@ -8,14 +8,18 @@
 <div class = "row">
 <div class = "col-sm-3 col-sm-offset-3">
 {% if request.user.is_anonymous and request.wechat %}
-    You need to regist to continue
+    You need to login to continue
 {% endif %}
 <form method="post" action="">
     {% csrf_token %}
     {{ form|crispy }}
     <input class = "btn btn-block btn-primary" type="submit" value="{% trans 'Log in' %}" />
     <!-- <input type="hidden" name="next" value="{{ next }}" /> -->
-    <input type="hidden" name="next" value="{% url 'home' %}" /> <!-- add by hebin -->
+    {% if request.user.is_anonymous and request.wechat %}
+        <input type="hidden" name="next" value="{% url 'link_to_wechat' %}" /> <!-- workaround here, maybe we need to change it in login function later-->
+    {% else %}
+        <input type="hidden" name="next" value="{{ next }}" /> 
+    {% endif %}
 </form>
 <h1></h1>
 <p >{% trans "Forgot your password?" %} <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>.</p>

@@ -5,6 +5,7 @@ from django.utils.encoding import smart_str#, smart_unicode
 from translate import paraseMsgXml,paraseYouDaoXml,getReplyXml
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from zakkabag.settings import APP_ID, APP_SECRET
 
 import xml.etree.ElementTree as ET
 import urllib2,hashlib #,urllib
@@ -76,12 +77,13 @@ def responseMsg(request):
 	return getReplyXml(msg,replyContent)
 
 
-APP_ID = 'wxe90ebbe29377e650'
-APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
+#APP_ID = 'wxe90ebbe29377e650'
+#APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
 
 #https://github.com/gusibi/python-weixin/blob/master/sample_app.py
 def wechatlogin(request):
-	REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("login", kwargs={}))
+	#REDIRECT_URI = "http://%s%s" % (request.META['HTTP_HOST'], reverse("login", kwargs={}))
+	REDIRECT_URI = request.build_absolute_uri('/').strip("/") + reverse("login", kwargs={})
 	api = WeixinMpAPI(appid=APP_ID, app_secret=APP_SECRET,redirect_uri=REDIRECT_URI)
 	redirect_uri = api.get_authorize_login_url(scope=("snsapi_userinfo",))
 	return redirect(redirect_uri)

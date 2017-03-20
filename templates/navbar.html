@@ -48,9 +48,10 @@
               <li><a href="{{request.user.get_absolute_url}}">{{request.user}}</a></li> 
               <li><a href="{% url 'logout' %}">Logout</a></li>
               {% endif %}
-            {% elif request.wechat %}
+<!--- below shuold be useless -->              
+            {% elif request.wechat %}            
               <li><a href="{{request.wechat.get_absolute_url}}">{{request.wechat}}</a></li> 
-              <li><a href="{% url 'logout' %}">Logout</a></li>              
+              <li><a href="{% url 'logout' %}">Logout</a></li>          
             {% else %}
               <li><a href="{% url 'registration_register' %}">Register</a></li>
               <li><a href='{% url "wechatlogin" %}'><i class="fa fa-weixin" aria-hidden="true"></i></a></li>

@@ -1,9 +1,14 @@
+from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from personalcenter.models import WechatUserProfile
 UserModel = get_user_model()
 
+from personalcenter.views import accountlinktowechat
+
 class openidmiddleware():
 	def process_response(self, request, response):
+#		if request.META['PATH_INFO'] == reverse("auth_login"):
+#			accountlinktowechat(request)
 		return response
 
 
