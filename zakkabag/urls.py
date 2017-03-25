@@ -57,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^personalcenter/', include('personalcenter.urls')),
     url(r'^crowdfundings/', include('crowdfundings.urls')),
 
-    # url(r'^articles/comments/', include('django_comments.urls')),
+    # url(r'^articles/comments/', include('django_comments.urls')),   
 )
 
 '''

@@ -50,12 +50,10 @@ USER_TYPE = (
 )
 
 def image_upload_to(instance, filename):
-    title = instance.username
-    slug = slugify(title)
-    basename, file_extension = filename.split(".")
-    new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
-    basename = basename
-    return "profile/%s/%s" %(slug, new_filename)
+    name = instance.username
+    title, file_extension = filename.split(".")
+    new_filename = "%s-%s.%s" %(instance.id, slugify(title), file_extension)
+    return "profile/%s/%s" %(name, new_filename)
 
 #Copy from AbstractUser
 class MyUser(AbstractBaseUser, PermissionsMixin):

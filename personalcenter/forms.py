@@ -54,7 +54,7 @@ class MyUserForm(forms.ModelForm):
         fields = [
             'first_name',
             'last_name',
-            'image',
+            #'image',
         ]
         
 
@@ -67,7 +67,6 @@ class MyUserForm(forms.ModelForm):
             self.cleaned_data['image'] = self.data.get("image")
             return self.data.get("image")
 
-    def is_valid(self):
-        if self.clean_image != None:
-            return True
-        return False        
+class UploadFileForm(forms.Form):
+  image = forms.ImageField(widget=forms.FileInput(
+    attrs={'required': 'required'}))  # required=True is the default, but not show it validation in template
