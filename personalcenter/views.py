@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404, JsonResponse, HttpResponse
 from django.contrib import auth
-from .models import WechatUserProfile
+from .models import WechatUserProfile, UserProfile
 from products.models import Product
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
@@ -13,31 +13,35 @@ from django.core.cache import cache
 from django.core.cache.backends.memcached import MemcachedCache
 import json
 from django.conf import settings
+from django.utils.text import slugify
+
+from orders.models import UserCheckout
 
 from django.contrib.auth import get_user_model
 UserModel = get_user_model()
 
 # Create your views here.
 def personalcenterhome(request,id):
-
-    wechatuser = get_object_or_404(UserModel, id=id)
-    wechat = None
+    '''    
     try:
-        wechatuser = UserModel.objects.get(id=id)
+        myuser = UserModel.objects.get(id=id)
     except UserModel.DoesNotExist:
         raise Http404
     except:
         raise Http404
+    '''
+    myuser = get_object_or_404(UserModel, id=id)
 
+    wechat = None
     try:
-        wechat = WechatUserProfile.objects.get(user=wechatuser)
+        wechat = WechatUserProfile.objects.get(user=myuser)
     except:
         pass
 
 
     template = "personalcenter/personalcenterhome.html"
     context = {    
-        "object": wechatuser,
+        "myuser": myuser,
         'wechat': wechat,
         'product' : Product.objects.all()[0],   
     }
@@ -46,27 +50,40 @@ def personalcenterhome(request,id):
 
 def myorder(request,id):
 
-    wechatuser = get_object_or_404(UserModel, id=id)
+    myuser = get_object_or_404(UserModel, id=id)
     try:
-        wechatuser = UserModel.objects.get(id=id)
-    except UserModel.DoesNotExist:
-        raise Http404
+        usercheckout = UserCheckout.objects.get(user = myuser)
+    except UserCheckout.DoesNotExist:
+        usercheckout = None
     except:
         raise Http404
-
-    order_objects = Order.objects.filter(user__id=wechatuser.id)
+        
+    order_objects = Order.objects.filter(user = usercheckout)
 
     template = "personalcenter/myorder.html"
     context = {    
-        "object": wechatuser,
+        "myuser": myuser,
         "order_objects" : order_objects,
-
     }
-
 
     return render(request, template, context)
 
-def accountlinktowechat(request):
+def myuser_profile_extend(request,id):
+
+    myuser = get_object_or_404(UserModel, id=id)
+
+    userprofle, created = UserProfile.objects.get_or_create(user = myuser)
+
+    template = "personalcenter/profile_extend.html"
+    context = {    
+        "myuser": myuser,
+        "userprofle" : userprofle,
+
+    }
+
+    return render(request, template, context)
+
+def account_link_to_wechat(request):
     user = auth.get_user(request)
     wechat_id = request.session.get("wechat_id")
     wechat = None
@@ -113,7 +130,7 @@ def upload_file(request):
                     os.makedirs(photopath)
                 img.save(os.path.join(photopath, filename.name))
                 cache.set('cache_key_upload',os.path.join('upload', filename.name) ,60*15)
-            return HttpResponse(json.dumps({'message': 'Upload complete!'}))
+            return HttpResponse(json.dumps({'message': 'Upload complete!','url': os.path.join('upload', filename.name)}))
         else:
             return HttpResponse(json.dumps({'message': 'invalid form!'}))
     else:
@@ -142,8 +159,14 @@ class ProfileDetailView(FormMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProfileDetailView, self).get_context_data(*args, **kwargs)
         context["form"] = self.form_class(instance = self.get_object()) 
-        #context["form"] = MyUserForm(instance = self.get_object())
-        context["upload_form"] = UploadFileForm()
+        upload_file_form = UploadFileForm()
+        #upload_file_form.fields['image'].queryset = self.get_object(*args, **kwargs).image
+        context["upload_form"] = upload_file_form
+
+        usermodel = UserModel.objects.get(id=self.kwargs.get("id"))        
+        usercheckout = UserCheckout.objects.get(user = usermodel)
+        context["object_list"] = Order.objects.filter(user = usercheckout)
+
         return context
 
     def get_object(self, *args, **kwargs):

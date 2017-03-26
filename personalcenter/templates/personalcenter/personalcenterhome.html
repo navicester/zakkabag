@@ -26,30 +26,33 @@ $("#link>a").click(function(event){
 
 {% block content %}
 
+{% comment%}		
+<!--- for all the tab page, myuser must be provided -->
+{% endcomment%}		
 
 <div class = "row">
 	<div class = "col-sm-6 col-sm-offset-3">
-		<ul class="nav nav-pills ">
-		  <li role="presentation" class="active"><a href='{{object.get_absolute_url}}'>Profile</a></li>
+		<ul class="nav nav-pills ">  
+		  <li role="presentation" class="active"><a href='{% url "personalcenter" id=myuser.id %}'>Profile</a></li>
 		  <li role="presentation"><a href="#">Messages</a></li>
-		  <li role="presentation"><a href="#">Score</a></li>
-		  <li role="presentation"><a href='{% url "myorder" object.id %}'>Order</a></li>
+		  <li role="presentation"><a href='{% url "myuser_profile_extend" id=myuser.id %}'>Score</a></li>
+		  <li role="presentation"><a href='{% url "myorder" id=myuser.id %}'>Order</a></li>
 		  <li role="presentation"><a href="#">Donate</a></li>
 		</ul>
 		<p>
 		{% block subcontent %}
 		<div class = "row">
 			<div class = "col-sm-3">
-				<img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
+				<img  id='img' class= 'img-responsive' src="{{myuser.get_image_url}}"/>
 			</div>
 			<div class = "col-sm-9">
-			    <div>User Name : {{object}}</div>
+			    <div>User Name : {{myuser}}</div>
 			    <div id='link'>				
 				{% if wechat %}
 				Wechat : {{wechat}} <a href='{% url "unlink_from_wechat" %}'>unlink</a>
 				{% endif %}</div>
 				<div><a href='{% url "auth_password_change"%}'>Change Password</a></div>
-				<div><a href='{% url "profile_detail" id=object.id %}'>Change Profile</a></div>
+				<div><a href='{% url "profile_detail" id=myuser.id %}'>Change Profile</a></div>
 			</div>
 		</div>
 		{% endblock %}

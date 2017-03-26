@@ -39,7 +39,8 @@ function showResponse(responseText, statusText, xhr, $form)  {
         $(".processing-file").append(responseText.message);
         // enable submit button again for make requests
         $("#buttonSubmit").prop("disabled", false);
-
+        //img_html="<img  id='img' class= 'img-responsive' src='"+ responseText.url + "'/>";
+        //$("#form_profile").find("#img").replaceWith(img_html);
     }
 
     /*alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
@@ -146,10 +147,9 @@ $('#form_upload').submit(function() {
 
 <div class='col-sm-6 col-sm-offset-3'>
 	<h3>{{ object }}</h3>
-	<form method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
+	<form id="form_profile" method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
 		{{form|crispy}}		
 		<img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
-		<br>		
 		<input type="submit" value='Update' class='btn' />
 	</form>
 

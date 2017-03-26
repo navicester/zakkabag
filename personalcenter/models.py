@@ -173,14 +173,18 @@ class WechatUserProfile(models.Model):
     def get_image_url(self):
         return self.headimgurl #None        
 
-# class UserProfile(models.Model): 
-#     user = models.OneToOneField(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE,
-#     )
+class UserProfile(models.Model): 
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
 
-#     score = models.DecimalField(max_digits=10, decimal_places=0, default=100)
-#     level = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    score = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    # score_available = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    # score_frozen = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    # score_owned = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    # score_spent = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    level = models.DecimalField(max_digits=10, decimal_places=0, default=0)
 
-#     def __unicode__(self):  
-#         return user
+    def __unicode__(self):  
+        return str(self.user)
