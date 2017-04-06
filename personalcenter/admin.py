@@ -1,16 +1,16 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import MyUser
+from .models import MyUser, UserProfile
 from .forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 
 
-# class MyUserAdmin(admin.ModelAdmin):
-# 	list_display = ["username"]
-# 	class Meta:
-# 		model = MyUser
+class UserProfileAdmin(admin.ModelAdmin):
+	list_display = ["user","score","level"]
+	class Meta:
+		model = UserProfile
 
 #refer to django/contrib/auth/admin.py
 class UserAdmin(BaseUserAdmin):
@@ -46,6 +46,7 @@ class UserAdmin(BaseUserAdmin):
 
 # Now register the new UserAdmin...
 admin.site.register(MyUser, UserAdmin)
+admin.site.register(UserProfile, UserProfileAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 

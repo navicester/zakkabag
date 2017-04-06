@@ -10,6 +10,7 @@ from carts.models import Cart
 class UserCheckout(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True) #not required
 	email = models.EmailField(unique=True) #--> required
+	wechatpay_id = models.CharField(max_length=120,null=True,blank=True)
 
 	def __unicode__(self): #def __str__(self):
 		return self.email
@@ -19,6 +20,9 @@ class UserCheckout(models.Model):
 			return str(self.user.id)
 		else:
 			return "None" 
+
+	def get_client_token(self):
+		return None
 
 ADDRESS_TYPE = (
 	('billing', 'Billing'),
@@ -52,6 +56,7 @@ class Order(models.Model):
 	shipping_address = models.ForeignKey(UserAddress, related_name='shipping_address', null=True)
 	shipping_total_price = models.DecimalField(max_digits=50, decimal_places=2, default=5.99)
 	order_total = models.DecimalField(max_digits=50, decimal_places=2, )
+	order_id = models.CharField(max_length=20, null=True, blank=True) #3rd payment id
 
 	def __unicode__(self):
 		return str(self.cart.id)
@@ -65,6 +70,12 @@ class Order(models.Model):
 
 	def get_absolute_url(self):
 		return reverse("order_detail", kwargs={"pk": self.pk})
+
+	def mark_completed(self, order_id=None):
+		self.status = "paid"
+		if order_id and not self.order_id:
+			self.order_id = order_id
+		self.save()
 
 def order_pre_save(sender, instance, *args, **kwargs):
 	shipping_total_price = instance.shipping_total_price

@@ -14,6 +14,7 @@ from orders.mixins import CartOrderMixin
 from orders.models import UserCheckout, Order, UserAddress
 from products.models import Variation
 from .models import Cart, CartItem
+from personalcenter.models import UserProfile
 
 # Create your views here.
 class ItemCountView(View):
@@ -115,8 +116,12 @@ class CartView(SingleObjectMixin, View):
 			return JsonResponse(data) 
 
 		#context = self.get_context_data(request, *args, **kwargs)
+
+		myuser = self.get_object().user
+		userprofile, created = UserProfile.objects.get_or_create(user = myuser)
 		context={
-			"object":self.get_object()
+			"object":self.get_object(),
+			"userprofile":userprofile
 		}
 		template = self.template_name
 		return render(request, template, context)
@@ -142,6 +147,7 @@ class CheckoutView(CartOrderMixin, FormMixin, DetailView):
 			user_checkout, created = UserCheckout.objects.get_or_create(email=self.request.user.email)
 			user_checkout.user = self.request.user
 			user_checkout.save()
+			context['client_token'] = user_checkout.get_client_token();
 			self.request.session["user_checkout_id"] = user_checkout.id	
 		elif not self.request.user.is_authenticated() or user_check_id == None: #or request.user.is_guest:
 			context["login_form"] = AuthenticationForm()
@@ -151,6 +157,9 @@ class CheckoutView(CartOrderMixin, FormMixin, DetailView):
 
 		if user_check_id != None:
 			user_can_continue = True
+			if not self.request.user.is_authenticated(): #GUEST USER
+				user_checkout_2 = UserCheckout.objects.get(id=user_check_id)
+				context["client_token"] = user_checkout_2.get_client_token()
 
 		context["order"] = self.get_order()
 		context["user_can_continue"] = user_can_continue
@@ -188,14 +197,23 @@ class CheckoutView(CartOrderMixin, FormMixin, DetailView):
 			new_order.save()
 		return get_data		
 
+#checkout result after response from payment 3rd party
 class CheckoutFinalView(CartOrderMixin, View):
 	def post(self, request, *args, **kwargs):
 		order = self.get_order()
-		if request.POST.get("payment_token") == "ABC":
-			order.mark_completed()
-			messages.success(request, "Thank you for your order.")
-			del request.session["cart_id"]
-			del request.session["order_id"]
+		order_total = order.order_total
+		nonce = request.POST.get("payment_method_nonce") #payment response from template
+		nonce = 1
+		if nonce:
+			 if 1: #success
+				order.mark_completed(order_id= '1')
+				messages.success(request, "Thank you for your order.")
+				del request.session["cart_id"]
+				del request.session["order_id"]
+			 else:
+				messages.success(request, "fail")
+				return redirect("checkout")
+
 		return redirect("order_detail", pk=order.pk)
 
 	def get(self, request, *args, **kwargs):
