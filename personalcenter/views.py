@@ -188,6 +188,9 @@ class ProfileDetailView(FormMixin, DetailView):
             usermodel = UserModel.objects.get(id=self.kwargs.get("id"))
             usermodel.first_name = form.cleaned_data['first_name']
             usermodel.last_name = form.cleaned_data['last_name']
+            usermodel.sex = form.cleaned_data['sex']
+            usermodel.nickname = form.cleaned_data['nickname']
+            usermodel.birthday = form.cleaned_data['birthday']
 
             # use plugin
             if 'image' in form.cleaned_data:

@@ -49,6 +49,11 @@ USER_TYPE = (
 	('phone', 'Phone'),
 )
 
+SEX_OPTION = (
+    ('male', 'Male'),
+    ('female', 'Female'),
+)
+
 def image_upload_to(instance, filename):
     name = instance.username
     title, file_extension = filename.split(".")
@@ -80,6 +85,9 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     email = models.EmailField(_('email address'), blank=True)
+    sex = models.CharField(_('sex'), max_length=30, choices = SEX_OPTION, blank=True)
+    birthday = models.DateField(_('birthday'), blank=True)
+    nickname = models.CharField(_('nickname'), max_length=30, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False,
         help_text=_('Designates whether the user can log into this admin '
                     'site.'))

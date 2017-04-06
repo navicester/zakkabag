@@ -47,15 +47,20 @@ class UserChangeForm(forms.ModelForm):
         # field does not have access to the initial value
         return self.initial["password"]
 
+from django.forms.extras.widgets import SelectDateWidget
 class MyUserForm(forms.ModelForm):
+    birthday = forms.DateField(widget=SelectDateWidget())
     class Meta:
         model = MyUser
 
         fields = [
             'first_name',
             'last_name',
-            #'image',
+            'nickname',
+            'birthday',
+            'sex'
         ]
+
         
 
     def clean_image(self):
