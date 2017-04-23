@@ -35,7 +35,7 @@
 
 	<div class="row">
 		{% for category in categories%}
-		<div class='col-xs-2 thumbnail text-center' style="margin-right: 12px;padding: 5px 8px; background-color: #D6CCCC;">
+		<div class='col-xs-4 thumbnail text-center' style="margin-right: 12px;padding: 5px 8px; background-color: #D6CCCC; display: inline-block;">
 			<a href="{% url 'products' %}?category_id={{category.id}}" class="text-decoration: none; outline: none;">{{category}}</a>
 		</div>
 		{% cycle '' '' '' '' '' '</div><div class="row">'%} 

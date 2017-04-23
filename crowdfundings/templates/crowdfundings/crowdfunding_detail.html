@@ -150,7 +150,8 @@ https://pypi.python.org/pypi/django-threadedcomments
 		signature: '{{signPackage.signature}}',
 		jsApiList: [
 			'checkJsApi',
-			'onMenuShareAppMessage'
+			'onMenuShareAppMessage',
+			'chooseImage'
 			]
 		});
 
@@ -199,6 +200,15 @@ https://pypi.python.org/pypi/django-threadedcomments
 			fail: function (res) {
 				console.log("onMenuShareAppMessage fail");
 			}
+		});
+
+		wx.chooseImage({
+			count: 1,
+			sizeType: ['compressed'], 
+			sourceType: ['album', 'camera'], 
+			success: function (res) {
+				console.log("chooseImage success");
+			}			
 		});
 	})
 

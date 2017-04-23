@@ -16,26 +16,40 @@
 
 
 {% block jumbotron %}    
-{% include "jumbotron.html" with featured_image=featured_image%}
+  {% include "jumbotron.html" with featured_image=featured_image%}
 {% endblock %}
 {% comment %}
 {% endcomment %}
 
 {% block carousel %}  
 <div class="row"> 
-{% include "carousel.html" with objects=featured_images %}
+  {% include "carousel.html" with objects=featured_images %}
 </div>
 {% endblock %}
 
+
 {% block content %}
+<br>
 <div class= 'row'>
-<h3>Recommended Products</h3>
-{% include "products/products.html" with object_list=products col_class_set="col-sm-2" %}
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3>Recommended Products</h3>
+    </div>
+    <div class="panel-body">
+      {% include "products/products.html" with object_list=products col_class_set="col-sm-2" %}
+    </div>
+  </div>
 </div>
 
 <div class='row'>
-<h3>Featured Products</h3>
-{% include "products/products.html" with object_list=products2 %}
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3>Featured Products</h3>
+    </div>
+    <div class="panel-body">
+      {% include "products/products.html" with object_list=products2 %}
+    </div>
+  </div>
 </div>
 
 {% endblock %}
