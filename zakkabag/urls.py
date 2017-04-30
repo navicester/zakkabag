@@ -27,9 +27,7 @@ urlpatterns = patterns('',
     url(r'^home$', 'newsletter.views.home', name='home'),
     url(r'^contact/$', 'newsletter.views.contact', name='contact'),   
     url(r'^about/$', 'zakkabag.views.about', name='about'),
-
-
-
+    url(r'^about/sitemap$', 'zakkabag.views.sitemap', name='sitemap'),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
 
@@ -56,7 +54,10 @@ urlpatterns = patterns('',
 
     url(r'^personalcenter/', include('personalcenter.urls')),
     url(r'^crowdfundings/', include('crowdfundings.urls')),
+    url(r'^newsletter/', include('newsletter.urls')),
 
+    #url(r'^ckeditor/', include('ckeditor.urls')),
+    
     # url(r'^articles/comments/', include('django_comments.urls')),   
 )
 

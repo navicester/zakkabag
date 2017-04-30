@@ -23,6 +23,9 @@
 		<p class='lead'>
 			{{object.detail}}
 		</p>
+		<div>
+			<i id="chooseImagePlus" class="fa fa-plus" aria-hidden="true"></i>
+		</div>		
 		<i id="favorite" class="fa fa-heart" style= "color:{% if object.is_favorite %} #9C1010{% else %} #333 {% endif %}" aria-hidden="true"></i>
 		<br>
 		<a id="wechat-share" name="wechat-share" ><i class="fa fa-weixin fa-3x"></i></a>
@@ -201,21 +204,31 @@ https://pypi.python.org/pypi/django-threadedcomments
 				console.log("onMenuShareAppMessage fail");
 			}
 		});
-
-		wx.chooseImage({
-			count: 1,
-			sizeType: ['compressed'], 
-			sourceType: ['album', 'camera'], 
-			success: function (res) {
-				console.log("chooseImage success");
-			}			
-		});
 	})
 
 	wx.error(function(res){
 		// config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
 		console.log("wx.error");
 	});
+
+
+  var images = {
+    localId: [],
+    serverId: []
+  };
+
+$('#chooseImagePlus').click(function(){
+    wx.chooseImage({
+		count: 1,
+		sizeType: ['compressed'], 
+		sourceType: ['album', 'camera'],     	
+      	success: function (res) {
+        	images.localId = res.localIds;
+        	alert('已选择 ' + res.localIds.length + ' 张图片');
+        	console.log("chooseImage success");
+      }
+    });
+})
 
 
 // $("#test").click(function(){

@@ -57,6 +57,8 @@ INSTALLED_APPS = (
     'registration',
     'django_filters',
     # 'threadedcomments',
+    'pagination',
+    'ckeditor',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -70,6 +72,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',    
+    'pagination.middleware.PaginationMiddleware',
+    'breadcrumbs.middleware.BreadcrumbsMiddleware',
 )
 
 ROOT_URLCONF = 'zakkabag.urls'
@@ -160,6 +164,7 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "media_root")
 MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
+CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads')
 
 #print "base dir" + BASE_DIR
 #print "STATIC_ROOT" + STATIC_ROOT

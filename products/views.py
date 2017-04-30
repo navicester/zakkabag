@@ -1,3 +1,4 @@
+#encoding=utf-8
 from django.contrib import messages
 from django.db.models import Q
 from django.http import Http404
@@ -9,6 +10,7 @@ from django.utils import timezone
 from .forms import ProductCreateForm, ProductImageForm
 from .models import Category, ProductImage
 from django.utils.text import slugify
+from django.core.urlresolvers import reverse
 
 from django_filters import FilterSet, CharFilter, NumberFilter
 # Create your views here.
@@ -16,7 +18,7 @@ from .forms import VariationInventoryFormSet, ProductFilterForm
 from .mixins import StaffRequiredMixin
 
 from .models import Product, Variation, Category
-
+from django.utils.translation import gettext_lazy as _
 
 class CategoryListView(ListView):
     model = Category
@@ -130,7 +132,7 @@ class ProductListView(FilterMixin, ListView):
         context["now"] = timezone.now()
         context["query"] = self.request.GET.get("q") #None
         context["filter_form"] = ProductFilterForm(data=self.request.GET or None)        
-        context["categories"] = Category.objects.all()       
+        context["categories"] = Category.objects.all()        
         return context
 
     def get_queryset(self, *args, **kwargs):
@@ -150,6 +152,20 @@ class ProductListView(FilterMixin, ListView):
                 pass
         return qs
 
+    def dispatch(self, request, *args, **kwargs):
+        ''' need config i18n before use this
+        request.breadcrumbs([
+            (_("Home"),reverse("home", kwargs={})),
+            (_("product"),request.path_info),
+        ])
+        '''
+
+        request.breadcrumbs([
+            ("Home",reverse("home", kwargs={})),
+            ("product",request.path_info),
+        ])
+        return super(ProductListView, self).dispatch(request,args,kwargs)
+
 import random
 class ProductDetailView(DetailView):
     model = Product
@@ -160,7 +176,25 @@ class ProductDetailView(DetailView):
         instance = self.get_object()
         #context["related"] = Product.objects.get_related(instance).order_by("?")[:6]
         context["related"] = sorted(Product.objects.get_related(instance)[:6], key= lambda x: random.random())
+        context["images"] = ProductImage.objects.filter(product=instance)[1:]
         return context
+
+    def dispatch(self, request, *args, **kwargs):
+        ''' need config i18n before use this
+        request.breadcrumbs([
+            (_("Home"),reverse("home", kwargs={})),
+            (_("product"),request.path_info),
+        ])
+        '''
+
+        instance = self.get_object()
+        request.breadcrumbs([
+            ("Home",reverse("home", kwargs={})),
+            ("product",reverse("products", kwargs={})),
+            (instance.title,request.path_info),
+        ])
+        return super(ProductDetailView, self).dispatch(request,args,kwargs)
+
 
 def product_detail_view_func(request, id):
     #print "coming"
