@@ -3,8 +3,8 @@ include/
 lib/
 
 #static/static_root
-static_in_env/media_root
-static_in_env/static_root/
+#static_in_env/media_root
+#static_in_env/static_root/
 #static_in_pro/our_static/img/
 ~$*
 
