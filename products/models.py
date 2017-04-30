@@ -109,7 +109,7 @@ def image_upload_to(instance, filename):
 	new_filename = "%s-%s.%s" %(basename[:60], instance.id, file_extension)
 	#print title, slug, basename, file_extension, new_filename
 	#print instance,filename
-	return "products/%s/%s/%s" %(instance.product.default.title, slug[:40], new_filename)
+	return "products/%s/%s/%s" %(instance.product.default.title.lower(), slug[:40], new_filename)
 
 
 class ProductImage(models.Model):
