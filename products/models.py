@@ -106,11 +106,10 @@ def image_upload_to(instance, filename):
 	title = instance.product.title
 	slug = slugify(title)
 	basename, file_extension = filename.split(".")
-	new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
+	new_filename = "%s-%s.%s" %(basename[:60], instance.id, file_extension)
 	#print title, slug, basename, file_extension, new_filename
 	#print instance,filename
-	basename = basename
-	return "products/%s/%s" %(slug, new_filename)
+	return "products/%s/%s/%s" %(instance.product.default.title, slug[:40], new_filename)
 
 
 class ProductImage(models.Model):
@@ -138,9 +137,8 @@ def image_upload_to_featured(instance, filename):
 	title = instance.product.title
 	slug = slugify(title)
 	basename, file_extension = filename.split(".")
-	new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
-	basename = basename
-	return "products/%s/featured/%s" %(slug, new_filename)
+	new_filename = "%s-%s.%s" %(basename[:60], instance.id, file_extension)
+	return "products/featured/%s/%s" %(slug[:40], new_filename)
 
 class ProductFeatured(models.Model):
 	product = models.ForeignKey(Product)

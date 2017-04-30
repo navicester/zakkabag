@@ -57,7 +57,7 @@ SEX_OPTION = (
 def image_upload_to(instance, filename):
     name = instance.username
     title, file_extension = filename.split(".")
-    new_filename = "%s-%s.%s" %(instance.id, slugify(title), file_extension)
+    new_filename = "%s-%s.%s" %(slugify(title), instance.id,  file_extension)
     return "profile/%s/%s" %(name, new_filename)
 
 #Copy from AbstractUser

@@ -15,7 +15,9 @@ def image_upload_to(instance, filename):
     title = instance.title
     slug = slugify(title)
     basename, file_extension = filename.split(".")
-    new_filename = "%s-%s.%s" %(instance.id, slug, file_extension)
+    new_filename = "%s-%s.%s" %(slug[:100], instance.id, file_extension) #if it's new created object, the id is None
+    #import time
+    #new_filename = "%s-%s.%s" %(time.time(), slug, file_extension)    
     basename = basename
     return "crowdfunding/%s/%s" %(instance.user, new_filename)
 
