@@ -244,11 +244,12 @@ $('#chooseImagePlus').click(function(){
 })
 
 $('#wechat-search').click(function(){
-	wx.scanQRCode({
-        desc: 'scanQRCode desc',
-        success: function (res) {
-	    	var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-		}
+    wx.scanQRCode({
+      needResult: 1,
+      desc: 'scanQRCode desc',
+      success: function (res) {
+        alert(JSON.stringify(res));
+      }
     });
 })
 
