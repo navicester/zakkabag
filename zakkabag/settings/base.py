@@ -232,5 +232,9 @@ FILE_UPLOAD_HANDLERS = ('personalcenter.uploadfilehandler.UploadProgressCachedHa
 
 
 # Wechat
-APP_ID = 'wxe90ebbe29377e650'
-APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
+if not 'SERVER_SOFTWARE' in os.environ:
+    APP_ID = 'wx168434ba37e8c17b' #
+    APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
+else:
+    APP_ID = 'wxe90ebbe29377e650' #changyubingfeng
+    APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
