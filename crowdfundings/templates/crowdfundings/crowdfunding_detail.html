@@ -28,7 +28,9 @@
 		</div>		
 		<i id="favorite" class="fa fa-heart" style= "color:{% if object.is_favorite %} #9C1010{% else %} #333 {% endif %}" aria-hidden="true"></i>
 		<br>
-		<a id="wechat-share" name="wechat-share" ><i class="fa fa-weixin fa-3x"></i></a>
+		<a id="wechat-share" name="wechat-share" ><i id="wechat-sharing" class="fa fa-weixin fa-3x"></i></a>
+		<br>
+		<i id="wechat-search" class="fa fa-search fa-3x"></i>
 
 		<div> 
 			<br>
@@ -89,8 +91,10 @@ https://pypi.python.org/pypi/django-threadedcomments
 <script type="text/javascript" charset="utf-8">
 
 {% block jquery %}
-
+/*
+	//WeixinJSBridge cancelled since 6.0.3
 	//Method 1
+
 	function weixinShareTimeline(title,desc,link,imgUrl){
 		WeixinJSBridge.invoke('shareTimeline',{
 			'img_url':imgUrl,
@@ -106,6 +110,7 @@ https://pypi.python.org/pypi/django-threadedcomments
 	$("a[name='wechat-share']").click(function(){
 	    weixinShareTimeline("{{object.title}}", "{{object.detail}}", document.URL, window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}');
 	});
+
 
 
 	//Method 2
@@ -142,7 +147,7 @@ https://pypi.python.org/pypi/django-threadedcomments
 	}else{
 	    onBridgeReady();
 	}
-
+*/
 	//Method 3
 	//通过config接口注入权限验证配置
 	wx.config({
@@ -154,7 +159,8 @@ https://pypi.python.org/pypi/django-threadedcomments
 		jsApiList: [
 			'checkJsApi',
 			'onMenuShareAppMessage',
-			'chooseImage'
+			'chooseImage',
+			'scanQRCode'
 			]
 		});
 
@@ -162,7 +168,9 @@ https://pypi.python.org/pypi/django-threadedcomments
 		// 1 判断当前版本是否支持指定 JS 接口，支持批量判断		
 		wx.checkJsApi({
 			jsApiList: [
-				'onMenuShareAppMessage'
+				'onMenuShareAppMessage',
+				'chooseImage',
+				'scanQRCode'
 			],
 			success: function (res) {
 				console.log("checkJsApi res");
@@ -170,40 +178,45 @@ https://pypi.python.org/pypi/django-threadedcomments
 		});
 	
 		//获取“分享给朋友”按钮点击状态及自定义分享内容接口
-		wx.onMenuShareAppMessage({
-			title: "{{object.title}}",
-			desc: "{{object.detail}}",
-			link: document.URL, //'{{signPackage.url}}',
-			imgUrl: window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}',
-			trigger: function (res) {
-				// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
-				console.log("onMenuShareAppMessage trigger");
-			},
-			success: function (res) {
-				console.log("onMenuShareAppMessage success");
-				$.ajax({
-					url: '',
-					data: { name: "temp"},
-					type: 'post',
-					cache:false,
-					success: function(data){
-						console.log("Ajax success!");
-					},
-					error: function(xhr, type){
-						console.log("Ajax error!");
-					}
-				})
-			},
-			complete: function (res) {
-				console.log("onMenuShareAppMessage complete");
-			},
-			cancel: function (res) {
-				console.log("onMenuShareAppMessage cancel");
-			},
-			fail: function (res) {
-				console.log("onMenuShareAppMessage fail");
-			}
+		$("#wechat-sharing").click(function(){
+			wx.onMenuShareAppMessage({
+				title: "{{object.title}}",
+				desc: "{{object.detail}}",
+				link: document.URL, //'{{signPackage.url}}',
+				imgUrl: window.location.protocol + '//' + window.location.host + '{{object.get_image_url}}',
+				trigger: function (res) {
+					// 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+					console.log("onMenuShareAppMessage trigger");
+				},
+				success: function (res) {
+					console.log("onMenuShareAppMessage success");
+					$.ajax({
+						url: '',
+						data: { name: "temp"},
+						type: 'post',
+						cache:false,
+						success: function(data){
+							console.log("Ajax success!");
+						},
+						error: function(xhr, type){
+							console.log("Ajax error!");
+						}
+					})
+				},
+				complete: function (res) {
+					console.log("onMenuShareAppMessage complete");
+				},
+				cancel: function (res) {
+					console.log("onMenuShareAppMessage cancel");
+				},
+				fail: function (res) {
+					console.log("onMenuShareAppMessage fail");
+				}
+			});
 		});
+
+
+
 	})
 
 	wx.error(function(res){
@@ -230,6 +243,14 @@ $('#chooseImagePlus').click(function(){
     });
 })
 
+$('#wechat-search').click(function(){
+	wx.scanQRCode({
+        desc: 'scanQRCode desc',
+        success: function (res) {
+	    	var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+		}
+    });
+})
 
 // $("#test").click(function(){
 // 	wx.onMenuShareAppMessage();
