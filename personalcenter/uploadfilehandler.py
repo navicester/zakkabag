@@ -2,6 +2,8 @@ from django.core.files.uploadhandler import FileUploadHandler
 from django.core.cache import cache
 import time
 
+#https://docs.djangoproject.com/en/1.8/ref/files/uploads/#django.core.files.uploadhandler.FileUploadHandler
+
 class UploadProgressCachedHandler(FileUploadHandler):
     """
     Tracks progress for file uploads.
@@ -41,6 +43,12 @@ class UploadProgressCachedHandler(FileUploadHandler):
         return raw_data
     
     def file_complete(self, file_size):
+        """
+        Called when a file has finished uploading.
+
+        The handler should return an UploadedFile object that will be stored in request.FILES. 
+        Handlers may also return None to indicate that the UploadedFile object should come from subsequent upload handlers.
+        """
         if self.cache_key:
             data = cache.get(self.cache_key)
             data['uploaded'] = self.content_length
@@ -49,5 +57,8 @@ class UploadProgressCachedHandler(FileUploadHandler):
 
 
     def upload_complete(self):
+        """
+        Callback signaling that the entire upload (all files) has completed.
+        """
         if self.cache_key:
             cache.delete(self.cache_key)
