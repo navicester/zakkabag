@@ -17,7 +17,12 @@ UserModel = get_user_model()
 
 class MyBackend(object):
     
-    def authenticate(self, account_type = None, username=None, password=None, **kwargs):        
+    def authenticate(self, account_type = None, username=None, password=None, **kwargs):  
+
+        #if hasattr(kwargs['kwargs'], 'user') :
+        if kwargs['kwargs']['user'] :
+            return kwargs['kwargs'].get('user',None)
+
         user = None
         if username is None:
             username = kwargs.get(UserModel.USERNAME_FIELD)

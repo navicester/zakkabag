@@ -106,6 +106,10 @@ def account_unlink_from_wechat(request):
             wechat = WechatUserProfile.objects.get(pk=wechat_id)
             wechat.user = None
             wechat.save()
+            #wechat profile without user is NOT allowed, so delete the wechat profile
+            #but if deleted, it will become anomymous user (llead to auth.login fail),otherwise none when login with wechat again
+            #wechat.delete()
+            #request.session.delete(wechat_id)
         except:
             pass
 
@@ -117,6 +121,7 @@ def account_unlink_from_wechat(request):
 
 
 def upload_file(request):
+    print "upload_file"
     if request.method == 'POST':
         upload_form = UploadFileForm(request.POST, request.FILES)
         if upload_form.is_valid():
@@ -139,6 +144,7 @@ def upload_file(request):
         return HttpResponse(json.dumps({'message': 'invalid form!'}))
 
 def upload_status(request):
+    print "upload_status"
     if request.method == 'GET':
         if request.GET['key']:
             if cache.get(request.GET['key']):

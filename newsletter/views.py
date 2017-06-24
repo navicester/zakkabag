@@ -6,10 +6,7 @@ from products.models import ProductFeatured,Product
 from django.shortcuts import render, redirect
 from .forms import SignUpForm,ContactForm
 from .models import UserWechat,Banner, Article
-from django.contrib import auth
-from django.contrib.auth import authenticate#, login, logout
-from django.contrib.auth import views as auth_views
-from zakkabag.settings import APP_ID, APP_SECRET
+
 
 
 from django.views.generic.list import ListView
@@ -21,11 +18,7 @@ from django.core.urlresolvers import reverse
 # from django.http import HttpResponseRedirect
 
 
-from weixin.client import WeixinMpAPI
-#from weixin.oauth2 import OAuth2AuthExchangeError
 
-#from django.contrib.auth.models import User
-#http://www.cnblogs.com/smallcoderhujin/p/3193103.html
 
 def home(request):    
 
@@ -67,53 +60,6 @@ def home(request):
 
     return render(request, "home.html", context)
 
-def logout(request):
-    try:
-        del request.session['wechat_id']
-    except:
-        pass
-    auth.logout(request)
-    return redirect(reverse("home", kwargs={}))
-
-#refer to django/contrib/auth/views.py
-#http://127.0.0.1:8000/accounts/activate/??
-def login(request):
-    REDIRECT_URI = request.POST.get('next', request.GET.get('next', reverse("home", kwargs={}))) #next indicated in templaetes
-    if request.method == 'GET':
-        print '44444444444'
-        code = request.GET.get('code')
-        if code:
-            print '1111111111111'
-            redirect_to = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={})) # redirection URL after authenticate
-            api = WeixinMpAPI(appid=APP_ID, 
-                        app_secret=APP_SECRET,
-                        redirect_uri=redirect_to)
-            auth_info = api.exchange_code_for_access_token(code=code)
-            api = WeixinMpAPI(access_token=auth_info['access_token'])
-            api_user = api.user(openid=auth_info['openid'])                
-            user = authenticate(request=request, user=api_user)
-            print user
-            if user:
-                print '222222222222'
-                auth.login(request, user)
-                return redirect(redirect_to)
-
-        return redirect(reverse("auth_login", kwargs={}))
-    else:  #normal login is POST
-        print '33333333'
-        REDIRECT_FIELD_NAME = 'next'
-        return auth_views.login(request, redirect_field_name=REDIRECT_FIELD_NAME, extra_context=None)    
-
-        # below method is also OK
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request=request, username=username, password=password)
-        if user is not None:
-            auth.login(request, user)                
-        else:
-            return redirect(reverse("auth_login", kwargs={}))
-
-    return auth_views.login(request, redirect_field_name=REDIRECT_URI, extra_context=None)    
 
 def contact(request):
     title = 'Contact Us'    

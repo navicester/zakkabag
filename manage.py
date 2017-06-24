@@ -5,6 +5,7 @@ import sys
 if __name__ == "__main__":
     root = os.path.dirname(__file__)
     sys.path.insert(0, os.path.join(root, 'site-packages'))
+    #sys.path = filter(lambda x: x!='D:\\Python27',sys.path)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zakkabag.settings")
     
     #for path in sys.path:

@@ -85,8 +85,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     email = models.EmailField(_('email address'), blank=True)
-    sex = models.CharField(_('sex'), max_length=30, choices = SEX_OPTION, blank=True)
-    birthday = models.DateField(_('birthday'), blank=True)
+    sex = models.CharField(_('sex'), max_length=30, choices = SEX_OPTION, blank=True, default = 'male')
+    birthday = models.DateField(_('birthday'), blank=True, null=True)
     nickname = models.CharField(_('nickname'), max_length=30, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False,
         help_text=_('Designates whether the user can log into this admin '
@@ -97,7 +97,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 	
     # identifier = models.CharField(max_length=50, unique=True, db_index=True, verbose_name='username')
-    account_type = models.CharField(max_length=50, blank=True, null=True, choices=USER_TYPE, default = 'username')
+    account_type = models.CharField(max_length=50, blank=True, null=True, choices=USER_TYPE, default = 'username') #login account type
 
     image = models.ImageField(upload_to=image_upload_to)
 
@@ -149,6 +149,15 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
             return self.image.url
         else:
             return '/media/profile/bhe001/bhe001-1.jpg'
+    def is_wechatuser(self):
+        try:
+            WechatUserProfile.objects.get(user=self)
+        except Exception as e:
+            return False
+        else:
+            return True
+        finally:
+            pass
 
 class WechatUserProfile(models.Model):
     user = models.OneToOneField(

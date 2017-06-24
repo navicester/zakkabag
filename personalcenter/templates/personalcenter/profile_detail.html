@@ -82,15 +82,15 @@ function progressWorker(url){
         contentType: "application/json",
         success: function (progress) {
             if(progress.uploaded && progress.totalsize){
-            	console.log("Percent: "+percent+"%");
-            	percent = (progress.uploaded/progress.totalsize) * 100;
-            	percent = parseInt(percent, 10);
+                console.log("Percent: "+percent+"%");
+                percent = (progress.uploaded/progress.totalsize) * 100;
+                percent = parseInt(percent, 10);
                 $('.progress-bar').css('width', percent+'%').attr('aria-valuenow', percent);
                 $('.progress-bar').html(percent+"%");
             /* Call sleep function before make a new request in order to prevent much
               request to server. Use it wisely... */
             //sleep(1000);
-	   }
+        }
 
         },
         complete: function(){
@@ -102,13 +102,13 @@ function progressWorker(url){
                 $(".processing-file").append('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Processing file, please wait...');
             }
         },
-	error: function (jqXHR, textStatus, errorThrown) {
-                  if (jqXHR.status == 500) {
-                      alert('Internal error: ' + jqXHR.responseText);
-                  } else {
-                      alert('Unexpected error.');
-                  }
-       }
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 500) {
+                alert('Internal error: ' + jqXHR.responseText);
+            } else {
+                alert('Unexpected error.');
+            }
+        }
     });
 }
 
@@ -146,25 +146,25 @@ $('#form_upload').submit(function() {
 {% block content %}
 
 <div class='col-sm-6 col-sm-offset-3'>
-	<h3>{{ object }}</h3>
-	<form id="form_profile" method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
-		{{form|crispy}}		
-		<img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
-		<input type="submit" value='Update' class='btn' />
-	</form>
+    <h3>{{ object }}</h3>
+    <form id="form_profile" method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
+        {{form|crispy}}        
+        <img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
+        <input type="submit" value='Update' class='btn' />
+    </form>
 
-	<br>
+    <br>
 
-	<form id="form_upload"  enctype="multipart/form-data" action="/personalcenter/uploadfile " method="POST"> {% csrf_token %}
-		{{upload_form|crispy}}
-	    <div class="progress">
-	      <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-	        0%
-	      </div>
-	    </div>		
-		<div class="processing-file"></div>
-		<input id="buttonSubmit" class="btn btn-primary" type="submit" value="Upload" />		
-	</form>
+    <form id="form_upload"  enctype="multipart/form-data" action="/personalcenter/uploadfile " method="POST"> {% csrf_token %}
+        {{upload_form|crispy}}
+        <div class="progress">
+          <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+            0%
+          </div>
+        </div>        
+        <div class="processing-file"></div>
+        <input id="buttonSubmit" class="btn btn-primary" type="submit" value="Upload" />        
+    </form>
 </div>
 
 {% endblock %}

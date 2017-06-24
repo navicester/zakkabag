@@ -11,6 +11,8 @@ $("#link>a").click(function(event){
 		data: {},
 		success: function(data) {
 			$('#link>a').html('link');
+			//$('#link').css("display": "none"); //it will make ajax = False
+			$('#link').html('');
 		}, 
 		error: function(response, error) {
 			

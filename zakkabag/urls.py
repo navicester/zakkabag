@@ -48,13 +48,10 @@ urlpatterns = patterns('',
     url(r'^checkout/address/add/$', UserAddressCreateView.as_view(), name='user_address_create'), 
     url(r'^checkout/final/$', CheckoutFinalView.as_view(), name='checkout_final'),   	
 
-    url(r'^wechatlogin/$', 'wechat.views.wechatlogin', name='wechatlogin'), 
-    url(r'^logout/$', 'newsletter.views.logout', name='logout'), 
-    url(r'^login/$', 'newsletter.views.login', name='login'), 
-
     url(r'^personalcenter/', include('personalcenter.urls')),
     url(r'^crowdfundings/', include('crowdfundings.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
+    url(r'^auth/', include('auth.urls')),
 
     #url(r'^ckeditor/', include('ckeditor.urls')),
     
