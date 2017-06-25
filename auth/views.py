@@ -79,16 +79,6 @@ class RegistrationView(FormView):
     #    return super(RegistrationView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-    	is_exist = UserModel().objects.filter(phone=form.cleaned_data['phone']).exists()
-        #print is_exist
-        users = UserModel().objects.filter(username=form.cleaned_data['phone'])
-        #print users
-        #print form.cleaned_data['phone']
-        #if users :
-            #from django import forms
-            #raise forms.ValidationError('User Exist!')
-            #return redirect(reverse("register_phone", kwargs={}))
-            #return self.render_to_response(self.get_context_data(form=form))
 
         new_user = self.register(form)
         success_url = self.get_success_url(new_user)
@@ -106,23 +96,21 @@ class RegistrationView(FormView):
         if hasattr(form, 'save'):
             new_user_instance = form.save()
         else:
-            #new_user_instance = (UserModel().objects.create_user(**form.cleaned_data))
-            
+            #{'phone': u'13409876541', 'password': u'123', 'vc': u'123'}
+            form.cleaned_data.pop('vc')
             new_user_instance = (UserModel().objects.create_user(
-                form.cleaned_data['phone'],
-                'phone', 
-                None,
-                form.cleaned_data['password'],))
+                username = form.cleaned_data['phone'],
+                account_type = 'phone', 
+                **form.cleaned_data))
                 
         
         return new_user_instance
 
     def get_success_url(self, user=None):
-        #return super(RegistrationView, self).get_success_url()
         try:
             return reverse("profile_update", kwargs={'pk':user.id}) 
         except UserModel.DoesNotExist:
-            return None 
+            return reverse("home", kwargs={}) 
 
 
 import random
@@ -132,35 +120,49 @@ verificationCode = 0
 def GetVerificationCode():
     verificationCode = random()
 
+# pk value is in self.kwargs
+
 class ProfileUpdateView(UpdateView):
     model = UserModel
     form_class = UserUpdateForm
     template_name = 'auth/user_update_form.html'
     success_url = None
+    
 
     def get_object(self, *args, **kwargs):
         try:
-            return model.objects.get(id=kwargs.get('pk'))
+            return  UserModel().objects.get(id=self.kwargs.get('pk'))
+            #return UserModel._default_manager.get_by_natural_key(self.kwargs.get('pk'))
         except:
             return None
 
+
     def get_form(self, form_class):
-        #print self.get_form_kwargs()
-        #return self.form_class(self.get_object(), **self.get_form_kwargs())     
-        return self.form_class(self.get_object())  
+    	kwargs = self.get_form_kwargs()
+    	kwargs.update({'instance': self.get_object()})
+        form = self.form_class(**kwargs)  
+        return form
 
-    def post(self, request, *args, **kwargs):  
-        postresult = super(ProfileUpdateView, self).post(request, *args, **kwargs)
+    '''
+    def get_form(self,  *args, **kwargs):
+        form = super(ProfileUpdateView, self).get_form(*args, **kwargs)
+        #form.fields['phone'] = self.get_object(args,kwargs).phone
+        return form
+    '''
+    def post(self, request, *args, **kwargs): 
 
-        form = self.form_class(request.POST, request.FILES)  
-        if form.is_valid():
+        self.object = self.get_object()
+        form = self.get_form() # use get_form() to replace, it will include all the information
+        #form = self.form_class(request.POST, request.FILES,instance=self.get_object())  
+        if form.is_valid():            
             user = form.save(commit=False)
+            #user.id = self.kwargs.get('pk') # WHY it will create a new object HERE?
             user.save() 
             auth.authenticate(request=request,kwargs={'user':user})
             auth_login(request, user)
             print request.user
         else:
-            return postresult #redirect(reverse("register_phone", kwargs={}))
+            return self.form_invalid(form) #redirect(reverse("register_phone", kwargs={}))
 
         return redirect(reverse("home", kwargs={}))
 

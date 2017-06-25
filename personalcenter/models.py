@@ -7,6 +7,7 @@ from django.utils import six, timezone
 from django.core import validators
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
+from django.db.models.signals import pre_save
 
 # Create your models here.
 
@@ -30,23 +31,32 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_user(self, username, account_type='mail',email=None, password=None, **extra_fields):
-        if 'wechat' == account_type:
-            return self._create_user(username, email, password, False, False,
-                                     **extra_fields)
-        else:
-            return self._create_user(username, email, password, False, False,
-                                     **extra_fields)
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        return self._create_user(username, email, password, False, False, **extra_fields)
 
+    def create_superuser(self, **user_data):
+        if 'phone' == settings.ACCOUNT_REGISTER_TYPE:
+            #{'phone': '13500000000', u'password': '123', 'email': '', 'sex': 'male'}
+            #get usename from phone, and unpack the rest
+            return self._create_user(user_data['phone'], is_staff=True, is_superuser=True, account_type='phone',
+                                 **user_data)
+        else:
+            return self._create_user(is_staff=True, is_superuser=True, account_type='mail',
+                                 **user_data)
+    '''
     def create_superuser(self, username, email, password, **extra_fields):
         return self._create_user(username, email, password, True, True,
                                  **extra_fields)
+    '''
 
+# register with Phone, email, ....
+# for phone register, username will be a repalica of phone number
+# for mail register, username and mail is seperated value
 USER_TYPE = (
 	('username', 'Username'),
-	('mail', 'Mail'),
+	('mail', 'Mail'), 
 	('wechat', 'Wechat'),
-	('phone', 'Phone'),
+	('phone', 'Phone'), 
 )
 
 SEX_OPTION = (
@@ -81,7 +91,16 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         error_messages={
             'unique': _("A user with that username already exists."),
         })
-    phone = models.CharField(_('phone'), max_length=30, blank=True)
+    phone = models.CharField(_('phone'), max_length=30, blank=True, unique=True,
+        help_text=_('Required. digits and + only.'),
+        validators=[
+            validators.RegexValidator(r'^(130|131|132|133|134|135|136|137|138|139)\d{8}$',
+                                      _('Enter a valid phone number. '
+                                        'This value may contain only numbers and + characters.'), 'invalid'),
+        ],
+        error_messages={
+            'unique': _("A user with that phone number already exists."),
+        })
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     email = models.EmailField(_('email address'), blank=True)
@@ -99,10 +118,10 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     # identifier = models.CharField(max_length=50, unique=True, db_index=True, verbose_name='username')
     account_type = models.CharField(max_length=50, blank=True, null=True, choices=USER_TYPE, default = 'username') #login account type
 
-    image = models.ImageField(upload_to=image_upload_to)
+    image = models.ImageField(upload_to=image_upload_to, blank=True, null=True)
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = 'phone' if 'phone' == settings.ACCOUNT_REGISTER_TYPE  else 'username'
+    REQUIRED_FIELDS = ['mail'] if 'phone' == settings.ACCOUNT_REGISTER_TYPE  else ['phone','email']
  
     objects = MyUserManager()
  
@@ -158,6 +177,13 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
             return True
         finally:
             pass
+
+def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
+    if 'phone' == MyUser.USERNAME_FIELD:
+        if instance.username is None:
+            instance.username = instance.phone
+
+pre_save.connect(myuser_pre_save_receiver, sender=MyUser)
 
 class WechatUserProfile(models.Model):
     user = models.OneToOneField(

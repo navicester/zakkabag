@@ -17,6 +17,10 @@ from orders.views import (
 					
 admin.autodiscover()
 
+def i18n_javascript(request):
+    return admin.site.i18n_javascript(request)
+
+
 urlpatterns = patterns('',
     # Examples:
 	url(r'^$', 'wechat.views.handleRequest'),
@@ -30,6 +34,7 @@ urlpatterns = patterns('',
     url(r'^about/sitemap$', 'zakkabag.views.sitemap', name='sitemap'),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
+    url(r'^admin/jsi18n', i18n_javascript),
 
     url(r'^admin/', include(admin.site.urls)),
 

@@ -19,15 +19,18 @@ class MyBackend(object):
     
     def authenticate(self, account_type = None, username=None, password=None, **kwargs):  
 
-        #if hasattr(kwargs['kwargs'], 'user') :
-        if kwargs['kwargs']['user'] :
-            return kwargs['kwargs'].get('user',None)
+        try:
+            #if hasattr(kwargs['kwargs'], 'user') :
+            if kwargs['kwargs']['user'] :
+                return kwargs['kwargs'].get('user',None)
+        except:
+            pass
+
 
         user = None
-        if username is None:
-            username = kwargs.get(UserModel.USERNAME_FIELD)
-            if username is None:
-                return None
+        if username is None or kwargs.get(UserModel.USERNAME_FIELD) is None:
+            return None
+
         try:
             #user = UserModel.objects.filter(username=username).first()  #fail, why?
             #user = UserModel.objects.get(username=username)  #fail, why?
