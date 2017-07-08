@@ -47,9 +47,10 @@ class UserChangeForm(forms.ModelForm):
         # field does not have access to the initial value
         return self.initial["password"]
 
-from django.forms.extras.widgets import SelectDateWidget
+#from django.forms.extras.widgets import SelectDateWidget
+from django.contrib.admin import widgets
 class MyUserForm(forms.ModelForm):
-    birthday = forms.DateField(widget=SelectDateWidget())
+    #birthday = forms.DateField(widget=SelectDateWidget())
     class Meta:
         model = MyUser
 
@@ -61,7 +62,10 @@ class MyUserForm(forms.ModelForm):
             'sex'
         ]
 
-        
+    def __init__(self, *args, **kwargs):
+        super(MyUserForm, self).__init__(*args, **kwargs)
+        self.fields['sex'].empty_label = None     
+        self.fields['birthday'].widget = widgets.AdminDateWidget()   
 
     def clean_image(self):
         if self.cleaned_data.get("image") != None:

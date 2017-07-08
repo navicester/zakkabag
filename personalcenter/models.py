@@ -70,7 +70,8 @@ def image_upload_to(instance, filename):
     new_filename = "%s-%s.%s" %(slugify(title), instance.id,  file_extension)
     return "profile/%s/%s" %(name, new_filename)
 
-#Copy from AbstractUser
+#Copy from AbstractUser => inherit from AbstractUser directly 
+#class AbstractUser(AbstractBaseUser, PermissionsMixin):
 class MyUser(AbstractBaseUser, PermissionsMixin):
 #class MyUser(AbstractUser): 
     """

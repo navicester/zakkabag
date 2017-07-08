@@ -71,7 +71,6 @@ from django.contrib.admin import widgets
 class UserUpdateForm(forms.ModelForm):
     required_css_class = 'required'
     phone = forms.CharField(label='phone')
-    #birthday = forms.DateField(label='birthday', widget=SelectDateWidget, error_messages={'required':'birthday required'})
     birthday = forms.DateField(label='birthday', 
         #widget=forms.DateInput(attrs={'cols': 10, 'rows': 50, 'readonly':'readonly','disable':True}),  #WORK
         #widget=SelectDateWidget(),
@@ -84,6 +83,7 @@ class UserUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)
         self.fields['birthday'].widget = widgets.AdminDateWidget()
+        self.fields['sex'].empty_label = None
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
             self.fields['phone'].widget.attrs['readonly'] = True

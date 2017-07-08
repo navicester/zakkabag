@@ -53,7 +53,7 @@ $("#link>a").click(function(event){
 				{% if wechat %}
 				Wechat : {{wechat}} <a href='{% url "unlink_from_wechat" %}'>unlink</a>
 				{% endif %}</div>
-				<div><a href='{% url "auth_password_change"%}'>Change Password</a></div>
+				<div><a href='{% url "auth_password_change2"%}'>Change Password</a></div>
 				<div><a href='{% url "profile_detail" id=myuser.id %}'>Change Profile</a></div>
 			</div>
 		</div>
