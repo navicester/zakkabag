@@ -26,9 +26,9 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, 
         	{'fields': 
-        	('username','email', 'password')}),
+        	('username','phone','email', 'password')}),
         ('Personal info', 
-        	{'fields': ('first_name','last_name','phone', 'sex','birthday','nickname','account_type','image')}),
+        	{'fields': ('first_name','last_name', 'sex','birthday','nickname','account_type','image')}),
         ('Permissions', 
         	{'fields': ('is_staff','is_active', 'is_superuser','groups', 'user_permissions')}),
     )
@@ -37,7 +37,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2')}
+            'fields': ('username','phone', 'email', 'password1', 'password2')}
         ),
     )
     search_fields = ('email',)

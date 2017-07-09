@@ -181,8 +181,10 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
     if 'phone' == MyUser.USERNAME_FIELD:
-        if instance.username is None:
+        if instance.username is None: # hide username and copy value from phone number
             instance.username = instance.phone
+        if instance.phone is None and instance.username is not None:
+            instance.phone = instance.username
 
 pre_save.connect(myuser_pre_save_receiver, sender=MyUser)
 
