@@ -11,16 +11,17 @@ from zakkabag.settings import APP_ID, APP_SECRET
 from weixin.client import WeixinMpAPI
 #from weixin.oauth2 import OAuth2AuthExchangeError
 
-#UserModel = 'auth.User' #
+#UserModel = 'authwrapper.User' #
 #UserModel = settings.AUTH_USER_MODEL
 UserModel = get_user_model()
 
 class MyBackend(object):
-    
-    def authenticate(self, account_type = None, username=None, password=None, **kwargs):  
+    """Allows user to sign-in using email, username or phone_number."""
+    def authenticate(self, username=None, password=None, **kwargs):  
+    #def authenticate(self, account_type = None, username=None, password=None, **kwargs):      
 
         try:
-            #if hasattr(kwargs['kwargs'], 'user') :
+            """login with user info directly"""
             if kwargs['kwargs']['user'] :
                 return kwargs['kwargs'].get('user',None)
         except:
@@ -28,30 +29,62 @@ class MyBackend(object):
 
 
         user = None
-        if username is None or kwargs.get(UserModel.USERNAME_FIELD) is None:
+        if username is None and kwargs.get(UserModel.USERNAME_FIELD,None) is None:
             return None
 
         try:
-            #user = UserModel.objects.filter(username=username).first()  #fail, why?
-            #user = UserModel.objects.get(username=username)  #fail, why?
-            user = UserModel._default_manager.get_by_natural_key(username)
+            """ fail? why 
+            user = UserModel.objects.filter(username=username).first()  
+            user = UserModel.objects.get(username=username) 
+            """
+
+            """ 'username' for mail registion, 'phone' for phone registion 
+            here let's take username as the input in login textbox """
+            '''
+            user = UserModel._default_manager.using(self._db).get(**{
+                UserModel.USERNAME_FIELD: username
+            })
+            '''
+
+            """if allow mix login options
+            username/phone/mail """
+            if True == settings.ACCOUNT_ALLOW_MIX_TYPE_LOGIN:
+                if '@' in username:
+                    user = UserModel._default_manager.get(email=username)
+                elif '+' in username[0]: # to be precise
+                    user = UserModel._default_manager.get(phone=username)
+                else:
+                    user = UserModel._default_manager.get(username=username)
+            else:    
+                user = UserModel._default_manager.get_by_natural_key(username)
+            
             if user.check_password(password):
                 return user
+                            
+            if user.check_password(password):
+                return user
+                
         except UserModel.DoesNotExist:
             UserModel().set_password(password)
             return None
         else:
-            if user.check_password(password):
+            if user.check_password(password) and self.user_can_authenticate(user):
                 return user
             else:
                 return None
- 
+
+    def user_can_authenticate(self, user):
+        """Reject users with is_active=False. Custom user models that don't have that attribute are allowed."""
+        is_active = getattr(user, 'is_active', None)
+        return is_active or is_active is None
+
     def get_user(self, user_id):
         
         try:
-            return UserModel._default_manager.get(pk=user_id)
+            user = UserModel._default_manager.get(pk=user_id)
         except UserModel.DoesNotExist:
             return None
+        return user if self.user_can_authenticate(user) else None
 
 
 class WechatBackend(object):

@@ -14,13 +14,18 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 #refer to django/contrib/auth/admin.py
 class UserAdmin(BaseUserAdmin):
-    # The forms to add and change user instances
+    ''' 
+    The forms to add and change user instances
+    '''
     form = UserChangeForm
     add_form = UserCreationForm
 
-    # The fields to be used in displaying the User model.
-    # These override the definitions on the base UserAdmin
-    # that reference specific fields on auth.User.
+    '''
+    The fields to be used in displaying the User model.
+    These override the definitions on the base UserAdmin
+    that reference specific fields on auth.User.
+    '''
+
     list_display = ('username', 'phone','email', 'sex','birthday','nickname','is_staff')
     list_filter = ('account_type','is_staff',)
     fieldsets = (
@@ -31,16 +36,21 @@ class UserAdmin(BaseUserAdmin):
         	{'fields': ('first_name','last_name', 'sex','birthday','nickname','account_type','image')}),
         ('Permissions', 
         	{'fields': ('is_staff','is_active', 'is_superuser','groups', 'user_permissions')}),
+        ('Important dates', 
+            {'fields': ('last_login', 'date_joined')}),
     )
-    # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-    # overrides get_fieldsets to use this attribute when creating a user.
+    
+    '''
+    add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
+    overrides get_fieldsets to use this attribute when creating a user.
+    '''
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('username','phone', 'email', 'password1', 'password2')}
         ),
     )
-    search_fields = ('email',)
+    search_fields = ('phone','email',)
     ordering = ('email',)
     filter_horizontal = ()
 
@@ -49,6 +59,5 @@ admin.site.register(MyUser, UserAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
-
 #admin.site.unregister(Group)
 

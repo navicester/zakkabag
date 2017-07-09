@@ -83,7 +83,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, "templates"), 
                 os.path.join(BASE_DIR, "comments","templates"),
-                os.path.join(BASE_DIR, "auth","templates"),
+                os.path.join(BASE_DIR, "authwrapper","templates"),
                 os.path.join(BASE_DIR, "crowdfundings")],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -241,3 +241,4 @@ else:
     APP_SECRET = 'd4624c36b6795d1d99dcf0547af5443d'
 
 ACCOUNT_REGISTER_TYPE = 'phone' #phone, mail
+ACCOUNT_ALLOW_MIX_TYPE_LOGIN = True

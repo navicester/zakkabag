@@ -56,7 +56,7 @@ urlpatterns = patterns('',
     url(r'^personalcenter/', include('personalcenter.urls')),
     url(r'^crowdfundings/', include('crowdfundings.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
-    url(r'^auth/', include('auth.urls')),
+    url(r'^auth/', include('authwrapper.urls')),
 
     #url(r'^ckeditor/', include('ckeditor.urls')),
     
