@@ -14,6 +14,7 @@ class SignUp(models.Model):
 	def __unicode__(self): #Python 3.3 is __str__
 		return self.email
 
+'''
 class UserWechat(models.Model):
 	#user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True) #not required
 	openid = models.CharField(max_length=120, blank=True, null=True)
@@ -37,7 +38,7 @@ class UserWechat(models.Model):
 
 	def get_absolute_url(self):
 		return reverse("personalcenter", kwargs={"id": self.id })
-
+'''
 
 def image_upload_to_banner(instance, filename):
 	title = instance.title

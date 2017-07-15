@@ -7,6 +7,7 @@ from phone_login.models import PhoneToken
 import datetime
 from django.conf import settings
 
+#from .models import MyUser
 from .users import UserModel, UsernameField
 User = UserModel()
 
@@ -108,10 +109,23 @@ class UserUpdateForm(forms.ModelForm):
         fields = (UsernameField(),'first_name','last_name','sex','birthday','nickname','image') 
         #exclude = ('password',)
 
+class RegistrationForgetForm(RegistrationForm):
+    #password = forms.CharField(label='New Password', widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForgetForm, self).__init__(*args, **kwargs)
+        self.fields['password'].label = 'New Password'
+
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        users = UserModel().objects.filter(phone=phone).first()
+        if not users or not users.is_active:
+            raise forms.ValidationError('User is not Exist!')
+            return phone
+
+        return phone
+
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-
-from .models import MyUser
-
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password.
@@ -120,7 +134,7 @@ class UserCreationForm(forms.ModelForm):
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
 
     class Meta:
-        model = MyUser
+        model = User
         fields = ('email', 'phone')
 
     def clean_password2(self):
@@ -149,7 +163,7 @@ class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
-        model = MyUser
+        model = User
         fields = '__all__' #('email', 'password', 'first_name', 'last_name', 'is_active', 'is_staff', 'account_type')
 
     def clean_password(self):

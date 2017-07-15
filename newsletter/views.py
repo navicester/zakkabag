@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from products.models import ProductFeatured,Product
 from django.shortcuts import render, redirect
 from .forms import SignUpForm,ContactForm
-from .models import UserWechat,Banner, Article
+from .models import Banner, Article
 
 
 
@@ -38,7 +38,6 @@ def home(request):
         "products":products,
         "products2":products2,
         'banners':banners,
-        # 'userwechat': cuserwechat,
 
     }
     

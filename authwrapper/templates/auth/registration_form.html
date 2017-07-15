@@ -71,8 +71,8 @@ $("#getVerificationCode").click(function(event){
 
 <div class='row'>
     <div class='col-sm-6 col-sm-offset-3'>
-        <h1>Register for free!</h1>
-        <form class="form-horizontal" method='POST' action='/auth/register/'>{% csrf_token %}
+        <h1>{% block content_title %}{% trans "Register for free!" %}{% endblock %}</h1>        
+        <form class="form-horizontal" method='POST' action=''>{% csrf_token %}
             {% if form.errors %}
                 <p style="color: red;">
                     {# pulralize 是filter，用来判断是否为添加's'来表示单词的复数形式#}

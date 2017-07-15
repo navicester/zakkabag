@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy
 
 from .views import logout, login, GetVerificationCode
-from .views import RegistrationView, ProfileUpdateView
+from .views import RegistrationView, ProfileUpdateView, RegistrationForgetView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -18,8 +18,7 @@ urlpatterns = [
     url(r'^getVerificationCode/$', GetVerificationCode, name='getVerificationCode'), 
     url(r'^password/change/$', auth_views.password_change, {'post_change_redirect': reverse_lazy('auth_password_change_done2')}, name='auth_password_change2'), 
     url(r'^password/change/done/$', auth_views.password_change_done, name='auth_password_change_done2'), 
-    url(r'^password_update/$', GetVerificationCode, name='password_update'), 
-    url(r'^registration_verify/$', GetVerificationCode, name='registration_verify'), 
+    url(r'^password/forget/$', RegistrationForgetView.as_view(), name='password_forget'), 
 ]
 
 '''

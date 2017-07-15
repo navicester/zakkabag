@@ -15,10 +15,15 @@ from weixin.client import WeixinMpAPI
 from phone_login.models import PhoneToken
 from django.http import JsonResponse, Http404
 import datetime
+from .models import WechatUserProfile
 
 from django.utils.module_loading import import_string
 REGISTRATION_FORM_PATH = getattr(settings, 'REGISTRATION_FORM','authwrapper.forms.RegistrationForm')
 REGISTRATION_FORM = import_string(REGISTRATION_FORM_PATH)
+
+REGISTRATION_FORGET_FORM_PATH = getattr(settings, 'REGISTRATION_FORGET_FORM','authwrapper.forms.RegistrationForgetForm')
+REGISTRATION_FORGET_FORM = import_string(REGISTRATION_FORGET_FORM_PATH)
+
 
 from django.contrib.auth import get_user_model
 UserModel = get_user_model
@@ -57,7 +62,7 @@ def login(request):
         password = request.POST['password']
         user = authenticate(request=request, username=username, password=password)
         if user is not None:
-            auth_login(request, user)                
+            auth_login(request, user) 
         else:
             return redirect(reverse("auth_login", kwargs={}))
 
@@ -102,7 +107,7 @@ class RegistrationView(FormView):
 
         user = UserModel().objects.filter(
             phone=phone_number
-        ).first()
+        ).first()  #not active user, user forgetpassword
 
         if not user:
             user = (UserModel().objects.create_user(
@@ -116,16 +121,24 @@ class RegistrationView(FormView):
             user.is_active = True
             user.save()
 
-        #authenticate(**{'user':user})
-        #auth_login(self.request, user)
-
         return user            
 
     def get_success_url(self, user=None):
         try:
             return reverse("profile_update", kwargs={'pk':user.id}) 
-        except UserModel.DoesNotExist:
+        except:
             return reverse("home", kwargs={}) 
+
+
+class RegistrationForgetView(RegistrationView):
+    form_class = REGISTRATION_FORGET_FORM
+    template_name = 'auth/registration_form_forget.html'
+    success_url = 'home' 
+
+    def register(self, form):
+        user = super(RegistrationForgetView,self).register(form)
+        authenticate(**{'user':user})
+        auth_login(self.request, user)
 
 
 @csrf_exempt
@@ -177,9 +190,15 @@ class ProfileUpdateView(UpdateView):
             #user.id = self.kwargs.get('pk') # WHY it will create a new object HERE?
             user.is_active = True
             user.save() 
+
+            wechat_id = self.request.session.get('wechat_id',None)
+            if wechat_id:
+                wechat = WechatUserProfile.objects.get(pk=wechat_id) 
+                wechat.user = user   
+                wechat.save()
+
             auth.authenticate(**{'user':user})
             auth_login(request, user)
-            print request.user
         else:
             return self.form_invalid(form) #redirect(reverse("register_phone", kwargs={}))
 

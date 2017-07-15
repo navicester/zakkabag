@@ -1,7 +1,7 @@
 from django.contrib import admin
 # Register your models here.
 from .forms import SignUpForm
-from .models import SignUp, UserWechat, Banner, Article
+from .models import SignUp, Banner, Article
 
 class SignUpAdmin(admin.ModelAdmin):
 	list_display = ["__unicode__", "timestamp", "updated"]
