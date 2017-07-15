@@ -17,7 +17,7 @@ class RegistrationForm(forms.Form):
     """
     #phone = forms.CharField(label='Phone', max_length=18)
     phone = FormPhoneNumberField(label='Phone')
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Set Password', widget=forms.PasswordInput)
     otp = forms.CharField(label='One-Time Password',  max_length=10) 
 
     def clean_phone(self):

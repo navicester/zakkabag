@@ -16,14 +16,11 @@ from phone_login.models import PhoneToken
 from django.http import JsonResponse, Http404
 import datetime
 from .models import WechatUserProfile
+from .forms import RegistrationForgetForm
 
 from django.utils.module_loading import import_string
 REGISTRATION_FORM_PATH = getattr(settings, 'REGISTRATION_FORM','authwrapper.forms.RegistrationForm')
 REGISTRATION_FORM = import_string(REGISTRATION_FORM_PATH)
-
-REGISTRATION_FORGET_FORM_PATH = getattr(settings, 'REGISTRATION_FORGET_FORM','authwrapper.forms.RegistrationForgetForm')
-REGISTRATION_FORGET_FORM = import_string(REGISTRATION_FORGET_FORM_PATH)
-
 
 from django.contrib.auth import get_user_model
 UserModel = get_user_model
@@ -48,7 +45,7 @@ def login(request):
             api = WeixinMpAPI(access_token=auth_info['access_token'])
             api_user = api.user(openid=auth_info['openid'])                
             user = authenticate(request = request, user = api_user)
-            if user:
+            if user and not user.is_anonymous():
                 auth_login(request, user)
                 return redirect(redirect_to)
 
@@ -131,7 +128,7 @@ class RegistrationView(FormView):
 
 
 class RegistrationForgetView(RegistrationView):
-    form_class = REGISTRATION_FORGET_FORM
+    form_class = RegistrationForgetForm
     template_name = 'auth/registration_form_forget.html'
     success_url = 'home' 
 
