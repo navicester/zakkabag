@@ -138,9 +138,16 @@ class RegistrationForgetView(RegistrationView):
         auth_login(self.request, user)
 
 
+from phonenumber_field.validators import validate_international_phonenumber as vip
+
 @csrf_exempt
 def GetVerificationCode(request):
     if request.is_ajax():
+        try:
+            vip(request.POST['phone_number'])
+        except:
+            return JsonResponse({"token": None})
+
         token = PhoneToken.create_otp_for_number(
                     request.POST['phone_number'])
         return JsonResponse({"token": token.otp})

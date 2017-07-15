@@ -6,6 +6,9 @@
 
 <script>
 {% block jquery %}
+
+$(".controls input").addClass("textinput textInput form-control");
+
 $("#getVerificationCode").click(function(event){
     event.preventDefault();
     $.ajax({
@@ -37,6 +40,8 @@ $("#getVerificationCode").click(function(event){
             */
         },
         success: function(data) {
+          if(null == data.token )
+            alert("generate otp fail")
           $('#id_otp').val(data.token);
         }, 
         error: function(response, error) {
@@ -58,9 +63,18 @@ $("#getVerificationCode").click(function(event){
 	textarea{height:80px;}
 	input[type=submit]{width:20%;margin-left:0%;float:right;}
 {% endcomment  %}	
-#div_id_vc{
 
+/*
+.has-error .controls input {
+    border-color: #a94442;
 }
+*/
+.controls input {
+width: 100%
+}
+
+
+
 
 #getVerificationCodeForm{
 	/*width: 40%;
@@ -68,6 +82,11 @@ $("#getVerificationCode").click(function(event){
 	float:left;*/
 }
 </style>
+
+{% comment %}
+admin/change_form.html
+admin/includes/fieldset.html
+{% endcomment %}
 
 <div class='row'>
     <div class='col-sm-6 col-sm-offset-3'>
@@ -77,43 +96,39 @@ $("#getVerificationCode").click(function(event){
                 <p style="color: red;">
                     {# pulralize 是filter，用来判断是否为添加's'来表示单词的复数形式#}
                     Please correct the error{{ form.errors|pluralize }} below.
+                    {{ form.non_field_errors }}
                 </p>
             {% endif %}
 
-          {{form|crispy}}
-
-          <div class="form-group" id="getVerificationCodeForm">
-            <button type="button" class="btn btn-default" id="getVerificationCode" value ="Get Verification Code" style="width: 100%" ">Get Verification Code</button>
-          </div>
-
-          {% comment  %}
-          <div class="form-group">
-            <label for="inputPhone3" class="col-sm-2 col-xs-3 control-label">Phone</label>
-            <div class="col-sm-10 col-xs-9">
-              <input type="text" class="form-control" id="inputphone3" name="phone" placeholder="Phone">
+            {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+              <div class="col-sm-4 col-xs-4 control-label">
+                  {{field.label_tag}}
+              </div>
+              
+              <div class="{% if field.label == 'One-Time Password' %} col-sm-4 col-xs-4 {% else %} col-sm-8 col-xs-8 {% endif %} controls">                                     
+                {{field}}                
+                {% if field.help_text %}<p class="help">{{ field.help_text|safe }}</p>{% endif %}              
+                <p class="help-block"><strong>{% if not field.is_readonly %}
+                  {% for error in field.errors %}{{ error }}{% endfor %}
+                {% endif %}</strong></p>
+              </div>
+              {% if field.label == "One-Time Password" %}
+              <div class="col-sm-4 col-xs-4 controls">
+                <button type="button" class="btn btn-default" id="getVerificationCode" value ="Get OTP" style="width: 100%" ">Get OTP</button>
+              </div>
+              {% endif %}            
             </div>
-          </div>
-          <div class="form-group">
-            <label for="inputPassword3" class="col-sm-2 col-xs-3 control-label">Password</label>
-            <div class="col-sm-10 col-xs-9">
-              <input type="password" class="form-control" id="inputPassword3" name="password" placeholder="Password">
-            </div>
-          </div>
+            {% endfor %} 
 
-          <div class="form-group">
-            <div class="col-sm-offset-2  col-xs-offset-3 col-sm-4 col-xs-4">
-              <input type="text" class="form-control" id="inputvc2" name="otp" placeholder="verification code" >
-            </div>
-            <div class="col-sm-6 col-xs-5">
-              <button type="button" class="btn btn-default" id="getVerificationCode" value ="Get Verification Code" style="width: 100%" ">Get Verification Code</button>
-            </div> 
-          </div>  
-          {% endcomment  %}
+{% comment  %}
+            {{ form|crispy }}
+{% endcomment  %}
 
 
           <div class="form-group">
-            <div class="col-sm-offset-6  col-xs-offset-3 col-sm-10 col-xs-9">
-              <button type="submit" class="btn btn-default">Sign Up</button>
+            <div class="col-sm-12 col-xs-12">
+              <button type="submit" class="btn btn-default"  style="width: 100%">Sign Up</button>
             </div>
           </div>
 

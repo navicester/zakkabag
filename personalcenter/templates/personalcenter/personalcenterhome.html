@@ -44,19 +44,33 @@ $("#link>a").click(function(event){
 		<p>
 		{% block subcontent %}
 		<div class = "row">
-			<div class = "col-sm-3">
-				<img  id='img' class= 'img-responsive' src="{{myuser.get_image_url}}"/>
+			<div class = "col-sm-3 col-xs-3">
+			    <img  id='img' class= 'img-responsive' src={% if wechat %}"{{wechat.get_image_url}}"{% else %}{{myuser.get_image_url}}{% endif %}/>
 			</div>
-			<div class = "col-sm-9">
-			    <div>User Name : {{myuser}}</div>
-			    <div id='link'>				
-				{% if wechat %}
-				Wechat : {{wechat}} <a href='{% url "unlink_from_wechat" %}'>unlink</a>
-				{% endif %}</div>
-				<div><a href='{% url "auth_password_change2"%}'>Change Password</a></div>
-				<div><a href='{% url "profile_detail" id=myuser.id %}'>Change Profile</a></div>
-			</div>
+			<div class = "col-sm-9 col-xs-9">
+			    <div>
+			        {{myuser}} 
+			        | {{myuser.sex}} 
+			        {% if myuser.birthday%}| {{myuser.birthday}}{% endif %}
+			     </div>
+			</div>			
 		</div>
+
+		<div class = "row">
+            <div class = "col-sm-9">			    
+			    {% if wechat %}	
+			    <br>
+			    <h1>Wechat <small><a href='{% url "unlink_from_wechat" %}'>unlink</a></small> </h1>
+			    <div id='link'>							
+				    {{wechat}}  | {{wechat.sex}} | {{wechat.country}} {{wechat.city}}
+				</div>
+				{% endif %}		
+
+				<hr>
+		        <div><a href='{% url "auth_password_change2"%}'>Change Password</a></div>
+		        <div><a href='{% url "profile_detail" id=myuser.id %}'>Change Profile</a></div>		
+	        </div>
+		</div>		
 		{% endblock %}
 
 	</div>
