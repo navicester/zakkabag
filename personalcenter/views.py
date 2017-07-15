@@ -1,26 +1,31 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404, JsonResponse, HttpResponse
 from django.contrib import auth
-from .models import WechatUserProfile, UserProfile
-from products.models import Product
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin
-from orders.models import Order
-from .forms import MyUserForm, UploadFileForm
 from django.core.cache import cache
 from django.core.cache.backends.memcached import MemcachedCache
 import json
 from django.conf import settings
 from django.utils.text import slugify
 
-from orders.models import UserCheckout
+from .models import UserProfile
+from authwrapper.models import WechatUserProfile
+from products.models import Product
+from orders.models import Order, UserCheckout
+from .forms import MyUserForm, UploadFileForm
+
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth import get_user_model
+
 UserModel = get_user_model()
 
 # Create your views here.
+
+@login_required
 def personalcenterhome(request,id):
     '''    
     try:
@@ -48,6 +53,7 @@ def personalcenterhome(request,id):
 
     return render(request, template, context)
 
+@login_required
 def myorder(request,id):
 
     myuser = get_object_or_404(UserModel, id=id)
@@ -68,6 +74,7 @@ def myorder(request,id):
 
     return render(request, template, context)
 
+@login_required
 def myuser_profile_extend(request,id):
 
     myuser = get_object_or_404(UserModel, id=id)
@@ -83,6 +90,7 @@ def myuser_profile_extend(request,id):
 
     return render(request, template, context)
 
+@login_required
 def account_link_to_wechat(request):
     user = auth.get_user(request)
     wechat_id = request.session.get("wechat_id")
@@ -98,6 +106,7 @@ def account_link_to_wechat(request):
 
     return redirect(reverse("home", kwargs={}))
 
+@login_required
 def account_unlink_from_wechat(request):
     wechat_id = request.session.get("wechat_id")
     wechat = None

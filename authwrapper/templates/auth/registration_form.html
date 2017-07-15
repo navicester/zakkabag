@@ -9,15 +9,18 @@
 $("#getVerificationCode").click(function(event){
     event.preventDefault();
     $.ajax({
-        type: "GET", 
+        type: "POST", 
         url: "{% url 'getVerificationCode' %}",
-        data: {},
+        data: {
+              phone_number: $('#id_phone').val(),
+        },
+        
         beforeSend : function(){
             $('#getVerificationCode').prop('disabled', true); //disable the item
             var interval;
             var times=10;
             var title = $('#getVerificationCode').val(); 
-            interval = setInterval(timeleft, "1000");
+            interval = setInterval(timeleft, "500");
             function timeleft() {
                 $('#getVerificationCode').html(times-- + "s");
                 if(times < 0){
@@ -34,9 +37,10 @@ $("#getVerificationCode").click(function(event){
             */
         },
         success: function(data) {
+          $('#id_otp').val(data.token);
         }, 
         error: function(response, error) {
-            
+          console.log(error)
         }
     })
 
@@ -98,7 +102,7 @@ $("#getVerificationCode").click(function(event){
 
           <div class="form-group">
             <div class="col-sm-offset-2  col-xs-offset-3 col-sm-4 col-xs-4">
-              <input type="text" class="form-control" id="inputvc2" name="vc" placeholder="verification code" >
+              <input type="text" class="form-control" id="inputvc2" name="otp" placeholder="verification code" >
             </div>
             <div class="col-sm-6 col-xs-5">
               <button type="button" class="btn btn-default" id="getVerificationCode" value ="Get Verification Code" style="width: 100%" ">Get Verification Code</button>

@@ -44,7 +44,7 @@
               </ul>
             </li>                
             {% if request.user.is_authenticated %}              
-              {% if request.user.account_type == 'wechat' %}
+              {% if request.user.is_wechatuser %}
               <li><a href='{{request.user.get_absolute_url}}'}>{{request.user.get_wechatprofile}}</a></li> 
               <li><a href="{% url 'logout' %}">Logout</a></li>              
               {% else %}

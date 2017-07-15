@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
-from personalcenter.models import WechatUserProfile
+from authwrapper.models import WechatUserProfile
 UserModel = get_user_model()
 
 from personalcenter.views import account_link_to_wechat

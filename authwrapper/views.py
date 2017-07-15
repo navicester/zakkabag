@@ -7,10 +7,14 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib import auth
 from django.views.generic.edit import FormView, UpdateView
+from django.views.decorators.csrf import csrf_exempt
+from forms import UserUpdateForm
 from zakkabag.settings import APP_ID, APP_SECRET
 from weixin.client import WeixinMpAPI
-from forms import UserUpdateForm
 #from weixin.oauth2 import OAuth2AuthExchangeError
+from phone_login.models import PhoneToken
+from django.http import JsonResponse, Http404
+import datetime
 
 from django.utils.module_loading import import_string
 REGISTRATION_FORM_PATH = getattr(settings, 'REGISTRATION_FORM','authwrapper.forms.RegistrationForm')
@@ -93,18 +97,30 @@ class RegistrationView(FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def register(self, form):
-        if hasattr(form, 'save'):
-            new_user_instance = form.save()
-        else:
-            #{'phone': u'13409876541', 'password': u'123', 'vc': u'123'}
-            form.cleaned_data.pop('vc')
-            new_user_instance = (UserModel().objects.create_user(
-                username = form.cleaned_data['phone'],
+        #{'phone': u'13409876541', 'password': u'123', 'otp': u'123'}
+        phone_number = form.cleaned_data['phone']
+        form.cleaned_data.pop('otp')
+
+        user = UserModel().objects.filter(
+            phone=phone_number
+        ).first()
+
+        if not user:
+            user = (UserModel().objects.create_user(
+                username = phone_number,
                 account_type = 'phone', 
-                **form.cleaned_data))
-                
-        
-        return new_user_instance
+                #**form.cleaned_data))
+                is_active = False,
+                phone = phone_number,
+                password = form.cleaned_data['password']))
+        else:
+            user.is_active = True
+            user.save()
+
+        #authenticate(**{'user':user})
+        #auth_login(self.request, user)
+
+        return user            
 
     def get_success_url(self, user=None):
         try:
@@ -113,12 +129,15 @@ class RegistrationView(FormView):
             return reverse("home", kwargs={}) 
 
 
-import random
-
-verificationCode = 0
-
-def GetVerificationCode():
-    verificationCode = random()
+@csrf_exempt
+def GetVerificationCode(request):
+    if request.is_ajax():
+        token = PhoneToken.create_otp_for_number(
+                    request.POST['phone_number'])
+        return JsonResponse({"token": token.otp})
+    else:
+        return redirect(reverse("home", kwargs={}))
+        raise Http404
 
 # pk value is in self.kwargs
 
@@ -138,8 +157,8 @@ class ProfileUpdateView(UpdateView):
 
 
     def get_form(self, form_class):
-    	kwargs = self.get_form_kwargs()
-    	kwargs.update({'instance': self.get_object()})
+        kwargs = self.get_form_kwargs()
+        kwargs.update({'instance': self.get_object()})
         form = self.form_class(**kwargs)  
         return form
 
@@ -157,8 +176,9 @@ class ProfileUpdateView(UpdateView):
         if form.is_valid():            
             user = form.save(commit=False)
             #user.id = self.kwargs.get('pk') # WHY it will create a new object HERE?
+            user.is_active = True
             user.save() 
-            auth.authenticate(request=request,kwargs={'user':user})
+            auth.authenticate(**{'user':user})
             auth_login(request, user)
             print request.user
         else:

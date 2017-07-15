@@ -3,61 +3,26 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from phonenumber_field.formfields import PhoneNumberField as FormPhoneNumberField
+from phone_login.models import PhoneToken
+import datetime
+from django.conf import settings
 
 from .users import UserModel, UsernameField
 User = UserModel()
 
-'''
-from django.core.validators import RegexValidator
-from django.forms import fields
-from django.forms.fields import MultiValueField, CharField
-class PhoneField(MultiValueField):
-    def __init__(self, *args, **kwargs):
-        # Define one message for all fields.
-        error_messages = {
-            'incomplete': 'Enter a country calling code and a phone number.',
-        }
-        # Or define a different message for each field.
-        fields = (
-            CharField(
-                error_messages={'incomplete': 'Enter a country calling code.'},
-                validators=[
-                    RegexValidator(r'^[0-9]+$', 'Enter a valid country calling code.'),
-                ],
-            ),
-            CharField(
-                error_messages={'incomplete': 'Enter a phone number.'},
-                validators=[RegexValidator(r'^[0-9]+$', 'Enter a valid phone number.')],
-            ),
-            CharField(
-                validators=[RegexValidator(r'^[0-9]+$', 'Enter a valid extension.')],
-                required=False,
-            ),
-        )
-        super(PhoneField, self).__init__(
-            error_messages=error_messages, fields=fields,
-            require_all_fields=False, *args, **kwargs
-        )
-
-
-
-         
-'''
 
 class RegistrationForm(forms.Form):
-    """docstring for PhoneRegisterForm"forms.formf __init__(self, arg):
-        super(PhoneRegisterForm,forms.form.__init__()
-        self.arg = arg
+    """Register form with phone verification code
     """
     #phone = forms.CharField(label='Phone', max_length=18)
     phone = FormPhoneNumberField(label='Phone')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    vc = forms.CharField(label='Verification Code',  max_length=10) 
+    otp = forms.CharField(label='One-Time Password',  max_length=10) 
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
-        users = UserModel().objects.filter(phone=phone)
-        if users :
+        users = UserModel().objects.filter(phone=phone).first()
+        if users and users.is_active:
             raise forms.ValidationError('User Exist!')
             return phone
 
@@ -72,10 +37,39 @@ class RegistrationForm(forms.Form):
         '''   
         return phone
 
+    def clean_otp(self):
+        phone_number = self.cleaned_data.get('phone',None)
+        if phone_number is None:
+            return
+
+        otp = self.cleaned_data.pop('otp')
+        phone_token = None
+
+        timestamp_difference = datetime.datetime.now() - datetime.timedelta(
+            minutes=getattr(settings, 'PHONE_LOGIN_MINUTES', 10)
+        )
+
+        try:
+            phone_token = PhoneToken.objects.get(
+                phone_number=phone_number,
+                otp=otp,
+                used=False,
+                timestamp__gte=timestamp_difference
+            )
+
+        except PhoneToken.DoesNotExist:
+            raise forms.ValidationError('invalid otp!')
+
+        phone_token.used = True
+        phone_token.attempts = phone_token.attempts + 1
+        phone_token.save()                    
+
+
 from django.forms.extras.widgets import SelectDateWidget
 from django.contrib.admin import widgets
 
 class UserUpdateForm(forms.ModelForm):
+    """ actual step to update user information after verification pass"""
     required_css_class = 'required'
     phone = forms.CharField(label='phone')
     birthday = forms.DateField(label='birthday', 
@@ -114,3 +108,52 @@ class UserUpdateForm(forms.ModelForm):
         fields = (UsernameField(),'first_name','last_name','sex','birthday','nickname','image') 
         #exclude = ('password',)
 
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
+
+from .models import MyUser
+
+class UserCreationForm(forms.ModelForm):
+    """A form for creating new users. Includes all the required
+    fields, plus a repeated password.
+    used in admin """
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+
+    class Meta:
+        model = MyUser
+        fields = ('email', 'phone')
+
+    def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super(UserCreationForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user
+
+#refer to django/contrib/auth/forms.py
+class UserChangeForm(forms.ModelForm):
+    """A form for updating users. Includes all the fields on
+    the user, but replaces the password field with admin's
+    password hash display field.
+    used in admin
+    """
+    password = ReadOnlyPasswordHashField()
+
+    class Meta:
+        model = MyUser
+        fields = '__all__' #('email', 'password', 'first_name', 'last_name', 'is_active', 'is_staff', 'account_type')
+
+    def clean_password(self):
+        # Regardless of what the user provides, return the initial value.
+        # This is done here, rather than on the field, because the
+        # field does not have access to the initial value
+        return self.initial["password"]

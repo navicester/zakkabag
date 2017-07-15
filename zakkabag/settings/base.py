@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_comments',   
     # 'django.contrib.comments',
+    'authwrapper',
     'mptt',
     'comments',
     'newsletter',
@@ -59,6 +60,8 @@ INSTALLED_APPS = (
     # 'threadedcomments',
     'pagination',
     'ckeditor',
+    'phone_login',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -217,11 +220,11 @@ SEND_ACTIVATION_EMAIL = True
 
 AUTHENTICATION_BACKENDS = (    
     
-    'personalcenter.backends.auth.WechatBackend',
-    'personalcenter.backends.auth.MyBackend',       
+    'authwrapper.backends.auth.WechatBackend',
+    'authwrapper.backends.auth.MyBackend',       
     'django.contrib.auth.backends.ModelBackend', 
     )
-AUTH_USER_MODEL = 'personalcenter.MyUser'
+AUTH_USER_MODEL = 'authwrapper.MyUser'
 
 # COMMENTS_APP = 'threadedcomments'
 COMMENTS_APP = 'comments'
@@ -242,3 +245,5 @@ else:
 
 ACCOUNT_REGISTER_TYPE = 'phone' #phone, mail
 ACCOUNT_ALLOW_MIX_TYPE_LOGIN = True
+
+PHONE_LOGIN_ATTEMPTS = 100

@@ -38,7 +38,6 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^accounts/', include('registration.backends.default.urls')),    
     url(r'^products/', include('products.urls')),
     url(r'^categories/', include('products.urls_categories')),
 
@@ -57,6 +56,10 @@ urlpatterns = patterns('',
     url(r'^crowdfundings/', include('crowdfundings.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^auth/', include('authwrapper.urls')),
+
+    url(r'^accounts/', include('registration.backends.default.urls')),    
+
+    url(r'^phone_login/', include('phone_login.urls')),    
 
     #url(r'^ckeditor/', include('ckeditor.urls')),
     
