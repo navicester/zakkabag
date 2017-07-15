@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 # Register your models here.
-from .models import MyUser
+from .models import MyUser, WechatUserProfile
 from .forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
@@ -51,8 +51,14 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
+class WechatUserProfileAdmin(admin.ModelAdmin):
+    list_display = ["openid", "unionid", "nickname"]
+    class Meta:
+        model = WechatUserProfile
+
 # Now register the new UserAdmin...
 admin.site.register(MyUser, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 #admin.site.unregister(Group)
+admin.site.register(WechatUserProfile, WechatUserProfileAdmin)

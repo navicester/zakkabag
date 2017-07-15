@@ -21,17 +21,22 @@ class MyBackend(object):
     def authenticate(self, username=None, password=None, **kwargs):  
     #def authenticate(self, account_type = None, username=None, password=None, **kwargs):      
 
+        '''
         try:
             """login with user info directly"""
             if kwargs['kwargs']['user'] :
                 return kwargs['kwargs'].get('user',None)
         except:
             pass
+       '''
 
         try:
             """login with user info directly"""
             if kwargs['user'] :
-                return kwargs.get('user',None)
+                if isinstance(kwargs['user'], UserModel):
+                    return kwargs.get('user',None)
+                else: #wechat user
+                    return None
         except:
             pass
 

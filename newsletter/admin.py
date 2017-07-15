@@ -9,10 +9,7 @@ class SignUpAdmin(admin.ModelAdmin):
 	# class Meta:
 	# 	model = SignUp
 
-class UserWechatAdmin(admin.ModelAdmin):
-	list_display = ["openid", "unionid", "nickname"]
-	class Meta:
-		model = UserWechat
+
 
 class BannerAdmin(admin.ModelAdmin):
 	list_display = ["image", "title", "text", "active"]
@@ -27,6 +24,5 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(SignUp, SignUpAdmin)
-admin.site.register(UserWechat, UserWechatAdmin)
 admin.site.register(Banner, BannerAdmin)
 admin.site.register(Article, ArticleAdmin)

@@ -42,8 +42,7 @@ def login(request):
             auth_info = api.exchange_code_for_access_token(code=code)
             api = WeixinMpAPI(access_token=auth_info['access_token'])
             api_user = api.user(openid=auth_info['openid'])                
-            user = authenticate(request=request, user=api_user)
-            print user
+            user = authenticate(request = request, user = api_user)
             if user:
                 auth_login(request, user)
                 return redirect(redirect_to)
