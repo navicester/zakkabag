@@ -19,7 +19,8 @@ def image_upload_to(instance, filename):
     #import time
     #new_filename = "%s-%s.%s" %(time.time(), slug, file_extension)    
     basename = basename
-    return "crowdfunding/%s/%s" %(instance.user.lower(), new_filename)
+    username = instance.user.__unicode__()
+    return "crowdfunding/%s/%s" %(username.lower(), new_filename)
 
 class Crowdfunding(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)

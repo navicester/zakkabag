@@ -71,6 +71,7 @@ class CrowdfundingCreateView(CreateView):
     #     return reverse("CrowdfundingListView")
 
     def post(self, request, *args, **kwargs):
+        postresult = super(CrowdfundingCreateView,self).post(request, args, kwargs)
         if request.is_ajax():
             id = request.POST['id']
             f = request.FILES['picture']
@@ -89,7 +90,8 @@ class CrowdfundingCreateView(CreateView):
                 #return HttpResponseRedirect(reverse("CrowdfundingListView"))
                 return HttpResponseRedirect(crowdfunding.get_absolute_url())
             else:
-                return self.form_invalid(crowdfundingForm)
+                return postresult
+                #return self.form_invalid(crowdfundingForm)
 
             # if 0:
             #     filename=request.FILES['image']

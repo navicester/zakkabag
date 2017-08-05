@@ -24,6 +24,22 @@
 		color:white; 
 		background-color: #2d826f;
 	}
+
+	.footer hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 0;
+    border-top: 1px solid #eee;
+    }
+
+    .footer .form-group {
+        margin-bottom: 5px;
+    }
+
+    .footer .form-control {
+    height: 30px!important;
+    padding: 6px 6px;
+}
 </style>
 
 
@@ -31,11 +47,11 @@
 
 	<div class="row foot-link"> 
 	    <div class="col-sm-2 col-sm-offset-2">
-	    	<b>FOLLOW US</b><br>
+	    	<br><b>FOLLOW US</b><hr>
 	    	<img  class= 'img-responsive' style=" margin:0;" src='/media/footer/weixin.jpg'/>	
 	    </div>
 	    <div class="col-sm-2" >
-	    	<b>ABOUT US</b>
+	    	<br><b>ABOUT US</b><hr>
 	    	<ul>		    	
 		    	<li><a href="{% url 'ArticleListView' %}">News</a></li>
 		    	<li><a href="{% url 'products' %}">Products</a></li>
@@ -43,7 +59,7 @@
 	    	</ul>
 	    </div>
 	    <div class="col-sm-2">
-	    	<b>CONTACT US</b>
+	    	<br><b>CONTACT US</b><hr>
 	    	<ul>		    	
 		    	<li>电话: 13888888888</li>
 		    	<li>地址: 泰州</li>
@@ -52,7 +68,7 @@
 	    	
 	    </div>
 	    <div class="col-sm-2">
-	    	<b>FEEDBACK</b><br>
+	    	<br><b>FEEDBACK</b><hr>
 	    	<form method='POST' action=''>{% csrf_token %}
 				<div id="div_id_full_name" class="form-group"> 
 					<label for="id_full_name" class="control-label ">Full name</label> 

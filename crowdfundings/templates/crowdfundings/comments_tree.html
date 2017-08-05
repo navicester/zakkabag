@@ -3,43 +3,53 @@
 {% load mytags %}
 
 <div id='cmt_show'>
-	<h3>Comments for Crowdfunding - {{ object.title }}:</h3>
+	<h3>Comments for - {{ object.title }}:</h3>
 	<hr>
-	{# get_comment_list for object as comments #}
-	{% full_tree_for_model comments.MPTTComment as comments %}
+	{% get_comment_list for object as comments %}
+	{# full_tree_for_model comments.MPTTComment as comments #}
 
 	{% if comments %}
 		{% recursetree comments %}
-			{% if node.level > 0 or node.object_pk == object.id|int2str %}
+			{# if node.level > 0 or node.object_pk == object.id|int2str #} {# required only if full_tree_for_model used #}
 				<div {% if request.REQUEST.c|add:"0" == node.id %}id="newly_posted_comment"{% endif %}>	
-					{% get_comment_form for node as form %}
-					<div class="media">
-						<div class="media-left">
-							<a href="#">
-							  <img style="height:35px; width:35px; " class="media-object" src="http://127.0.0.1:8000/media/products/test/test-None.png" alt="...">
+					<div class="comments-cell" {% if node.level > 0 %}style="border-color: #b5abab;border-style: solid;border-width: 1px;padding:5px 5px 5px 15px; margin:3px; background-color: rgba(217, 222, 174, 0.12);"{% endif %}>
+					    <div class="comments-msg" style=" min-height: 30px">
+							<a name="c{{ node.id }}" href="{{ node.user.get_image_url }}" style="float: left;">
+							    <img style="height:25px; width:25px; margin-right: 10px"  src="{{ node.user.get_image_url }}" alt="...">
 							</a>
+							{{ node.comment }}
 						</div>
-						<div class="media-body">
-						<h5 class="media-heading">{{ node.user }} {{ node.submit_date|timesince }} ago </h5>
-						<a type = "submit"  ><i class="fa fa-reply"  aria-hidden="true"> Reply</i></a>
-						<!-- href="{{ object.get_absolute_url }}#c{{ node.id }}" -->
-						</div>
-					</div>
-					<div class="comment-content">{{ node.comment }}</div>
-						
-					{% include "form.html" with form=form node=node object=object %}
+						<div class="row comment-footer">
+						    <div class="col-sm-6">
+								{{ node.user }} 
+							</div>
+							<div class="col-sm-6 pull-right text-right">
+								{{ node.submit_date|timesince }} ago 
+								<a type = "submit"><i class="fa fa-reply"  aria-hidden="true"> Reply</i></a>
+								<a href="{{ object.get_absolute_url }}#c{{ node.id }}">#</a>
+							</div>
+                        </div>
+										
 
-					{# recursion! children of a given comment #}
-					{% if not node.is_leaf_node %}
-						<ul class="children">
-						{{ children }}
-						</ul>
-					{% endif %} 
-					
+	                    {# get_comment_form for node as form #}
+						{# include "comments/form.html" with form=form node=node object=object #} <!-- replace by render_comment_form, default template is comments/form.html -->
+
+						{% render_comment_form for object %}
+
+						{# recursion! children of a given comment #}
+						<div class="children">
+						{% if not node.is_leaf_node %}
+							<!--<ul class="children">-->
+							{{ children }}
+							<!--</ul>-->
+						{% endif %} 
+						</div>
+					</div>					
 				</div>	
-			{% endif %}				
+			{# endif #}
 		{% endrecursetree %}
 	{% endif %}
+	{% render_comment_form for object %}
 
 </div>
 

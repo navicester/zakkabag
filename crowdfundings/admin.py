@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Crowdfunding
 
 class CrowdfundingAdmin(admin.ModelAdmin):
-	list_display = ['id', '__unicode__', ]
+	list_display = ['id', 'title','__unicode__', 'user', 'date_joined']
 
 	class Meta:
 		model = Crowdfunding

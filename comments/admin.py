@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import MPTTComment
 
 class MPTTCommentAdmin(admin.ModelAdmin):
-	list_display = ['id', '__unicode__', ]
+	list_display = ['id', 'parent',  '__unicode__', ]
 
 	class Meta:
 		model = MPTTComment

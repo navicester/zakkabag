@@ -64,16 +64,19 @@ $("#getVerificationCode").click(function(event){
 	input[type=submit]{width:20%;margin-left:0%;float:right;}
 {% endcomment  %}	
 
-/*
-.has-error .controls input {
-    border-color: #a94442;
-}
-*/
 .controls input {
 width: 100%
 }
 
+.control-label{
+    padding-right: 5px;
+    padding-left: 5px;
+}
 
+.controls{
+    padding-right: 5px;
+    padding-left: 5px;
+}
 
 
 #getVerificationCodeForm{
@@ -102,11 +105,11 @@ admin/includes/fieldset.html
 
             {% for field in form %}
             <div class="form-group {% if field.errors %}has-error{% endif %}">
-              <div class="col-sm-4 col-xs-4 control-label">
+              <div class="col-sm-4 col-xs-3 control-label">
                   {{field.label_tag}}
               </div>
               
-              <div class="{% if field.label == 'One-Time Password' %} col-sm-4 col-xs-4 {% else %} col-sm-8 col-xs-8 {% endif %} controls">                                     
+              <div class="{% if field.label == 'One-Time Password' %} col-sm-4 col-xs-5 {% else %} col-sm-8 col-xs-9 {% endif %} controls">                                     
                 {{field}}                
                 {% if field.help_text %}<p class="help">{{ field.help_text|safe }}</p>{% endif %}              
                 <p class="help-block"><strong>{% if not field.is_readonly %}
@@ -127,7 +130,7 @@ admin/includes/fieldset.html
 
 
           <div class="form-group">
-            <div class="col-sm-12 col-xs-12">
+            <div class="col-xs-9 col-sm-8  col-xs-offset-3 col-sm-offset-4 controls">
               <button type="submit" class="btn btn-default"  style="width: 100%">Sign Up</button>
             </div>
           </div>

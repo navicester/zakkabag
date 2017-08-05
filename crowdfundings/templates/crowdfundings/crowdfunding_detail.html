@@ -15,14 +15,12 @@
 	<div class='col-sm-8'> 
 		<!-- {{signPackage}} -->
 		<h2>{{object.title}}</h2>
+		<hr>
 		{% if object.get_image_url %}
-		<div>
-			<img  id='img' class= 'img-responsive' src='{{ object.get_image_url }}'/>
-		</div>
-		{% endif %}		
-		<p class='lead'>
-			{{object.detail}}
-		</p>
+		<div><img  id='img' class= 'img-responsive' src='{{ object.get_image_url }}'/></div>
+		{% endif %}
+		<hr>		
+		<p class='lead'>{{object.detail}}</p>
 		<div>
 			<i id="chooseImagePlus" class="fa fa-plus" aria-hidden="true"></i>
 		</div>		
@@ -47,9 +45,16 @@
 
 <style type="text/css">
 	label{display:inline;float:left;width:20%;}
-	input,textarea{width:80%;}
+	input,textarea{width:100%;}
 	textarea{height:80px;}
 	input[type=submit]{width:20%;margin-left:0%;float:right;}
+
+
+.childrenX {
+    background-color: #e4d7d7;
+    border: solid 1px;
+    border-color: #bbbbc1;
+}
 </style>
 
 <!-- 
@@ -68,11 +73,12 @@ https://pypi.python.org/pypi/django-threadedcomments
 		<div id="new_cmt">
 			<hr>
 			{# render_comment_form for object #}
-			{% include "crowdfundings/comments_form.html" %}
+			{% include "comments/comments_form.html" %}
 
 			<hr>
 			{% with object as crowdfunding_obj %}		
 			{% endwith %}
+
 			{% include "crowdfundings/comments_tree.html" %}
 			<hr>
 		</div>
@@ -301,20 +307,25 @@ $("#favorite").click(function(){
 
 
 function bindform(this_fa_reply){
+/*
     var media_div = this_fa_reply.parents('.media');
     media_div.next('.comment-content').css("color","red");
     var form_div = media_div.next().next();
     // var form_div = media_div.next('.comment-form');
     // var form_div = media_div.nextUntil('.reply-form');  
+*/    
+    var cmt_cell = this_fa_reply.parents('.comment-footer');
+    var form_div = cmt_cell.next();
     $(".comment-form").hide();    
     form_div.css("display","block");
+    //form_div.parents(".comment-form").css("display","block");
 }
 
 $(".fa-reply").bind("click",function(){
     bindform($(this));
 });
 
-{% include "_ajax_comments.html" with object=object%}
+{% include "comments/_ajax_comments.html" with object=object%}
 
 {% endblock %}
 </script>
