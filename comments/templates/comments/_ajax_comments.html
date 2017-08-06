@@ -49,9 +49,18 @@
                         //$(commentwrap).slideDown(600);
                         //$(commentwrap).find('.comment-form form').bindPostCommentHandler(); //bind for the new form
 
-                        $(commentwrap).css("display","none");
-                        //$(commentchild).replaceWith('<div class="children"><div>' + postedcomment.html() + '</div></div>');
-                        $(commentchild).append(postedcomment.html());
+                        if($(commentwrap).parent().attr('id') == "cmt_show" || $(commentwrap).parent().attr('id') == "new_cmt")
+                        {
+                            $(commentwrap).css("display","block");
+                            $($("#cmt_show").children('.comment-form')[0]).before(postedcomment.html());
+                        }
+                        else
+                        {
+                            $(commentwrap).css("display","none");
+                            //$(commentchild).replaceWith('<div class="children"><div>' + postedcomment.html() + '</div></div>');
+                            $(commentchild).append(postedcomment.html());
+                        }                            
+                        
                         //$(commentchild).find('.comment-form form').bindPostCommentHandler(); // not valid, ?
                         $('.comment-form form').bindPostCommentHandler();      
  
