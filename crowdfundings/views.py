@@ -141,7 +141,7 @@ def CommentsShow(request, pk=''):
         'object': crowdfunding,
     }
 
-    #return render_to_response('crowdfundings/comments_tree.html', {"object": crowdfunding})
+    #return render_to_response('comments/comments_tree.html', {"object": crowdfunding})
     return render(request, "crowdfundings/comments_render.html", context)
-    #return render(request, "crowdfundings/comments_tree.html", context)
+    #return render(request, "comments/comments_tree.html", context)
     

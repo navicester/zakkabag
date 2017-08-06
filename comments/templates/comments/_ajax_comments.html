@@ -25,6 +25,9 @@
                     url: "{% comment_form_target %}",
                     cache: false,
                     dataType: "html",
+                    beforeSend : function(){
+                        console.log("sent");
+                    },
                     success: function(html, textStatus) {                        
                         // window.location.reload();
 
@@ -39,17 +42,18 @@
                         // this method will only replace form with comment
                         // Extract the form from the returned html
                         postedcomment = $(html).find('#newly_posted_comment'); //find return the beneath, #newly_posted_comment will not show in html
-                        console.log(postedcomment.html());
+                        console.log("received");
+                        //console.log(postedcomment.html());
                         
                         //$(commentform).replaceWith(postedcomment.html());
                         //$(commentwrap).slideDown(600);
                         //$(commentwrap).find('.comment-form form').bindPostCommentHandler(); //bind for the new form
 
                         $(commentwrap).css("display","none");
-                        //$(commentchild).replaceWith('<div class="children">' + postedcomment.html() + '</div>');
+                        //$(commentchild).replaceWith('<div class="children"><div>' + postedcomment.html() + '</div></div>');
                         $(commentchild).append(postedcomment.html());
                         //$(commentchild).find('.comment-form form').bindPostCommentHandler(); // not valid, ?
-                        $('.comment-form form').bindPostCommentHandler();                         
+                        $('.comment-form form').bindPostCommentHandler();      
  
                         $(".fa-reply").bind("click",function(){bindform($(this));});                        
                         $('#comment_form form')[0].reset(); //only for new level0 comments post                       
@@ -65,10 +69,14 @@
     };
 })(jQuery);
 
+
+
 $(function() {
     $('.comment-form form').bindPostCommentHandler(); 
     $('#new_cmt form').bindPostCommentHandler(); 
+
 });
+
 
 
 

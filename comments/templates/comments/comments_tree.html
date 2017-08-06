@@ -11,7 +11,7 @@
 	{% if comments %}
 		{% recursetree comments %}
 			{# if node.level > 0 or node.object_pk == object.id|int2str #} {# required only if full_tree_for_model used #}
-				<div {% if request.REQUEST.c|add:"0" == node.id %}id="newly_posted_comment"{% endif %}>	
+				{% if request.REQUEST.c|add:"0" == node.id %}<div id="newly_posted_comment">{% endif %}	
 					<div class="comments-cell" {% if node.level > 0 %}style="border-color: #b5abab;border-style: solid;border-width: 1px;padding:5px 5px 5px 15px; margin:3px; background-color: rgba(217, 222, 174, 0.12);"{% endif %}>
 					    <div class="comments-msg" style=" min-height: 30px">
 							<a name="c{{ node.id }}" href="{{ node.user.get_image_url }}" style="float: left;">
@@ -45,7 +45,7 @@
 						{% endif %} 
 						</div>
 					</div>					
-				</div>	
+				{% if request.REQUEST.c|add:"0" == node.id %}</div>{% endif %}	
 			{# endif #}
 		{% endrecursetree %}
 	{% endif %}

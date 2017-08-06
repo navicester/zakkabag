@@ -57,29 +57,13 @@
 }
 </style>
 
-<!-- 
-http://django-mptt.readthedocs.io/en/latest/templates.html
-http://django-mptt.github.io/django-mptt/templates.html 
-https://pypi.python.org/pypi/django-threadedcomments
--->
-
-{% comment %}
-		<div {% if request.REQUEST.c|add:"0" == node.id %}id="newly_posted_comment"{% endif %}>	
-			{% full_tree_for_model comments.MPTTComment as genres %}
-			{% include "crowdfundings/comments_mptt_tree.html" with root=object %}
-		</div>
-{% endcomment %}
-
 		<div id="new_cmt">
 			<hr>
 			{# render_comment_form for object #}
 			{% include "comments/comments_form.html" %}
 
 			<hr>
-			{% with object as crowdfunding_obj %}		
-			{% endwith %}
-
-			{% include "crowdfundings/comments_tree.html" %}
+			{% include "comments/comments_tree.html" %}
 			<hr>
 		</div>
 		
