@@ -86,7 +86,7 @@ from PIL import Image
 
 qr=qrcode.QRCode(
      version = 2,
-     error_correction = qrcode.constants.ERROR_CORRECT_L,
+     error_correction = qrcode.constants.ERROR_CORRECT_H,
      box_size=10,
      border=10,)
 qr.add_data('http://zakkabag.applinzi.com/newsletter/')
@@ -106,7 +106,7 @@ img.show()
 
 ![Alt text](img/qr_with_logo.png)
 
-这种方法是直接用一个图片叠加在生成的二维码图片上，会导致原二维码信息丢失，无法识别
+注意：这种方法是直接用一个图片叠加在生成的二维码图片上，会导致原二维码信息丢失，难以识别。需要将容错参数改为 ERROR_CORRECT_H
 
 
 
