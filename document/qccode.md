@@ -78,7 +78,8 @@ def gen_imge(img, factor = 4, icon = "logo.png"):
 	
     return img
 ```
-接着上面的基本用法
+在前面img生成之后，调用还函数叠加logo
+
 ``` python
 import qrcode
 from PIL import Image
@@ -97,7 +98,13 @@ img = gen_imge(img)
 
 img.show()
 ```
+插入的log
 
+![Alt text](img/logo.png)
+
+生成的图片
+
+![Alt text](img/qr_with_logo.png)
 
 
 
