@@ -108,6 +108,21 @@ img.show()
 
 注意：这种方法是直接用一个图片叠加在生成的二维码图片上，会导致原二维码信息丢失，难以识别。需要将容错参数改为 ERROR_CORRECT_H
 
+# 二维码解析
+- [qr-code-decoder-library-for-python](https://stackoverflow.com/questions/9310280/qr-code-decoder-library-for-python)
+- [How to decode a QR-code image in (preferably pure) Python?](http://www.howtobuildsoftware.com/index.php/how-do/bIAP/python-decode-qr-code-zxing-zbar-how-to-decode-a-qr-code-image-in-preferably-pure-python)
+- [how-to-decode-a-qr-code-image-in-preferably-pure-python](https://stackoverflow.com/questions/27233351/how-to-decode-a-qr-code-image-in-preferably-pure-python)
+- [decoding-qr-code-in-python](https://stackoverflow.com/questions/33519479/decoding-qr-code-in-python)
+- [qr-code-decoder-library-for-python](https://stackoverflow.com/questions/9310280/qr-code-decoder-library-for-python)
+- https://pypi.python.org/pypi/zbar
+- https://pypi.python.org/pypi/qrtools/
+- https://github.com/primetang/qrtools
+- https://launchpad.net/qr-tools
+- https://pypi.python.org/pypi/qrcode
+- [Python如何识别二维码](https://zhuanlan.zhihu.com/p/21292914)
+- [Python zxing 库解析（条形码二维码识别）](http://www.cnblogs.com/oucsheep/p/6269813.html)
+
+
 
 
 
