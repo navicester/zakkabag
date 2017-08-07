@@ -50,3 +50,21 @@ img.show()
 >
 > The **border** parameter controls how many boxes thick the border should be (the default is 4, which is the minimum according to the specs).
 
+## 生成带图案的二维码
+接着上面的基本用法
+``` python
+import qrcode
+qr=qrcode.QRCode(
+     version = 2,
+     error_correction = qrcode.constants.ERROR_CORRECT_L,
+     box_size=10,
+     border=10,)
+qr.add_data('http://zakkabag.applinzi.com/newsletter/')
+qr.make(fit=True)
+img = qr.make_image()
+```
+
+
+
+
+
