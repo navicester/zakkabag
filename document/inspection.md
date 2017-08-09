@@ -26,7 +26,9 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 </ul>
 ```
 显示效果如下
-![inspection_radioselect_ul_li_raw][img/inspection_radioselect_ul_li_raw.png]
+![inspection_radioselect_ul_li_raw](img/inspection_radioselect_ul_li_raw.png)
+
+
 
 ### 隐藏li的默认样式 (去掉圆点)
 首选去掉圆点
@@ -50,6 +52,8 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 }
 
 ```
+修改后效果
+![inspection_radioselect_ul_li_after](img/inspection_radioselect_ul_li_after.png)
 
 ### 参考
 [ul li css 做横向菜单](http://www.cnblogs.com/amylis_chen/archive/2011/09/24/2188398.html)
