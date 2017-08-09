@@ -58,3 +58,9 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 ### 参考
 [ul li css 做横向菜单](http://www.cnblogs.com/amylis_chen/archive/2011/09/24/2188398.html)
 
+## 水平表单
+参考 http://getbootstrap.com/css/#forms-horizontal
+
+
+
+
