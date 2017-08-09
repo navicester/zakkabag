@@ -1,21 +1,50 @@
 {% extends "base.html" %}
 
+<style type="text/css">
+{% block style %}
+
+
+{% endblock%}
+</style>
+
+
+
 {% block content %}
 
 <div class='row'>
-<div class='col-sm-6 col-sm-offset-3'>
-<div class="text-center">
-	<lead><h1>{{object}}</h1></lead>
-	time : {{object.timestamp}}
-	<p>{{object.plug}}</p>
-</div>
-<hr>
+	<div class='col-sm-6 col-sm-offset-3'>
+		<div class="text-center">
+			<lead><h1>{{object.location}}</h1></lead>
+			Time : {{object.timestamp}}			
+		</div>
+		<hr>
 
-<div>
-	{{ object.object|safe }}	
-	{{form}}
-</div>
-</div>
+		<div>	
+		    {% for field in form %}
+		        {% if field.is_hidden %}
+		            <div>{{ field }}</div>
+		        {% else %}
+		            {% if field.errors %}{{ field.errors }}{% endif %}
+		            <p
+		                {% if field.errors %} class="error"{% endif %}
+	                    {% ifequal field.name "timestamp" %} style="display:none;"{% endifequal %}>
+	                    <div class="row field">
+	                        <div class="col-xs-3">
+	                        	{{ field.label_tag }}
+	                        </div>
+	                        <div class="col-xs-9">
+	                        	{{ field }}
+	                        </div>	                     
+	                    </div>
+	                </p>
+	            {% endif %}			
+			{% endfor %}
+
+			<input type="submit" name="submit" class="btn btn-default" value="submit"/>
+		</div>
+	</div>
+	<div class='col-sm-3'>
+	</div>
 </div>
 
 
