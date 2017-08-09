@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'orders',
     'personalcenter',
     'crowdfundings',
+    'inspection',
     'crispy_forms',
     'registration',
     'django_filters',

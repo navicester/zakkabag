@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class='row'>
+	<div class='col-sm-6 col-sm-offset-2'>
+		<div class="article-table">
+			{% for object in objects %}
+				<div class="article-row row">
+					<div class="article-cell article-img col-sm-3 ">
+						<p class="article-title"><a href='{{ object.get_absolute_url }}'>{{object}}</a></p>			
+					</div>
+					<div class="article-cell article-text col-sm-8">
+						<p class="article-abstract">{{object.location}}</p>
+						<span class="article-time">{{object.timestamp}}</span>
+					</div>					
+				</div>
+				<hr>
+			{% endfor %}
+		</div>
+	</div>
+	<div class='col-sm-3'>
+		<h3>Latest Update</h3>
+		<hr>
+		<ul style="list-style:none; padding-left:2px; margin-left:2px;">
+			{% for object in objects %}
+			<li style="padding-bottom: 5px;">
+				<a href='{{ object.get_absolute_url }}'>{{object}}</a>
+			</li>
+			{% endfor %}
+		</ul>
+
+		
+	</div>
+</div>
+
+{% endblock %}

@@ -56,6 +56,7 @@ urlpatterns = patterns('',
     url(r'^crowdfundings/', include('crowdfundings.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^auth/', include('authwrapper.urls')),
+    url(r'^inspection/', include('inspection.urls')),
 
     url(r'^accounts/', include('registration.backends.default.urls')),    
 

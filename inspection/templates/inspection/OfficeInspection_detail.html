@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class='row'>
+<div class='col-sm-6 col-sm-offset-3'>
+<div class="text-center">
+	<lead><h1>{{object}}</h1></lead>
+	time : {{object.timestamp}}
+	<p>{{object.plug}}</p>
+</div>
+<hr>
+
+<div>
+	{{ object.object|safe }}	
+	{{form}}
+</div>
+</div>
+</div>
+
+
+{% endblock %}
