@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, ModelFormMixin
+
 
 # Create your views here.
 from .models import OfficeInspection
@@ -37,7 +38,9 @@ class OfficeInspectionFormView(FormView):
         return "/home/"
 '''
 
-class OfficeInspectionDetailView(FormMixin, DetailView):
+#class OfficeInspectionDetailView(FormMixin, DetailView):
+class OfficeInspectionDetailView(ModelFormMixin, DetailView):
+    
     model = OfficeInspection
     template_name = "inspection/officeinspection_detail.html"
     form_class = OfficeInspectionForm
@@ -48,8 +51,27 @@ class OfficeInspectionDetailView(FormMixin, DetailView):
         context["form"] = self.form_class(instance = self.get_object()) 
         return context        
 
+    def get_object(self, *args, **kwargs):
+        officeinspection_pk = self.kwargs.get("pk")
+        officeinspection = None
+        if officeinspection_pk:
+            print officeinspection_pk
+            officeinspection = get_object_or_404(OfficeInspection, pk=officeinspection_pk)
+        return officeinspection 
+
     def get(self, request, *args, **kwargs):
         return super(OfficeInspectionDetailView, self).get(request, *args, **kwargs) 
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form() 
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            self.object = self.get_object(*args, **kwargs)
+            return self.form_invalid(form)
+
+        return super(OfficeInspectionDetailView, self).post(request, *args, **kwargs) 
 
     def dispatch(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -59,6 +81,9 @@ class OfficeInspectionDetailView(FormMixin, DetailView):
             (instance,request.path_info),
         ])
         return super(OfficeInspectionDetailView, self).dispatch(request,args,kwargs)   
+
+    def get_success_url(self):
+        return reverse("OfficeInspection_list", kwargs=self.kwargs)    
 
 class OfficeInspectionListView(ListView): 
     model = OfficeInspection
