@@ -1,44 +1,29 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, CreateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin, ModelFormMixin
-
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 from .models import OfficeInspection
 from .forms import OfficeInspectionForm
 
 # Create your views here.
-'''
-class OfficeInspectionFormView(FormView):
-    form_class = AddressForm
-    template_name = "inspection/office_inspection.html"
 
-    def get_form(self, *args, **kwargs):
-        form = super(OfficeInspectionFormView, self).get_form(*args, **kwargs)
-
-        form.fields["billing_address"].queryset = UserAddress.objects.filter(
-                user__email=self.request.user.email,
-                type='billing',
-            )
-        form.fields["shipping_address"].queryset = UserAddress.objects.filter(
-                user__email=self.request.user.email,
-                type='shipping',
-            )
-        print self.request.user.email
-        return form
+class OfficeInspectionCreateView(CreateView):
+    form_class = OfficeInspectionForm
+    template_name = "inspection/officeinspection_create.html"
 
     def form_valid(self, form, *args, **kwargs):
-        form = super(OfficeInspectionFormView, self).form_valid(form, *args, **kwargs)
+        form = super(OfficeInspectionCreateView, self).form_valid(form, *args, **kwargs)
         return form
 
     def get_success_url(self, *args, **kwargs):
-        return "/home/"
-'''
+        return reverse("OfficeInspection_list", kwargs={}) 
 
-#class OfficeInspectionDetailView(FormMixin, DetailView):
+
 class OfficeInspectionDetailView(ModelFormMixin, DetailView):
     
     model = OfficeInspection
@@ -64,11 +49,11 @@ class OfficeInspectionDetailView(ModelFormMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form() 
+        self.object = self.get_object(*args, **kwargs)
 
         if form.is_valid():
             return self.form_valid(form)
-        else:
-            self.object = self.get_object(*args, **kwargs)
+        else:            
             return self.form_invalid(form)
 
         return super(OfficeInspectionDetailView, self).post(request, *args, **kwargs) 
@@ -83,7 +68,18 @@ class OfficeInspectionDetailView(ModelFormMixin, DetailView):
         return super(OfficeInspectionDetailView, self).dispatch(request,args,kwargs)   
 
     def get_success_url(self):
-        return reverse("OfficeInspection_list", kwargs=self.kwargs)    
+        #return reverse("OfficeInspection_list", kwargs=self.kwargs)    
+        return reverse("OfficeInspection_list", kwargs={}) 
+
+    def form_valid(self, form, *args, **kwargs):
+        #form.instance = self.get_object(*args, **kwargs)  # without this, form will create another new object
+        obj = form.save(commit = False)
+        instance = self.get_object()
+        obj.id = instance.id
+        obj.timestamp = instance.timestamp
+        obj.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class OfficeInspectionListView(ListView): 
     model = OfficeInspection

@@ -4,6 +4,8 @@
 
 <div class='row'>
 	<div class='col-sm-6 col-sm-offset-2'>
+	    <h3>Inspections	</h3>
+	    <hr>
 		<div class="article-table">
 			{% for object in objects %}
 				<div class="article-row row">
@@ -17,13 +19,14 @@
 				</div>
 				<hr>
 			{% endfor %}
+			<h4><a href='{% url "OfficeInspection_create" %}'>Create New Item</a></h4>
 		</div>
 	</div>
 	<div class='col-sm-3'>
 		<h3>Latest Update</h3>
 		<hr>
 		<ul style="list-style:none; padding-left:2px; margin-left:2px;">
-			{% for object in objects %}
+			{% for object in objects_sort %}
 			<li style="padding-bottom: 5px;">
 				<a href='{{ object.get_absolute_url }}'>{{object}}</a>
 			</li>

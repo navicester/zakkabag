@@ -11,16 +11,26 @@ class OfficeInspectionForm(forms.ModelForm):
     class Meta:
         model = OfficeInspection
 
-        fields = [
-            'plug',
-            'location',
-        ]     
+        exclude = [
+            'timestamp',
+            'updated',
+        ]
+        
 
                
-    plug = forms.MultipleChoiceField(
+    #plug = forms.MultipleChoiceField(
+    plug = forms.ChoiceField(
             choices=RESULT_OPTION,
             widget = forms.RadioSelect,
             )
 
+    power = forms.ChoiceField(
+            choices=RESULT_OPTION,
+            widget = forms.RadioSelect,
+            )
     # ModelChoiceField
-    
+
+    '''
+    def clean_plug(self):
+        return self.data.get('plug')
+    '''

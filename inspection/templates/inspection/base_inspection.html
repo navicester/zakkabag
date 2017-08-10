@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+<style type="text/css">
+{% block style %}
+
+.field-area ul{
+	list-style:none;
+}
+
+.field-area li{
+	float:left;
+	width:200px;
+}
+
+{% endblock%}
+</style>
+
+<script>
+{% block js %}
+
+$(document).ready(function(){
+	$(".field-area input").addClass("form-control");
+	$(".field-area textarea").addClass("form-control");
+	$(".field-area .field-label label").addClass("col-sm-2 control-label");
+});
+
+{% endblock %}
+</script>

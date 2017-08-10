@@ -11,7 +11,9 @@ RESULT_OPTION = (
 
 class OfficeInspection(models.Model):
 	plug = models.CharField(_('plug'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
-	location = models.CharField(max_length=120, blank=True, null=True)
+	power = models.CharField(_('power'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
+	comments = models.TextField(blank=True, null=True)
+	location = models.CharField(max_length=120, blank=False, null=True)
 	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 	updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
