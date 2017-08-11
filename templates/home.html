@@ -27,8 +27,11 @@
   {% include "jumbotron.html" with featured_image=featured_image%}
 {% endblock %}
 
-{% comment %}
-{% endcomment %}
+<script type="text/javascript" charset="utf-8">
+{% block jquery %}
+
+{% endblock %}
+</script>
 
 {% block carousel %}  
   {% include "carousel.html" with objects=banners %}

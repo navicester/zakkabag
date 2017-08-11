@@ -14,6 +14,7 @@ class OfficeInspectionForm(forms.ModelForm):
         exclude = [
             'timestamp',
             'updated',
+            'image'
         ]
         
 

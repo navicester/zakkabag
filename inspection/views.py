@@ -12,6 +12,27 @@ from .forms import OfficeInspectionForm
 
 # Create your views here.
 
+def gen_qrcode(link):
+    import qrcode
+    qr=qrcode.QRCode(
+         version = 2,
+         error_correction = qrcode.constants.ERROR_CORRECT_L,
+         box_size=10,
+         border=10,)
+    qr.add_data(link)
+    qr.make(fit=True)
+    img = qr.make_image()
+    #img.show()
+
+    from django.conf import settings
+    import os
+    photopath = os.path.join(settings.MEDIA_ROOT, "inspection")
+    if not os.path.exists(photopath):
+        os.makedirs(photopath)
+    path = os.path.join(photopath, 'create.jpg')
+    img.save(path)
+    return path
+
 class OfficeInspectionCreateView(CreateView):
     form_class = OfficeInspectionForm
     template_name = "inspection/officeinspection_create.html"
@@ -77,6 +98,7 @@ class OfficeInspectionDetailView(ModelFormMixin, DetailView):
         instance = self.get_object()
         obj.id = instance.id
         obj.timestamp = instance.timestamp
+        obj.image = gen_qrcode(self.request.get_host() + reverse("OfficeInspection_create", kwargs={}))
         obj.save()
 
         return HttpResponseRedirect(self.get_success_url())

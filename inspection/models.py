@@ -1,13 +1,19 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
-
+from django.utils.text import slugify
 # Create your models here.
 
 RESULT_OPTION = (
     ('yes', 'Yes'),
     ('no', 'No'),
 )
+
+# inspection/office/
+def image_upload_to(instance, filename):
+    title, file_extension = filename.split(".")
+    new_filename = "%s-%s.%s" %(instance.timestamp, slugify(title), file_extension)
+    return "inspection/%s/%s" %(instance.location, new_filename)
 
 class OfficeInspection(models.Model):
 	plug = models.CharField(_('plug'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
@@ -16,6 +22,7 @@ class OfficeInspection(models.Model):
 	location = models.CharField(max_length=120, blank=False, null=True)
 	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 	updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+	image = models.ImageField(upload_to=image_upload_to, blank=True, null=True)
 
 	def __unicode__(self): 
 		return "Office " + self.location
