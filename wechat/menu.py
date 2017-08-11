@@ -11,8 +11,9 @@ import json
 
 @csrf_exempt
 def handleMenuRequest(request):
+	template = "debug/menu.html"
 	if request.method == 'GET':
-		return render(request, "menu.html", {})
+		return render(request, template, {})
 	elif request.method == 'POST':
 		purpose = smart_str(request.POST.get("purpose", None))
 		json_data = None
@@ -85,6 +86,6 @@ def handleMenuRequest(request):
 				response = HttpResponse("fail",content_type="application/xml")
 			return response
 		else:
-			return render(request, "menu.html", {})
+			return render(request, template, {})
 	else:
 		return "welcome to zakkabag"

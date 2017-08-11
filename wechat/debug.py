@@ -1,4 +1,3 @@
-# Create your views here.
 from django.shortcuts import render, HttpResponseRedirect, Http404,render_to_response, HttpResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +11,7 @@ from wechat.views import responseMsg
 @csrf_exempt
 def handleDebug(request):
     #context = {}
-    template = "wechat.html"
+    template = "debug/wechat.html"
 
     if request.method == 'GET':
         if 'send-content' in request.GET: #submit throught "debug" button
@@ -33,13 +32,13 @@ def handleDebug(request):
             else:
                 #redirectionLink = "/debug/?type=text&send-content=%s" % rawStr
                 #return HttpResponseRedirect(redirectionLink)
-                return render_to_response("wechat.html",context)
+                return render_to_response(template,context)
         else: # startup
             context = {}
             context = RequestContext(request, {
                 'receivedContent' : "loading...."
             })
-            return render(request, "wechat.html", context)
+            return render(request, template, context)
     elif request.method == 'POST':
         '''
         if request.POST.has_key('mptoken') and request.POST['mptoken'] != "" and request.POST.has_key('mpxml') == False:

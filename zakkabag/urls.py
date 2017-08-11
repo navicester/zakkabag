@@ -3,8 +3,6 @@ from django.conf.urls.static import static
 
 from django.conf.urls import patterns, include, url
 from wechat.views import handleRequest
-from wechat.menu import handleMenuRequest
-
 
 from django.contrib import admin
 
@@ -23,10 +21,7 @@ def i18n_javascript(request):
 
 urlpatterns = patterns('',
     # Examples:
-	url(r'^$', 'wechat.views.handleRequest'),
-    url(r'^weixin', 'wechat.views.handleRequest'),
-    url(r'^menu', 'wechat.menu.handleMenuRequest', name='handleMenuRequest'),
-    url(r'^debug', 'debug.views.handleDebug', name='handleDebug'),
+    url(r'^$', 'wechat.views.handleRequest'),
 
     url(r'^home$', 'newsletter.views.home', name='home'),
     url(r'^contact/$', 'newsletter.views.contact', name='contact'),   
@@ -57,6 +52,7 @@ urlpatterns = patterns('',
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^auth/', include('authwrapper.urls')),
     url(r'^inspection/', include('inspection.urls')),
+    url(r'^wechat/', include('wechat.urls')),
 
     url(r'^accounts/', include('registration.backends.default.urls')),    
 
