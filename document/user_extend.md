@@ -351,6 +351,28 @@ def my_view(request):
    (6) ProfileBase(type)
    (7) 继承User
 
+(1)(2)，每次升级之后都要修改，维护成本太高  
+(3) 这个在原始的用户扩展中一般不用，因为会增加新的Models，但是对于额外的用户信息一般采用这种方法，比如微信用户，支付用户等等  
+(4) 不再支持  
+(5) 本文会采用该方法  
+(7) 从它的基类继承会更灵活  
+
+``` python
+class MyUser(MyAbstractUser):
+    class Meta(MyAbstractUser.Meta):
+        swappable = 'AUTH_USER_MODEL'
+
+class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
+
+    objects = MyUserManager()
+ 
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+        abstract = True
+class MyUserManager(BaseUserManager):
+```
+
 # 扩展用户授权
 
 
