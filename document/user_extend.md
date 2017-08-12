@@ -113,11 +113,11 @@ def authenticate(**credentials):
     user_login_failed.send(sender=__name__,
             credentials=_clean_credentials(credentials))
 ```
-- (1) inspect.getcallargs(backend.authenticate, **credentials)
+1. inspect.getcallargs(backend.authenticate, **credentials)
 
 首先它会遍历backend，根据参数去找到合适的authenticate函数，这个backend在settings.py文件AUTHENTICATION_BACKENDS里定义。
 
-- (2) user = backend.authenticate(**credentials)
+2. user = backend.authenticate(**credentials)
 
 当authenticate函数找到之后，它就会接下来执行授权操作，并返回用户信息
 
@@ -199,8 +199,10 @@ def login(request, user):
     user_logged_in.send(sender=user.__class__, request=request, user=user)
 
 ```
-- (1) request.session[SESSION_KEY]
+1. request.session[SESSION_KEY] = user.\_meta.pk.value_to_string(user)  
 SESSION_KEY会在后面_get_user_session_key中使用，用于获取用户
+2. request.session[BACKEND_SESSION_KEY] = user.backend  
+如果授权成功，django会把这个授权方式保存到session里，session周期里的下一次接入还是用这种方式。如果要强迫用不同方法授权，一个简单的方法是调用Session.objects.all().delete()
 
 注意两个user的差别
 ``` html
@@ -415,6 +417,13 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
 4. 在settings.py里添加配置ACCOUNT_REGISTER_TYPE，指示默认注册方式是邮件还是电话号码
 5. 根据ACCOUNT_REGISTER_TYPE确定USERNAME_FIELD和REQUIRED_FIELDS
 
+## 修改AUTH_USER_MODEL
+在settings.py添加
+``` python
+AUTH_USER_MODEL = 'authwrapper.MyUser'
+```
+以后调用新用户时，可以用django.contrib.auth.get_user_model或者settings.AUTH_USER_MODEL
+
 
 ## 添加用户管理
 ``` python
@@ -466,7 +475,94 @@ class MyUserManager(BaseUserManager):
 下一步是修改django\contrib\auth\management\commands\createsuperuser.py，可以指定函数参数
 
 # 扩展用户授权
+## 指定authentication backend
+Django维护了一个“authentication backends”列表，通过它在授权。Django会遍历所有的backends直到授权接收。
+authentication backends在settings里的[AUTHENTICATION_BACKENDS](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-AUTHENTICATION_BACKENDS)指定，可以是任意路径，默认的backends是
+```['django.contrib.auth.backends.ModelBackend']```  
+轮询算法见authenticate
+ 
+AUTHENTICATION_BACKENDS的顺序是有影响的，如果多个backends的用户名和密码都能验证通过，django在第一次匹配后就会停止。所以要特别小心参数的匹配。  
+如果backend抛出PermissionDenied异常，授权检查会立即停止，不会再检查后面的backend。
+ 
+**注意**：如果授权成功，django会把这个授权方式保存到session里，session周期里的下一次接入还是用这种方式。如果要强迫用不同方法授权，一个简单的方法是调用Session.objects.all().delete().
+ 
+Settings.py
+``` python
+AUTHENTICATION_BACKENDS = (        
+    'authwrapper.backends.auth.MyBackend', 
+    'django.contrib.auth.backends.ModelBackend', 
+    )
+AUTH_USER_MODEL = 'personalcenter.MyUser'
+```
 
+## 实现authentication backend
+必须实现的方法
+``` python
+get_user(user_id)
+authenticate(request, **credentials)
+```
+
+遗留问题
+> 不知道为什么？username登录时的request.user是有值的，但是wechat登录永远是anonymous，这个从一开始的render就开始了
+\_cached_user为AnonymousUser: AnonymousUser  
+>问题查清楚了，下面这个wechat auth backend函数没写好，之前返回None，这个函数在eclipse上打断点也进不去不知道为什么  
+>好像也不是这个问题，突然就好了
+
+``` python
+class MyBackend(object):
+    """Allows user to sign-in using email, username or phone_number."""
+    def authenticate(self, username=None, password=None, **kwargs):  
+        try:
+            """login with user info directly"""
+            if kwargs['user'] :
+                if isinstance(kwargs['user'], UserModel):
+                    return kwargs.get('user',None)
+                else: 
+                    return None
+        except:
+            pass
+
+        user = None
+        if username is None and kwargs.get(UserModel.USERNAME_FIELD,None) is None:
+            return None
+            
+        try:
+            """if allow mix login options
+            username/phone/mail """
+            if True == settings.ACCOUNT_ALLOW_MIX_TYPE_LOGIN:
+                if '@' in username:
+                    user = UserModel._default_manager.get(email=username)
+                elif '+' in username[0]: # to be precise
+                    user = UserModel._default_manager.get(phone=username)
+                else:
+                    user = UserModel._default_manager.get(username=username)
+            else:    
+                user = UserModel._default_manager.get_by_natural_key(username)
+            
+            if user.check_password(password):
+                return user
+        except UserModel.DoesNotExist:
+            UserModel().set_password(password)
+            return None
+        else:
+            if user.check_password(password) and self.user_can_authenticate(user):
+                return user
+            else:
+                return None
+                
+    def user_can_authenticate(self, user):
+        """Reject users with is_active=False. Custom user models that don't have that attribute are allowed."""
+        is_active = getattr(user, 'is_active', None)
+        return is_active or is_active is None
+        
+    def get_user(self, user_id):        
+        try:
+            user = UserModel._default_manager.get(pk=user_id)
+        except UserModel.DoesNotExist:
+            return None
+        return user if self.user_can_authenticate(user) else None        
+            
+```    
 
 
 
