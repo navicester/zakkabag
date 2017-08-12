@@ -1,11 +1,11 @@
 
 
 ## 单选改为横向
-设置form中的field为 RadioSelect，在template中它会以ul,li方式进行显示
+设置form中的field为 ChoiceField / RadioSelect，在template中它会以ul,li方式进行显示
 ``` python
 class OfficeInspectionForm(forms.ModelForm):
       
-    plug = forms.MultipleChoiceField(
+    plug = forms.ChoiceField(
             choices=RESULT_OPTION,
             widget = forms.RadioSelect,
             )
@@ -26,6 +26,7 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 </ul>
 ```
 显示效果如下
+
 ![inspection_radioselect_ul_li_raw](img/inspection_radioselect_ul_li_raw.png)
 
 
@@ -53,6 +54,7 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 
 ```
 修改后效果
+
 ![inspection_radioselect_ul_li_after](img/inspection_radioselect_ul_li_after.png)
 
 ### 参考
@@ -61,6 +63,10 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 ## 水平表单
 参考 http://getbootstrap.com/css/#forms-horizontal
 
+{{ form|crispy }}的显示效果为label单独行，这个对于有些模板排版就不会那么好看
 
+参考bootstrapp horizontal form效果，实现类似效果
+
+![inspection_horizontal_form_example](img/inspection_horizontal_form_example.png)
 
 
