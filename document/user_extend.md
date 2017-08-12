@@ -788,6 +788,28 @@ del request.session['wechat_id']
 ## 登陆 login
 ```
 from django.contrib.auth import login as auth_login
+```
+登陆最终都会调用基本的login函数
+
+
+## 退出   
+``` python
+from django.contrib.auth import logout as auth_logout
+
+def logout(request):
+    try:
+        del request.session['wechat_id']
+    except:
+        pass
+    auth_logout(request)
+    return redirect(reverse("home", kwargs={}))
+```
+退出时调用基本的logout函数，并删除wechat_id session
+
+## 完整的过程
+```
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import views as auth_views
 def login(request):
     REDIRECT_URI = request.POST.get('next', request.GET.get('next', reverse("home", kwargs={}))) #next indicated in templaetes
     if request.method == 'GET':
@@ -810,39 +832,38 @@ def login(request):
         REDIRECT_FIELD_NAME = 'next'
         return auth_views.login(request, redirect_field_name=REDIRECT_FIELD_NAME, extra_context=None)    
 
-        # below method is also OK
+    return auth_views.login(request, redirect_field_name=REDIRECT_URI, extra_context=None)    
+```
+1. WeixinMpAPI对微信进行授权
+登陆的过程会用到python-weixin的API，这个API主要是针对Mobile Phone使用的，其实的还没有去尝试使用过
+其中会用到几个参数APP_ID，APP_SECRET，这些都可以在公众号里面获取  
+redirect_uri表示授权成功之后跳转的地址  
+Wechat的login是通过get方式进行的
+
+2. 系统授权
+对于微信登陆方式，授权传递的参数即为wechat profile，在authenticate函数里会把它和UserModel进行绑定处  
+- 如果当前用户已登陆，则直接绑定该用户到微信账户，将来可能会增加确认窗口
+- 否则重定向到新的网页进行登陆或注册处理，登陆或注册成功后会继续绑定
+
+对于正常登陆方式，可以针对不同的backend进行授权
+- ModelBackend
+``` python
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request=request, username=username, password=password)
-        if user is not None:
-            auth_login(request, user) 
-        else:
-            return redirect(reverse("auth_login", kwargs={}))
-
-    return auth_views.login(request, redirect_field_name=REDIRECT_URI, extra_context=None)    
 ```
-1. WeixinMpAPI
-登陆的过程会用到python-weixin的API，这个API主要是针对Mobile Phone使用的，其实的还没有去尝试使用过
-其中会用到几个参数APP_ID，APP_SECRET，这些都可以在公众号里面获取  
-redirect_uri表示授权成功之后跳转的地址
-2. 授权
+
+3. 登陆
+最终的登陆都是调用django.contrib.auth.login
+- django.contrib.auth.login() 纯登陆操作，之前需完成相关的授权工作
+
+有些情况可以把调用封装起来，比如login form的处理
+- django.contrib.auth.view.login()，这个是正常的视图的登陆的处理，模板为'registration/login.html'
+
+	    
 
 
 
-
-## 退出   
-``` python
-from django.contrib.auth import logout as auth_logout
-
-def logout(request):
-    try:
-        del request.session['wechat_id']
-    except:
-        pass
-    auth_logout(request)
-    return redirect(reverse("home", kwargs={}))
-```
-退出时调用auth_logout函数，并删除wechat_id session
 
 # 用户扩展 (支持头像)
 
