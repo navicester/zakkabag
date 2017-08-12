@@ -361,6 +361,7 @@ def my_view(request):
 
 ## 添加用户域
 新的用户域如下
+
 | Field	| Type	| Property | Description |
 |-------|-------|----------|:-------------|
 |username	| CharField	| unique |	用户名 [如果电话注册= phone]
@@ -587,10 +588,39 @@ class MyBackend(object):
         return user if self.user_can_authenticate(user) else None        
             
 ```    
+1. authenticate
+这里面包含了几种场景
+- 传递user信息，那么如果用户存在的话，可以直接授权，这个往往用于第三方授权场景。第三方本身授权通过之后，然后储存的信息获取到MyUser信息，然后执行授权，不执行授权login会失败
+- 混合输入登陆，支持用户名，电话，邮箱登陆，这个时候要尝试多种匹配
+- 单一登陆，根据setting设置的登陆方式进行校验授权
 
+2. get_user
+获取用户信息
 
+3. user_can_authenticate
+这个用于验证注册的场景，比如邮箱或者电话号码注册账号都会立即创建账户，但不会立即激活，只有激活is_active = True之后，才能授权
 
+4. UserModel.\_default_manager.get和UserModel.\_default_manager.get_by_natural_key
+``` python
+user = UserModel.objects.filter(username=username).first()  
+user = UserModel.objects.get(username=username) 
+```
+上面这两种方式调用都会出错，分析原因可能是因为UserModel有多个manager, 导致行为上有差异，待验证
+> UserModel.\_default_manager
+> MyUserManager: personalcenter.MyUser.objects
 
+> UserModel.\_base_manager
+> Manager: personalcenter.MyUser.\_base_manager
+
+以后关于UserModel的get，尽量用 UserModel._default_manager
+
+针对不同的注册方式，get_by_natural_key可能根据 USERNAME_FIELD 准确的找到默认的field
+
+``` python
+    def get_by_natural_key(self, username):
+        return self.get(**{self.model.USERNAME_FIELD: username})
+```	
+\*\*{}解决了get后面model名字不确定的问题，也是之前困扰voith的一个问题
 
 
 
