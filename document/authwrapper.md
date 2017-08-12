@@ -382,7 +382,7 @@ def my_view(request):
 |account_type	| CharField	| | [mail, phone]	注册类型
 			
 
-
+authwrapper\models.py
 ``` python
 from __future__ import unicode_literals
 from authwrapper.fields import EmailNullField, PhoneNumberNullField
@@ -460,6 +460,8 @@ AUTH_USER_MODEL = 'authwrapper.MyUser'
 
 ## 信号
 django系统里面username是默认存在，如果用电话号码注册，这个信息一开始并不是必须的，为了通过django的验证，暂时通过设置username=phone来保证models的validation
+
+authwrapper\models.py
 ``` python
 def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
     if 'phone' == MyUser.USERNAME_FIELD:
@@ -469,6 +471,7 @@ def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
 pre_save.connect(myuser_pre_save_receiver, sender=MyUser)
 
 ## 添加用户管理
+authwrapper\models.py
 ``` python
     def _create_user(self, username, email, phone, password, **extra_fields):
         """
@@ -555,6 +558,7 @@ authenticate(request, **credentials)
 >问题查清楚了，下面这个wechat auth backend函数没写好，之前返回None，这个函数在eclipse上打断点也进不去不知道为什么  
 >好像也不是这个问题，突然就好了
 
+authwrapper\backends\auth.py
 ``` python
 class MyBackend(object):
     """Allows user to sign-in using email, username or phone_number."""
@@ -652,6 +656,8 @@ Validation规则变化之后，即使搜索135000000000（老的添加值在数�
 这儿会用到一个微信库 [python-weixin](https://pypi.python.org/pypi/python-weixin)
 
 1. 定义微信用户数据模型
+
+authwrapper\models.py
 ``` python
 class WechatUserProfile(models.Model):
     user = models.OneToOneField(
@@ -695,6 +701,8 @@ AUTHENTICATION_BACKENDS = (
 
 3. 实现backend
 同样要实现基本的authenticate和get_user函数
+
+authwrapper\backends\auth.py
 ``` python
 class WechatBackend(object):
 
@@ -764,6 +772,8 @@ request.session['wechat_id'] = profile.id
         return None
 ```
 在middle里将wechat信息添加进request，这样在处理navbar登陆选项时能够知道wechat信息
+
+zakkabag\middleware.py
 ``` python
 class openidmiddleware():
 
@@ -807,6 +817,7 @@ def logout(request):
 退出时调用基本的logout函数，并删除wechat_id session
 
 ## 完整的过程
+authwrapper\login.py
 ```
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import views as auth_views
@@ -903,6 +914,7 @@ templates.registration.activation_complete.html
 {% endblock %}
 ```
 
+personalcenter\login.py
 ``` python
 @login_required
 def account_link_to_wechat(request):
