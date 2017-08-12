@@ -738,7 +738,9 @@ class WechatBackend(object):
             return None
 ```	    
 1. authenticate
- 根据openid获取wechat用户model, 如果该wechat用户已存在，进一步检查该用户是否已关联UserModel，如果未关联，则关联数据；如果wechat用户不存在，则创建新用户
+调用时传递的参数为request和user，这个user是WeixinMpAPI User
+ 
+根据openid获取wechat用户model, 如果该wechat用户已存在，进一步检查该用户是否已关联UserModel，如果未关联，则关联数据；如果wechat用户不存在，则创建新用户
 
 2. get_user
 该处返回的还是UserModel对象
@@ -778,8 +780,69 @@ class openidmiddleware():
 
 调用get_wechat_user的必须是一个函数，所以要对它实例化之后才能调用
 
-## 登陆 login
+logout的时候要删除这个session
+``` python
+del request.session['wechat_id']
+```
 
+## 登陆 login
+```
+from django.contrib.auth import login as auth_login
+def login(request):
+    REDIRECT_URI = request.POST.get('next', request.GET.get('next', reverse("home", kwargs={}))) #next indicated in templaetes
+    if request.method == 'GET':
+        code = request.GET.get('code')
+        if code:
+            redirect_to = "http://%s%s" % (request.META['HTTP_HOST'], reverse("home", kwargs={})) # redirection URL after authenticate
+            api = WeixinMpAPI(appid=APP_ID, 
+                        app_secret=APP_SECRET,
+                        redirect_uri=redirect_to)
+            auth_info = api.exchange_code_for_access_token(code=code)
+            api = WeixinMpAPI(access_token=auth_info['access_token'])
+            api_user = api.user(openid=auth_info['openid'])                
+            user = authenticate(request = request, user = api_user)
+            if user and not user.is_anonymous():
+                auth_login(request, user)
+                return redirect(redirect_to)
+
+        return redirect(reverse("auth_login", kwargs={}))
+    else:  #normal login is POST
+        REDIRECT_FIELD_NAME = 'next'
+        return auth_views.login(request, redirect_field_name=REDIRECT_FIELD_NAME, extra_context=None)    
+
+        # below method is also OK
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request=request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user) 
+        else:
+            return redirect(reverse("auth_login", kwargs={}))
+
+    return auth_views.login(request, redirect_field_name=REDIRECT_URI, extra_context=None)    
+```
+1. WeixinMpAPI
+登陆的过程会用到python-weixin的API，这个API主要是针对Mobile Phone使用的，其实的还没有去尝试使用过
+其中会用到几个参数APP_ID，APP_SECRET，这些都可以在公众号里面获取  
+redirect_uri表示授权成功之后跳转的地址
+2. 授权
+
+
+
+
+## 退出   
+``` python
+from django.contrib.auth import logout as auth_logout
+
+def logout(request):
+    try:
+        del request.session['wechat_id']
+    except:
+        pass
+    auth_logout(request)
+    return redirect(reverse("home", kwargs={}))
+```
+退出时调用auth_logout函数，并删除wechat_id session
 
 # 用户扩展 (支持头像)
 
