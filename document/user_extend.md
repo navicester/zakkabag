@@ -3,7 +3,7 @@
 - 用户扩展
 - 用户授权
 
-https://docs.djangoproject.com/en/dev/topics/auth/default/#how-to-log-a-user-in
+djangoproject - [topics-auth](https://docs.djangoproject.com/en/dev/topics/auth/default)
 
 
 # django 中的实现
@@ -84,6 +84,171 @@ demo代码里backend的authenticate的参数包含request，调用authenticate�
 - [python 中参数*args, **kwargs](http://blog.csdn.net/anhuidelinger/article/details/10011013)
 
 ## 登陆 login
+
+__init__.py (site-packages\django\contrib\auth)
+
+``` python
+SESSION_KEY = '_auth_user_id'
+BACKEND_SESSION_KEY = '_auth_user_backend'
+HASH_SESSION_KEY = '_auth_user_hash'
+REDIRECT_FIELD_NAME = 'next'
+ 
+def login(request, user):
+    """
+    Persist a user id and a backend in the request. This way a user doesn't
+    have to reauthenticate on every request. Note that data set during
+    the anonymous session is retained when the user logs in.
+    """
+    session_auth_hash = ''
+    if user is None:
+        user = request.user
+    if hasattr(user, 'get_session_auth_hash'):
+        session_auth_hash = user.get_session_auth_hash()
+ 
+    if SESSION_KEY in request.session:
+        if _get_user_session_key(request) != user.pk or (
+                session_auth_hash and
+                request.session.get(HASH_SESSION_KEY) != session_auth_hash):
+            # To avoid reusing another user's session, create a new, empty
+            # session if the existing session corresponds to a different
+            # authenticated user.
+            request.session.flush()
+    else:
+        request.session.cycle_key()
+ 
+# 正常用户登录时，会保存这个用户session，这样在response的消息里的request里面会带出去user信息
+    request.session[SESSION_KEY] = user._meta.pk.value_to_string(user)
+    request.session[BACKEND_SESSION_KEY] = user.backend
+    request.session[HASH_SESSION_KEY] = session_auth_hash
+    if hasattr(request, 'user'):
+        request.user = user
+    rotate_token(request)
+    user_logged_in.send(sender=user.__class__, request=request, user=user)
+
+```
+- (1) request.session[SESSION_KEY]
+SESSION_KEY会在后面_get_user_session_key中使用，用于获取用户
+
+注意两个user的差别
+``` html
+{{user}}
+{{request.user}}
+ ```
+这两个user分别是由下面的middleware传进来的
+``` python
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+```
+
+## context_processors
+django.contrib.auth.context_processors.auth
+``` python
+def auth(request):
+    """
+    Returns context variables required by apps that use Django's authentication
+    system.
+ 
+    If there is no 'user' attribute in the request, uses AnonymousUser (from
+    django.contrib.auth).
+    """
+    if hasattr(request, 'user'):
+        user = request.user
+    else:
+        from django.contrib.auth.models import AnonymousUser
+        user = AnonymousUser()
+ 
+    return {
+        'user': user,
+        'perms': PermWrapper(user),
+    }
+``` 
+user赋值在这儿完成，如果是非登陆用户，则为AnonymousUser
+
+## middleware
+
+Middleware.py (site-packages\django\contrib\auth
+``` python
+def get_user(request):
+    if not hasattr(request, '_cached_user'):
+        request._cached_user = auth.get_user(request)
+return request._cached_user
+ 
+class AuthenticationMiddleware(object):
+    def process_request(self, request):
+        assert hasattr(request, 'session'), (
+            "The Django authentication middleware requires session middleware "
+            "to be installed. Edit your MIDDLEWARE_CLASSES setting to insert "
+            "'django.contrib.sessions.middleware.SessionMiddleware' before "
+            "'django.contrib.auth.middleware.AuthenticationMiddleware'."
+        )
+        request.user = SimpleLazyObject(lambda: get_user(request))
+``` 
+
+## 获取用户 get_user
+系统里多个地方都调用了get_user
+
+django/contrib/auth/__init__
+``` python
+def get_user(request):
+    """
+    Returns the user model instance associated with the given request session.
+    If no user is retrieved an instance of `AnonymousUser` is returned.
+    """
+    from .models import AnonymousUser
+    user = None
+    try:
+        user_id = _get_user_session_key(request) 
+        backend_path = request.session[BACKEND_SESSION_KEY]
+    except KeyError:
+        pass
+    else:
+        if backend_path in settings.AUTHENTICATION_BACKENDS:
+            backend = load_backend(backend_path)
+            user = backend.get_user(user_id)
+            # Verify the session
+            if ('django.contrib.auth.middleware.SessionAuthenticationMiddleware'
+                    in settings.MIDDLEWARE_CLASSES and hasattr(user, 'get_session_auth_hash')):
+                session_hash = request.session.get(HASH_SESSION_KEY)
+                session_hash_verified = session_hash and constant_time_compare(
+                    session_hash,
+                    user.get_session_auth_hash()
+                )
+                if not session_hash_verified:
+                    request.session.flush()
+                    user = None
+ 
+    return user or AnonymousUser()
+```
+
+- (1) _get_user_session_key(request)
+SESSION_KEY在login中赋值了
+
+django/contrib/auth/backends.py
+``` python
+class ModelBackend(object):    
+    def get_user(self, user_id):
+        UserModel = get_user_model()
+        try:
+            return UserModel._default_manager.get(pk=user_id)
+        except UserModel.DoesNotExist:
+            return None
+```
+
+django/contrib/auth/forms.py
+``` python
+class AuthenticationForm(forms.Form):
+    def get_user(self):
+        return self.user_cache
+```
+
+django/contrib/auth/middleware.py
+``` python
+def get_user(request):
+    if not hasattr(request, '_cached_user'):
+        request._cached_user = auth.get_user(request)
+    return request._cached_user
+```
+
 
 ## 应用调用
 https://docs.djangoproject.com/en/dev/topics/auth/default/#how-to-log-a-user-in
