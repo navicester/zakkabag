@@ -827,7 +827,7 @@ def login(request):
                 auth_login(request, user)
                 return redirect(redirect_to)
 
-        return redirect(reverse("auth_login", kwargs={}))
+        return redirect(reverse("auth_login", kwargs={})) # if user is not login, redirect to login template
     else:  #normal login is POST
         REDIRECT_FIELD_NAME = 'next'
         return auth_views.login(request, redirect_field_name=REDIRECT_FIELD_NAME, extra_context=None)    
@@ -835,17 +835,72 @@ def login(request):
     return auth_views.login(request, redirect_field_name=REDIRECT_URI, extra_context=None)    
 ```
 1. WeixinMpAPI对微信进行授权
+
 登陆的过程会用到python-weixin的API，这个API主要是针对Mobile Phone使用的，其实的还没有去尝试使用过
 其中会用到几个参数APP_ID，APP_SECRET，这些都可以在公众号里面获取  
 redirect_uri表示授权成功之后跳转的地址  
 Wechat的login是通过get方式进行的
 
 2. 系统授权
+
 对于微信登陆方式，授权传递的参数即为wechat profile，在authenticate函数里会把它和UserModel进行绑定处  
-- 如果当前用户已登陆，则直接绑定该用户到微信账户，将来可能会增加确认窗口
+- 如果当前用户已登陆，则直接绑定该用户到微信账户，将来可能会增加确认窗口 (WechatBackend.authenticate)
 - 否则重定向到新的网页进行登陆或注册处理，登陆或注册成功后会继续绑定
 
+提取上面的部分代码，如果用户存在，并且非匿名用户，说明wexin登陆之前，用户已正常登陆，并且在authenticate里面已完成绑定。否则，重定向到登陆界面
+```
+if user and not user.is_anonymous():
+    auth_login(request, user)
+    return redirect(redirect_to)
+return redirect(reverse("auth_login", kwargs={}))
+```
+
+登陆的模板如下
+templates\registration\login.html
+``` html
+{% block content %}
+<div class = "row">
+    <div class = "col-sm-3 col-sm-offset-3">
+
+        {% if request.user.is_anonymous and request.wechat %}
+            You need to login to continue
+        {% endif %}
+        
+        <form method="post" action=""> {% csrf_token %}
+            
+            {{ form|crispy }}
+            
+            <input class = "btn btn-block btn-primary" type="submit" value="{% trans 'Log in' %}" />
+            
+            {% if request.user.is_anonymous and request.wechat %}
+                <input type="hidden" name="next" value="{% url 'link_to_wechat' %}" /> 
+	        <!-- workaround here, maybe we need to change it in login function later-->
+            {% else %}
+                <input type="hidden" name="next" value="{{ next }}" /> 
+            {% endif %}
+        </form>
+        
+    </div>
+</div>
+{% endblock %}
+```
+next跳转链接会根据用户状态进行设置，如果发现系统用户未登陆，但微信用户登陆了，则在提交成功后重定向到link_to_wechat进行关联
+
+``` python
+@login_required
+def account_link_to_wechat(request):
+    user = auth.get_user(request)
+    wechat = WechatBackend().get_wechat_user(request)
+    if wechat:
+        wechat.user = user   
+        wechat.save()    
+        return redirect(reverse("home", kwargs={}))
+
+    return redirect(reverse("home", kwargs={}))
+```    
+
 对于正常登陆方式，可以针对不同的backend进行授权
+比如：
 - ModelBackend
 ``` python
         username = request.POST['username']
@@ -854,6 +909,7 @@ Wechat的login是通过get方式进行的
 ```
 
 3. 登陆
+
 最终的登陆都是调用django.contrib.auth.login
 - django.contrib.auth.login() 纯登陆操作，之前需完成相关的授权工作
 
