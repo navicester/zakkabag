@@ -1,13 +1,13 @@
 
 用户的扩展要涉及的以下几个方面:
-- 用户扩展
+- 用户数据扩展
 - 用户授权
 
 djangoproject - [topics-auth](https://docs.djangoproject.com/en/dev/topics/auth/default)
 
 
-# django 中的实现
-## 数据结构
+# 基本用户 (django 实现)
+## 模型定义
 ``` python
 class User(AbstractUser):
     """
@@ -84,7 +84,7 @@ abstract = True，所以AbstractUser是抽象类，不能实例化
 ## 用户授权 authenticate
 当项目调用authenticate时，它会直接调用这个函数
 
-django.contrib.auth.__init__
+django.contrib.auth.\__\init\_\_
 
 ``` python
 def authenticate(**credentials):
@@ -262,6 +262,8 @@ class AuthenticationMiddleware(object):
 ## 获取用户 get_user
 系统里多个地方都调用了get_user
 
+跟authenticate类似，它也会轮询多个backend找到对应的函数
+
 django/contrib/auth/__init__
 ``` python
 def get_user(request):
@@ -295,7 +297,7 @@ def get_user(request):
     return user or AnonymousUser()
 ```
 
-- (1) _get_user_session_key(request)
+- (1) \_get_user_session_key(request)
 SESSION_KEY在login中赋值了
 
 django/contrib/auth/backends.py
@@ -382,6 +384,7 @@ def my_view(request):
 
 
 ``` python
+from __future__ import unicode_literals
 from authwrapper.fields import EmailNullField, PhoneNumberNullField
 from authwrapper.validators import (ASCIIUsernameValidator,
                                     UnicodeUsernameValidator)
@@ -428,15 +431,25 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
         abstract = True
 ```
 
-以下是主要改动：
 1. 添加新的filed **phone**
 - 首先安装库django-phonenumber-field
 - PhoneNumberNullField从PhoneNumberField继承而来，当内容为空时保存为Null
 - phone number的validation会在这个field内完成
+
 2. 扩展EmailField为EmailNullField
+
 3. 添加Username的validator，支持py3和py2
+下面这句话是为了兼容py3
+``` python
+from __future__ import unicode_literals
+```
+
 4. 在settings.py里添加配置ACCOUNT_REGISTER_TYPE，指示默认注册方式是邮件还是电话号码
+
 5. 根据ACCOUNT_REGISTER_TYPE确定USERNAME_FIELD和REQUIRED_FIELDS
+
+6. swappable = 'AUTH_USER_MODEL'
+> swappable is an "intentionally undocumented" feature which is currently under development / in-test. It's used to handle "I have a base abstract model which has some foreign-key relationships." Slightly more detail is available from [Django's ticketing system](https://code.djangoproject.com/ticket/19103) and [github](https://github.com/wq/django-swappable-models). Because it's a "stealth alpha" feature, it's not guaranteed to work (for anything other than User), and understanding the detailed operation will likely require diving into source code. It works with AUTH_USER_MODEL because the User model and swappable flag were developed together, specifically for each other.
 
 ## 修改AUTH_USER_MODEL
 在settings.py添加
@@ -445,6 +458,15 @@ AUTH_USER_MODEL = 'authwrapper.MyUser'
 ```
 以后调用新用户时，可以用django.contrib.auth.get_user_model或者settings.AUTH_USER_MODEL
 
+## 信号
+django系统里面username是默认存在，如果用电话号码注册，这个信息一开始并不是必须的，为了通过django的验证，暂时通过设置username=phone来保证models的validation
+``` python
+def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
+    if 'phone' == MyUser.USERNAME_FIELD:
+        if instance.username is None: # hide username and copy value from phone number
+            instance.username = instance.phone
+```
+pre_save.connect(myuser_pre_save_receiver, sender=MyUser)
 
 ## 添加用户管理
 ``` python
@@ -507,7 +529,7 @@ authentication backends在settings里的[AUTHENTICATION_BACKENDS](https://docs.d
 轮询算法见authenticate
  
 AUTHENTICATION_BACKENDS的顺序是有影响的，如果多个backends的用户名和密码都能验证通过，django在第一次匹配后就会停止。所以要特别小心参数的匹配。  
-如果backend抛出PermissionDenied异常，授权检查会立即停止，不会再检查后面的backend。
+如果backend抛出[PermissionDenied](https://docs.djangoproject.com/en/dev/ref/exceptions/#django.core.exceptions.PermissionDenied)异常，授权检查会立即停止，不会再检查后面的backend。
  
 **注意**：如果授权成功，django会把这个授权方式保存到session里，session周期里的下一次接入还是用这种方式。如果要强迫用不同方法授权，一个简单的方法是调用Session.objects.all().delete().
  
@@ -622,7 +644,144 @@ user = UserModel.objects.get(username=username)
 ```	
 \*\*{}解决了get后面model名字不确定的问题，也是之前困扰voith的一个问题
 
+执行get时会做validation，即使值一致但是validation不过也会返回失败  
+比如电话号码+86135000000000，之前validation时没有+86，添加的值也不会带+86.  
+Validation规则变化之后，即使搜索135000000000（老的添加值在数据库存在）也会返回失败
 
+# 用户扩展 (支持微信)
+这儿会用到一个微信库 [python-weixin](https://pypi.python.org/pypi/python-weixin)
+
+1. 定义微信用户数据模型
+``` python
+class WechatUserProfile(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank = True,
+        null = True
+    )
+    openid = models.CharField(max_length=120, blank=True, null=True) #wechat only
+    unionid = models.CharField(max_length=120, blank=True, null=True) #wechat only
+    privilege = models.CharField(max_length=120, blank=True, null=True) #wechat only    
+    headimgurl = models.CharField(max_length=500, blank=True, null=True)
+    nickname = models.CharField(max_length=120, blank=True, null=True)
+    sex = models.CharField(max_length=45, blank=True, null=True)    
+    city = models.CharField(max_length=45, blank=True, null=True)
+    country = models.CharField(max_length=45, blank=True, null=True)    
+    language = models.CharField(max_length=45, blank=True, null=True)
+
+    def __unicode__(self):
+        if self.nickname:
+            return self.nickname
+        elif self.user:
+            return self.user.username
+        else:
+            return self.openid
+
+    def get_absolute_url(self):
+        return reverse("personalcenter", kwargs={"id": self.id })  
+
+    def get_image_url(self):
+        return self.headimgurl   
+```
+这些域field是从微信的结构拷贝来的，添加了OneToOneField user
+
+2. 添加backend (settings.py)
+``` python
+AUTHENTICATION_BACKENDS = (    
+    'authwrapper.backends.auth.WechatBackend',
+    )
+```
+
+3. 实现backend
+同样要实现基本的authenticate和get_user函数
+``` python
+class WechatBackend(object):
+
+    def authenticate(self, request, user):
+        obj = None
+        cur_user = auth.get_user(request)
+        profile, created = WechatUserProfile.objects.get_or_create(openid = user['openid'])
+
+        if created is False:
+            obj = profile.user            
+            if profile.user is None: # wechat profile not linked to UserModel yet
+                 if cur_user.is_active and not cur_user.is_anonymous() and cur_user is not None:
+                    profile.user =  cur_user # link wechat profile to UserModel
+                    profile.save()
+        else:
+            profile.unionid = user['unionid']
+            #profile.privilege = user['privilege'] #privilege is list
+            profile.city = user['city']
+            profile.country = user['country']
+            profile.language = user['language']
+            if 1 == user['sex']:
+                profile.sex = 'male'
+            else:
+                profile.sex = 'female'
+            profile.nickname = user['nickname']
+            profile.headimgurl = user['headimgurl']
+            if cur_user.is_active and not cur_user.is_anonymous() and cur_user is not None:
+                profile.user = cur_user
+            profile.save()
+            obj = request.user
+
+        request.session['wechat_id'] = profile.id
+        # request._cached_user = obj
+
+        return obj
+
+    def get_user(self, user_id):
+        try:
+            return UserModel.objects.get(pk=user_id)
+        except UserModel.DoesNotExist:
+            return None
+```	    
+1. authenticate
+ 根据openid获取wechat用户model, 如果该wechat用户已存在，进一步检查该用户是否已关联UserModel，如果未关联，则关联数据；如果wechat用户不存在，则创建新用户
+
+2. get_user
+该处返回的还是UserModel对象
+
+3. get_wechat_user
+django在维护user的信息，但是wechat user的信息，需要我们自己维护  
+目前的实现方式是通过添加session "wechat_id"在完成的，授权完成之后
+``` python
+request.session['wechat_id'] = profile.id
+```
+定义 get_wechat_user 用于获取wechat用户
+``` python
+    def get_wechat_user(self, request):
+        wechat_id = request.session.get("wechat_id", None)
+        if wechat_id:
+            try:
+                wechat = WechatUserProfile.objects.get(pk=wechat_id)
+                return wechat
+            except:
+                pass
+        return None
+```
+在middle里将wechat信息添加进request，这样在处理navbar登陆选项时能够知道wechat信息
+``` python
+class openidmiddleware():
+
+	def process_request(self, request):
+		request.register_type = settings.ACCOUNT_REGISTER_TYPE
+		    		    
+		if request.user.is_anonymous:
+		       from django.utils.module_loading import import_string
+		       backend = import_string('authwrapper.backends.auth.WechatBackend')()
+		       request.wechat = backend.get_wechat_user(request)
+```
+
+学习get_user里面load module的方法 - load_backend，里面用了一个新的方法去import model (import_string)，可以以后再函数里对module数组操作时使用，这儿仅是一个练习
+
+调用get_wechat_user的必须是一个函数，所以要对它实例化之后才能调用
+
+## 登陆 login
+
+
+# 用户扩展 (支持头像)
 
 
 
