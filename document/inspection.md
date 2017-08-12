@@ -1,6 +1,18 @@
+inspection要实现的功能包括检查的统计，创建，修改
 
+urls.py
+``` python
+from .views import OfficeInspectionListView, OfficeInspectionDetailView, OfficeInspectionCreateView
 
-## 单选改为横向
+urlpatterns = [
+    url(r'^$', OfficeInspectionListView.as_view(), name='OfficeInspection_list'),
+    url(r'^create$', OfficeInspectionCreateView.as_view(), name='OfficeInspection_create'),
+    url(r'^(?P<pk>\d+)/$', OfficeInspectionDetailView.as_view(), name='OfficeInspection_detail'), 
+]
+```
+
+# DetailView FormMixin, CreateView
+## 单选改为水平展开
 设置form中的field为 ChoiceField / RadioSelect，在template中它会以ul,li方式进行显示
 ``` python
 class OfficeInspectionForm(forms.ModelForm):
@@ -115,10 +127,8 @@ inspection/horizontal_form.html
             <div>{{ field }}</div>
         {% else %}
             {% if field.errors %}<div class="error" style="color:#b75f33">{{ field.errors }}</div>{% endif %}
-            <div class="field-area form-group {% if field.errors %} error{% endif %}">
-                <div class="col-sm-2 field-label">
-                    {{ field.label_tag }}
-                </div>
+            <div class="field-area form-group {% if field.errors %} error{% endif %}">                
+                {{ field.label_tag }}                
                 <div class="col-sm-10">
                     {{ field }}
                 </div>
@@ -139,7 +149,7 @@ css部分放在base_inspection.html文件了,
 $(document).ready(function(){
 	$(".field-area input").addClass("form-control");
 	$(".field-area textarea").addClass("form-control");
-	$(".field-area .field-label label").addClass("col-sm-2 control-label");
+	$(".field-area>label").addClass("col-sm-2 control-label");
 });
 
 {% endblock %}
