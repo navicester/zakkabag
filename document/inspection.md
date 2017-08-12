@@ -139,9 +139,8 @@ inspection/horizontal_form.html
 </form>
 ```
 
-css部分放在base_inspection.html文件了,
+template里面添加下面的css
 ``` html
-{% extends "base.html" %}
 
 <script>
 {% block js %}
