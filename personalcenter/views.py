@@ -23,6 +23,8 @@ from django.contrib.auth import get_user_model
 
 UserModel = get_user_model()
 
+from authwrapper.backends.auth import WechatBackend
+
 # Create your views here.
 
 @login_required
@@ -93,34 +95,20 @@ def myuser_profile_extend(request,id):
 @login_required
 def account_link_to_wechat(request):
     user = auth.get_user(request)
-    wechat_id = request.session.get("wechat_id")
-    wechat = None
-    if wechat_id:
-        try:
-            wechat = WechatUserProfile.objects.get(pk=wechat_id)
-            wechat.user = user
-            wechat.save()
-            return redirect(reverse("home", kwargs={}))
-        except:
-            pass
+    wechat = WechatBackend().get_wechat_user(request)
+    if wechat:
+        wechat.user = user   
+        wechat.save()    
+        return redirect(reverse("home", kwargs={}))
 
     return redirect(reverse("home", kwargs={}))
 
 @login_required
 def account_unlink_from_wechat(request):
-    wechat_id = request.session.get("wechat_id")
-    wechat = None
-    if wechat_id:
-        try:
-            wechat = WechatUserProfile.objects.get(pk=wechat_id)
-            wechat.user = None
-            wechat.save()
-            #wechat profile without user is NOT allowed, so delete the wechat profile
-            #but if deleted, it will become anomymous user (llead to auth.login fail),otherwise none when login with wechat again
-            #wechat.delete()
-            #request.session.delete(wechat_id)
-        except:
-            pass
+    wechat = WechatBackend().get_wechat_user(request)
+    if wechat:
+        wechat.user = None   
+        wechat.save()    
 
     if request.is_ajax():
         data = {'unlink' : True }

@@ -195,12 +195,19 @@ class ProfileUpdateView(UpdateView):
             user.is_active = True
             user.save() 
 
+            wechat = authwrapper.backends.auth.WechatBackend().get_wechat_user(request)            
+            if wechat:
+                wechat.user = user   
+                wechat.save()
+
+            '''
             wechat_id = self.request.session.get('wechat_id',None)
             if wechat_id:
                 wechat = WechatUserProfile.objects.get(pk=wechat_id) 
                 wechat.user = user   
                 wechat.save()
-
+            '''
+            
             auth.authenticate(**{'user':user})
             auth_login(request, user)
         else:

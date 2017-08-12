@@ -143,6 +143,16 @@ class WechatBackend(object):
         #     request._cached_user = auth.get_user(request)
         # return request._cached_user
 
+    def get_wechat_user(self, request):
+        wechat_id = request.session.get("wechat_id", None)
+        if wechat_id:
+            try:
+                wechat = WechatUserProfile.objects.get(pk=wechat_id)
+                return wechat
+            except:
+                pass
+        return None
+            
 class SettingsBackend(object):
     """
     Authenticate against the settings ADMIN_LOGIN and ADMIN_PASSWORD.
