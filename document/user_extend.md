@@ -360,6 +360,26 @@ def my_view(request):
 (7) 从它的基类继承会更灵活  
 
 ## 添加用户域
+新的用户域如下
+| Field	| Type	| Property | Description |
+|-------|-------|----------|:-------------|
+|username	| CharField	| unique |	用户名 [如果电话注册= phone]
+|phone |	CharField	| |	电话
+|first_name	| CharField	| |	名
+|last_name	| CharField	| |	姓
+|email	| EmailField	| |	邮箱
+|sex	| CharField		| | 性别
+|birthday	| DateField	| |	生日
+|nickname	| CharField	| |	昵称
+|image	| ImageField	| |	头像
+|is_staff	| BooleanField |	| 职员状态 指明用户是否可以登录到这个管理站点。<br> Boolean. Designates whether this user can access the admin site.
+|is_super	| BooleanField	| |	超级用户状态 指明该用户缺省拥有所有权限。<br> Boolean. Designates that this user has all permissions without explicitly assigning them.
+|is_active	| BooleanField	| |	有效 <br> 指明用户是否被认为活跃的。以反选代替删除帐号。 <br>Boolean. Designates whether this user account should be considered active. Set this flag to False instead of deleting accounts.
+|date_joined	| DateTimeField	| | 加入时间
+|account_type	| CharField	| | [mail, phone]	注册类型
+			
+
+
 ``` python
 from authwrapper.fields import EmailNullField, PhoneNumberNullField
 from authwrapper.validators import (ASCIIUsernameValidator,
@@ -475,6 +495,10 @@ class MyUserManager(BaseUserManager):
 下一步是修改django\contrib\auth\management\commands\createsuperuser.py，可以指定函数参数
 
 # 扩展用户授权
+用户授权的实现包括以下几个方面
+- 在settings.py添加backend入口
+- 实现backend完成authenticate工作
+
 ## 指定authentication backend
 Django维护了一个“authentication backends”列表，通过它在授权。Django会遍历所有的backends直到授权接收。
 authentication backends在settings里的[AUTHENTICATION_BACKENDS](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-AUTHENTICATION_BACKENDS)指定，可以是任意路径，默认的backends是
