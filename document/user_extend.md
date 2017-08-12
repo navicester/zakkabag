@@ -855,7 +855,8 @@ if user and not user.is_anonymous():
 return redirect(reverse("auth_login", kwargs={}))
 ```
 
-登陆的模板如下
+登陆的模板如下，用户登陆成功时进行绑定
+
 templates\registration\login.html
 ``` html
 {% block content %}
@@ -885,6 +886,22 @@ templates\registration\login.html
 {% endblock %}
 ```
 next跳转链接会根据用户状态进行设置，如果发现系统用户未登陆，但微信用户登陆了，则在提交成功后重定向到link_to_wechat进行关联
+
+注册情况下的处理，最终激活成功时进行绑定
+
+templates.registration.activation_complete.html
+``` html
+{% block content %}
+<p class = "lead">
+    {% trans "Your account is now activated." %}
+    {% if not user.is_authenticated %}
+    	{% trans "You can log in." %}
+    {% else %}
+    	<a href='{% url "link_to_wechat" %}'>Link to wechat</a> 
+    {% endif %}
+</p>
+{% endblock %}
+```
 
 ``` python
 @login_required
@@ -916,7 +933,20 @@ def account_link_to_wechat(request):
 有些情况可以把调用封装起来，比如login form的处理
 - django.contrib.auth.view.login()，这个是正常的视图的登陆的处理，模板为'registration/login.html'
 
-	    
+	    
+## 参考文档
+1. https://docs.djangoproject.com/en/1.5/ref/settings/#auth-profile-module 
+2. https://docs.djangoproject.com/en/dev/topics/auth/customizing/#substituting-a-custom-user-model
+3. [Django中扩展User模型](http://blog.csdn.net/watsy/article/details/15506351)
+4. [非profile方式扩展Django User Model](http://onlypython.group.iteye.com/group/wiki/1519-expansion-django-user-model-by-non-profile-way)
+5. [django user 权限](http://www.cnblogs.com/smallcoderhujin/p/3193103.html)
+6. [django 注册、登录及第三方接口程序(2)：扩展User表](http://www.tuicool.com/articles/aMBJNjj)
+7. [扩展django的User的部分方法](http://www.cnblogs.com/captain-cp/p/3590213.html)
+8. [django admin框架使用系列之三:扩展user model](http://www.yihaomen.com/article/python/334.htm）
+9. [Django扩展user表并使用email登陆](http://www.python88.com/topic/395/)
+10. [Django 扩展 User model 的字段有什么好的方法？](https://segmentfault.com/q/1010000000610904)
+11. [django使用email进行身份验证](http://guangboo.org/2013/03/27/authentication-using-email-in-django)
+12. [自定义的用户认证如何登录使用Django自带的后台管理?](https://www.oschina.net/question/2341837_235437)
 
 
 
