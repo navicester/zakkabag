@@ -341,15 +341,15 @@ def my_view(request):
         ...
 ```
 
-# 用户数据扩展
+# 用户扩展 (支持电话号码)
 用户扩展包括以下几种方法
-   (1) 直接修改django 源码 
-   (2) 把django 的user以及认证部分的源代码拷贝到自己的app下面
-   (3) OneToOneField扩展
-   (4) Profile Model (1.5之后不再支持)
-   (5) AbstractBaseUser, PermissionsMixin开始派生出一个自定用户Model，并且实现自定义的BaseUserManager (1.5之后)
-   (6) ProfileBase(type)
-   (7) 继承User
+- (1) 直接修改django 源码 
+- (2) 把django 的user以及认证部分的源代码拷贝到自己的app下面
+- (3) OneToOneField扩展
+- (4) Profile Model (1.5之后不再支持)
+- (5) AbstractBaseUser, PermissionsMixin开始派生出一个自定用户Model，并且实现自定义的BaseUserManager (1.5之后)
+- (6) ProfileBase(type)
+- (7) 继承User
 
 (1)(2)，每次升级之后都要修改，维护成本太高  
 (3) 这个在原始的用户扩展中一般不用，因为会增加新的Models，但是对于额外的用户信息一般采用这种方法，比如微信用户，支付用户等等  
@@ -357,21 +357,113 @@ def my_view(request):
 (5) 本文会采用该方法  
 (7) 从它的基类继承会更灵活  
 
+## 添加用户域
 ``` python
+from authwrapper.fields import EmailNullField, PhoneNumberNullField
+from authwrapper.validators import (ASCIIUsernameValidator,
+                                    UnicodeUsernameValidator)
+                                    
 class MyUser(MyAbstractUser):
     class Meta(MyAbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
 
 class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
 
+    username_validator = UnicodeUsernameValidator() if six.PY3 else ASCIIUsernameValidator()
+    username = models.CharField(_('username'), 
+        max_length=30, 
+        unique=True,
+        help_text=_('Required. 30 characters or fewer. Letters, digits and '
+                    '@/./+/-/_ only.'),                    
+        #validators=[
+        #    validators.RegexValidator(r'^[\w.@+-]+$',
+        #                              _('Enter a valid username. '
+        #                                'This value may contain only letters, numbers '
+        #                                'and @/./+/-/_ characters.'), 'invalid'),
+        #],        
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        })
+    email = EmailNullField(_('email address'), max_length=255,null=True, blank=True, unique=True)
+    phone = PhoneNumberNullField(_('phone'), max_length=30, blank=True, unique=True,
+        help_text=_('Required. digits and + only.'),
+        error_messages={
+            'unique': _("A user with that phone number already exists."),
+        })
+        
+    account_type = models.CharField(max_length=50, blank=True, null=True, choices=USER_TYPE, default = 'username') #login account type
+
+    USERNAME_FIELD = 'phone' if 'phone' == settings.ACCOUNT_REGISTER_TYPE  else 'username'
+    REQUIRED_FIELDS = ['email'] if 'phone' == settings.ACCOUNT_REGISTER_TYPE  else ['phone','email']
+    
     objects = MyUserManager()
  
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
         abstract = True
-class MyUserManager(BaseUserManager):
 ```
+
+以下是主要改动：
+1. 添加新的filed **phone**
+- 首先安装库django-phonenumber-field
+- PhoneNumberNullField从PhoneNumberField继承而来，当内容为空时保存为Null
+- phone number的validation会在这个field内完成
+2. 扩展EmailField为EmailNullField
+3. 添加Username的validator，支持py3和py2
+4. 在settings.py里添加配置ACCOUNT_REGISTER_TYPE，指示默认注册方式是邮件还是电话号码
+5. 根据ACCOUNT_REGISTER_TYPE确定USERNAME_FIELD和REQUIRED_FIELDS
+
+
+## 添加用户管理
+``` python
+    def _create_user(self, username, email, phone, password, **extra_fields):
+        """
+        Creates and saves a User with the given username, email and password.
+        """
+        now = timezone.now()
+        if not username:
+            raise ValueError('The given username must be set')
+        email = self.normalize_email(email)
+        user = self.model(username=username, 
+                          email=email,
+                          phone=phone,
+                          date_joined=now, 
+                          **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+        
+class MyUserManager(BaseUserManager):
+    def create_user(self, username, email=None, phone=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(username, email, phone, password, **extra_fields)
+
+    def create_superuser(self, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        if 'phone' == settings.ACCOUNT_REGISTER_TYPE:
+            #{'phone': '13500000000', u'password': '123', 'email': '', 'sex': 'male'}
+            #get usename from phone, and unpack the rest
+            return self._create_user(extra_fields.get('phone'), account_type='phone',
+                                 **extra_fields)
+        else:
+            return self._create_user(account_type='mail',
+                                 **extra_fields)
+                                 
+```
+跟基本的class UserManager(BaseUserManager):相比，做了一下的修改
+1. \_create_user里面将is_superuser和is_staff从入参里面去掉，合进了extra_fields，调用更灵活
+2. create_superuser里面把所有的显示参数都去掉了，放进了extra_fields，改动的原因是如果不这么修改，执行```python manage.py createsuperuser```时会报参数缺失的错误，这个函数的实现中，username会copy phone的值。
+下一步是修改django\contrib\auth\management\commands\createsuperuser.py，可以指定函数参数
 
 # 扩展用户授权
 
