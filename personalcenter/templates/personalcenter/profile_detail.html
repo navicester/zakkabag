@@ -148,29 +148,38 @@ $('#form_upload').submit(function() {
 {% block style %}
 .progress {
     background-color: #dad88a;
-}
-
-.form-group {
-    margin-bottom: 5px;
-}
-
-.form-control {
-height: 30px!important;
-padding: 6px 6px;
+    padding-left: 10px;
 }
 
 {% endblock %}
 </style>
 
+<script>
+{% block js %}
+
+$(document).ready(function(){
+    $(".field-area input").addClass("form-control");
+    $(".field-area textarea").addClass("form-control");
+    $(".field-area select").addClass("form-control");
+    $(".field-area>label").addClass("col-sm-2 control-label");
+});
+
+{% endblock %}
+</script>
+
+
 {% block content %}
 
 <div class='col-sm-6 col-sm-offset-3'>
     <h3>{{ object }}</h3><hr>
+    {% comment %}
     <form id="form_profile" method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
-        {{form|crispy}}        
+        {% form|crispy %}         
         <br>
         <input type="submit" value='Update' class='btn' />
     </form>
+    {% endcomment %}
+    {% include "form_horizontal.html" with submitvalue="Update" file=True%}
 </div>
     
 <div class='col-sm-3'>

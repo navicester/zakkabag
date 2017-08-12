@@ -89,7 +89,6 @@ class OfficeInspectionDetailView(ModelFormMixin, DetailView):
         return super(OfficeInspectionDetailView, self).dispatch(request,args,kwargs)   
 
     def get_success_url(self):
-        #return reverse("OfficeInspection_list", kwargs=self.kwargs)    
         return reverse("OfficeInspection_list", kwargs={}) 
 
     def form_valid(self, form, *args, **kwargs):
