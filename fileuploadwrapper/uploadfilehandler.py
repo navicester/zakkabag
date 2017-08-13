@@ -34,6 +34,7 @@ class UploadProgressCachedHandler(FileUploadHandler):
                     'uploaded': 0
                 })
                 print "handle_raw_input cache_key %s set successfully" % self.cache_key
+                print "result %s" % (self.cache_key)
                 print cache.get(self.cache_key)
             except:
                 print "handle_raw_input cache_key %s set fail" % self.cache_key

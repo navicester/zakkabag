@@ -133,6 +133,7 @@ $('#form_upload').submit(function() {
     $(".progress").show();
     //url = "/personalcenter/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
     url = "/fileupload/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
+    sleep(150); // hebin workaround to avoid call upload_status immediately, if it's the 2nd upload
     progressWorker(url);
     // !!! Important !!!
     // always return false to prevent standard browser submit and page navigation
