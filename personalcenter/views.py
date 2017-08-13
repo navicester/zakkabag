@@ -6,8 +6,8 @@ from django.core.urlresolvers import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin
 from django.core.cache import cache
-from django.core.cache.backends.memcached import MemcachedCache
-import json
+#from django.core.cache.backends.memcached import MemcachedCache
+#import json
 from django.conf import settings
 from django.utils.text import slugify
 
@@ -15,7 +15,8 @@ from .models import UserProfile
 from authwrapper.models import WechatUserProfile
 from products.models import Product
 from orders.models import Order, UserCheckout
-from .forms import MyUserForm, UploadFileForm
+from .forms import MyUserForm#, UploadFileForm
+from fileuploadwrapper.forms import UploadFileForm
 
 from django.contrib.auth.decorators import login_required
 
@@ -116,7 +117,7 @@ def account_unlink_from_wechat(request):
 
     return redirect(reverse("home", kwargs={}))
 
-
+'''
 def upload_file(request):
     print "upload_file"
     if request.method == 'POST':
@@ -153,6 +154,7 @@ def upload_status(request):
             return HttpResponse(json.dumps({'error':'No parameter key in GET request'}), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'error':'No GET request'}), content_type="application/json")
+'''
 
 class ProfileDetailView(FormMixin, DetailView):
     model = UserModel

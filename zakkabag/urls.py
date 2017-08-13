@@ -53,6 +53,7 @@ urlpatterns = patterns('',
     url(r'^auth/', include('authwrapper.urls')),
     url(r'^inspection/', include('inspection.urls')),
     url(r'^wechat/', include('wechat.urls')),
+    url(r'^fileupload/', include('fileuploadwrapper.urls')),
 
     url(r'^accounts/', include('registration.backends.default.urls')),    
 

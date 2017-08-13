@@ -89,6 +89,7 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, "comments","templates"),
                 os.path.join(BASE_DIR, "authwrapper","templates"),
                 os.path.join(BASE_DIR, "wechat","templates"),
+                os.path.join(BASE_DIR, "fileuploadwrapper","templates"),
                 os.path.join(BASE_DIR, "crowdfundings")],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -233,7 +234,7 @@ COMMENTS_APP = 'comments'
 
 
 from django.conf import global_settings
-FILE_UPLOAD_HANDLERS = ('personalcenter.uploadfilehandler.UploadProgressCachedHandler', ) \
+FILE_UPLOAD_HANDLERS = ('fileuploadwrapper.uploadfilehandler.UploadProgressCachedHandler', ) \
 + global_settings.FILE_UPLOAD_HANDLERS
 
 
