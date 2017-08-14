@@ -13,6 +13,8 @@ urlpatterns = [
 
 # DetailView FormMixin, CreateView
 ## 单选改为水平展开
+方法一
+
 设置form中的field为 ChoiceField / RadioSelect，在template中它会以ul,li方式进行显示
 ``` python
 class OfficeInspectionForm(forms.ModelForm):
@@ -40,8 +42,6 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 显示效果如下
 
 ![inspection_radioselect_ul_li_raw](img/inspection_radioselect_ul_li_raw.png)
-
-
 
 ### 隐藏li的默认样式 (去掉圆点)
 首选去掉圆点
@@ -72,6 +72,19 @@ template中显示如下，各个选项(Yes, No0是竖着显示的，排版不够
 ### 参考
 [ul li css 做横向菜单](http://www.cnblogs.com/amylis_chen/archive/2011/09/24/2188398.html)
 
+**方法二**
+
+给ul添加两个class .list-inline和.list-unstyled  
+
+list-unstyled
+> 移除默认的列表样式，列表项中左对齐 ( \<ul\> 和 \<ol\> 中)。 这个类仅适用于直接子列表项 (如果需要移除嵌套的列表项，你需要在嵌套的列表中使用该样式)	
+
+list-inline
+> 将所有列表项放置同一行	
+
+### 参考
+http://www.runoob.com/bootstrap/bootstrap-typography.html
+	
 ## 水平表单
 参考 http://getbootstrap.com/css/#forms-horizontal
 
