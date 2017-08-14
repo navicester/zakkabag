@@ -1,5 +1,12 @@
 <script>
 
+function ShowProgress(){
+	sleep(150); 
+	url = "/fileupload/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
+	progressWorker(url);
+}
+
+
 // pre-submit callback
 function showRequest(formData, jqForm, options) {
     // formData is an array; here we use $.param to convert it to a string to display it
@@ -11,6 +18,10 @@ function showRequest(formData, jqForm, options) {
     // var formElement = jqForm[0];
 
     //alert('About to submit: \n\n' + queryString);
+
+    percent = parseInt(0, 10);
+    $('.progress-bar').css('width', percent+'%').attr('aria-valuenow', percent);
+    $('.progress-bar').html(percent+"%");     
 
     // here we could return false to prevent the form from being submitted;
     // returning anything other than false will allow the form submit to continue
@@ -48,6 +59,8 @@ function showResponse(responseText, statusText, xhr, $form)  {
 function showError(response){
     console.log(response.responseText);
 }
+
+
 
 //$('#X-Progress-ID').val('random string');
 
@@ -122,6 +135,7 @@ function sleep(milliseconds) {
 }
 
 
+
 // bind to the form's submit event
 $('#form_upload').submit(function() {
     // inside event callbacks 'this' is the DOM element so we first
@@ -132,9 +146,10 @@ $('#form_upload').submit(function() {
     $(this).ajaxSubmit(options);
     $(".progress").show();
     //url = "/personalcenter/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
-    url = "/fileupload/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
-    sleep(150); // hebin workaround to avoid call upload_status immediately, if it's the 2nd upload
-    progressWorker(url);
+    //url = "/fileupload/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
+    //sleep(150); // hebin workaround to avoid call upload_status immediately, if it's the 2nd upload
+    //progressWorker(url);
+    ShowProgress();
     // !!! Important !!!
     // always return false to prevent standard browser submit and page navigation
     return false;

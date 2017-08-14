@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class='row'>
+	<div class='col-sm-9 col-sm-offset-0'>
+		<table class="table table-hover table-striped">
+		<caption>Daily Inspections</caption>
+		    <thead>
+			    <tr>
+			        <th>Index</th>
+			        <th>cateory</th>
+			        <th>item</th>
+			        <th>impact</th>
+			        <th>correct</th>
+			        <th>correct_status</th>
+			        <th>owner</th>
+			        <th>updated</th>
+			        <th>created</th>
+			        <th>due_date</th>
+			        <th>image_before</th>
+			        <th>image_after</th>
+			    </tr>
+		    </thead>
+		    <tbody>
+		        {% for object in objects %}
+		        <tr>
+		            <td><a href='{{object.get_absolute_url}}'}>{{forloop.counter}}</a></td>
+		            <td>{{object.cateory}}</td>
+		            <td>{{object.item}}</td>
+		            <td>{{object.impact}}</td>
+		            <td>{{object.correct}}</td>
+		            <td>{{object.correct_status}}</td>
+		            <td>{{object.owner}}</td>
+		            <td>{{object.updated}}</td>
+		            <td>{{object.created}}</td>
+		            <td>{{object.due_date}}</td>
+		            <td><img  id='img_before' class= 'img-responsive' src="{{object.get_image_url_before}}"/></td>
+		            <td><img  id='img_after' class= 'img-responsive' src="{{object.get_image_url_after}}"/></td>
+		        </tr>
+		        {% endfor %}
+		    </tbody>
+		</table>
+
+	    <hr>
+	    <h4><a href='{% url "dailyinspection_create" %}'>Create New Item</a></h4>
+	</div>
+	<div class='col-sm-3'>
+		<h3>Latest Update</h3>
+		<hr>
+		<ul style="list-style:none; padding-left:2px; margin-left:2px;">
+			{% for object in objects_sort %}
+			<li style="padding-bottom: 5px;">
+				<a href='{{ object.get_absolute_url }}'>{{object}}</a>
+			</li>
+			{% endfor %}
+		</ul>
+
+		
+	</div>
+</div>
+
+{% endblock %}

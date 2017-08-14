@@ -28,4 +28,68 @@ class OfficeInspection(models.Model):
 		return "Office " + self.location
 
 	def get_absolute_url(self):
-		return reverse("OfficeInspection_detail", kwargs={"pk": self.id })			
+		return reverse("OfficeInspection_detail", kwargs={"pk": self.id })
+
+daily_insepction_category = (
+    ('people', 'People'),
+    ('device', 'Device'),
+    ('machine', 'Machine'),
+    ('method', 'Method'),
+    ('environment', 'Environment'),
+)
+
+daily_insepction_impact = (
+    ('people', 'People'),
+    ('device', 'Device'),
+    ('machine', 'Machine'),
+    ('method', 'Method'),
+    ('environment', 'Environment'),
+)
+
+daily_insepction_correction_status = (
+    ('complete', 'Complete'),
+    ('notcomplete', 'Not Complete'),
+)
+
+daily_insepction_warehouse = (
+    ('3', '3#'),
+    ('5', '5#'),
+)
+
+
+def image_upload_to_dailyinspection(instance, filename):
+    title, file_extension = filename.split(".")
+    new_filename = "%s-%s.%s" %(instance.created.strftime('%Y-%m-%d-%H-%M-%S'), slugify(title), file_extension)
+    return "dailyinspection/%s/%s" %(instance.cateory, new_filename)
+
+class DailyInspection(models.Model):
+    cateory = models.CharField(_('cateory'), max_length=30, choices = daily_insepction_category, blank=False, default = 'people')
+    item = models.CharField(_('item'), max_length=30, blank=False)
+    impact = models.TextField(_('impact'), max_length=30, blank=False)
+    correct = models.TextField(_('correct'), max_length=30, blank=False)
+    correct_status = models.CharField(_('correct status'), max_length=30, choices = daily_insepction_correction_status, blank=False, default = 'notcomplete')
+    owner = models.CharField(_('owner'), max_length=30, blank=False)
+    due_date = models.DateField(auto_now_add=False, auto_now=False)
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    image_before = models.ImageField(upload_to=image_upload_to_dailyinspection, blank=True, null=True)
+    image_after = models.ImageField(upload_to=image_upload_to_dailyinspection, blank=True, null=True)
+    warehouse = models.CharField(_('warehouse'), max_length=30, choices = daily_insepction_warehouse, blank=False, default = '3#')
+    
+    def __unicode__(self): 
+        return "daily inspection " + self.item
+
+    def get_absolute_url(self):
+        return reverse("dailyinspection_detail", kwargs={"pk": self.id })    
+
+    def get_image_url_before(self):
+        img = self.image_before
+        if img:
+            return img.url
+        return img     
+
+    def get_image_url_after(self):
+        img = self.image_after
+        if img:
+            return img.url
+        return img                       

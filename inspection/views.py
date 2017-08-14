@@ -7,8 +7,8 @@ from django.views.generic.edit import FormMixin, ModelFormMixin
 from django.http import HttpResponseRedirect
 
 # Create your views here.
-from .models import OfficeInspection
-from .forms import OfficeInspectionForm
+from .models import OfficeInspection, DailyInspection
+from .forms import OfficeInspectionForm, DailyInspectionForm
 
 # Create your views here.
 
@@ -104,7 +104,7 @@ class OfficeInspectionDetailView(ModelFormMixin, DetailView):
 
 class OfficeInspectionListView(ListView): 
     model = OfficeInspection
-    template_name = "inspection/officeinspection_list.html"
+    template_name = "dailyinspection/officeinspection_list.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super(OfficeInspectionListView, self).get_context_data(*args, **kwargs)
@@ -118,3 +118,93 @@ class OfficeInspectionListView(ListView):
             ('Inspection',request.path_info),
         ])
         return super(OfficeInspectionListView, self).dispatch(request,args,kwargs)   
+
+
+
+
+
+class DailyInspectionCreateView(CreateView):
+    form_class = DailyInspectionForm
+    template_name = "dailyinspection/dailyinspection_create.html"
+
+    def form_valid(self, form, *args, **kwargs):
+        form = super(DailyInspectionCreateView, self).form_valid(form, *args, **kwargs)
+        return form
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse("dailyinspection_list", kwargs={}) 
+
+
+class DailyInspectionDetailView(ModelFormMixin, DetailView):
+    
+    model = DailyInspection
+    template_name = "dailyinspection/dailyinspection_detail.html"
+    form_class = DailyInspectionForm
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(DailyInspectionDetailView, self).get_context_data(*args, **kwargs)
+        context["object"] = self.get_object()
+        context["form"] = self.form_class(instance = self.get_object()) 
+        return context        
+
+    def get_object(self, *args, **kwargs):
+        dailyinspection_pk = self.kwargs.get("pk")
+        dailyinspection = None
+        if dailyinspection_pk:
+            print dailyinspection_pk
+            dailyinspection = get_object_or_404(DailyInspection, pk=dailyinspection_pk)
+        return dailyinspection 
+
+    def get(self, request, *args, **kwargs):
+        return super(DailyInspectionDetailView, self).get(request, *args, **kwargs) 
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form() 
+        self.object = self.get_object(*args, **kwargs)
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:            
+            return self.form_invalid(form)
+
+        return super(DailyInspectionDetailView, self).post(request, *args, **kwargs) 
+
+    def dispatch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        request.breadcrumbs([
+            ("Home",reverse("home", kwargs={})),
+            ("Daily Inspection",reverse("dailyinspection_list", kwargs={})),
+            (instance,request.path_info),
+        ])
+        return super(DailyInspectionDetailView, self).dispatch(request,args,kwargs)   
+
+    def get_success_url(self):
+        return reverse("dailyinspection_list", kwargs={}) 
+
+    def form_valid(self, form, *args, **kwargs):
+        #form.instance = self.get_object(*args, **kwargs)  # without this, form will create another new object
+        obj = form.save(commit = False)
+        instance = self.get_object()
+        obj.id = instance.id
+        obj.created = instance.created
+        #obj.image = gen_qrcode(self.request.get_host() + reverse("dailyinspection_create", kwargs={}))
+        obj.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+class DailyInspectionListView(ListView): 
+    model = DailyInspection
+    template_name = "dailyinspection/dailyinspection_list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(DailyInspectionListView, self).get_context_data(*args, **kwargs)
+        context["objects"] = DailyInspection.objects.all()
+        context["objects_sort"] = DailyInspection.objects.order_by('-updated')
+        return context       
+
+    def dispatch(self, request, *args, **kwargs):
+        request.breadcrumbs([
+            ("Home",reverse("home", kwargs={})),
+            ('Daily Inspection',request.path_info),
+        ])
+        return super(DailyInspectionListView, self).dispatch(request,args,kwargs)   

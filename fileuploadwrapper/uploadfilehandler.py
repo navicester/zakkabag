@@ -28,16 +28,13 @@ class UploadProgressCachedHandler(FileUploadHandler):
         elif 'CSRF_COOKIE' in self.request.META:
             self.cache_key = self.request.META['CSRF_COOKIE']
         if self.cache_key:
-            try:
-                cache.set(self.cache_key, {
-                    'totalsize': self.content_length,
-                    'uploaded': 0
-                })
-                print "handle_raw_input cache_key %s set successfully" % self.cache_key
-                print "result %s" % (self.cache_key)
-                print cache.get(self.cache_key)
-            except:
-                print "handle_raw_input cache_key %s set fail" % self.cache_key
+            cache.set(self.cache_key, {
+                'totalsize': self.content_length,
+                'uploaded': 0
+            })
+            #print "handle_raw_input cache_key %s set successfully" % self.cache_key
+            #print "result %s" % (self.cache_key)
+            #print cache.get(self.cache_key)
         else:
             print "handle_raw_input cache_key not set"
 
