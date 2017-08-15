@@ -11,8 +11,8 @@ urlpatterns = [
 ]
 ```
 
-# DetailView FormMixin, CreateView
-## 单选改为水平展开
+# 表单显示 Form
+## 1. 单选改为水平展开
 方法一
 
 设置form中的field为 ChoiceField / RadioSelect，在template中它会以ul,li方式进行显示
@@ -172,4 +172,8 @@ $(document).ready(function(){
 2. 显示label内容使用了```{{ field.label_tag }}```，显示field本身```{{ field }}```，这儿无法把 css class 加进去，所以通过JavaScript在页面ready时把label的```control-label```和field的```form-control```添加进去了  
 3. column宽度，lable直接添加在label内添加col-sm-2，field的在div里面添加col-sm-10
 
+# 表格
+## 自适应表格
+http://caibaojian.com/responsive-tables.html  
+http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 
