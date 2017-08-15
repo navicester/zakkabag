@@ -11,8 +11,8 @@ urlpatterns = [
 ]
 ```
 
-# DetailView FormMixin, CreateView
-## 单选改为水平展开
+# 表单显示 Form
+## 内联单选框 inline
 方法一
 
 设置form中的field为 ChoiceField / RadioSelect，在template中它会以ul,li方式进行显示
@@ -171,5 +171,25 @@ $(document).ready(function(){
 1. 改例子没有明确地写出每个field的名字，对应的属性(widget, readonly, disable, exclude)可以在form中设置  
 2. 显示label内容使用了```{{ field.label_tag }}```，显示field本身```{{ field }}```，这儿无法把 css class 加进去，所以通过JavaScript在页面ready时把label的```control-label```和field的```form-control```添加进去了  
 3. column宽度，lable直接添加在label内添加col-sm-2，field的在div里面添加col-sm-10
+
+# 表格
+## 自适应表格
+http://caibaojian.com/responsive-tables.html  
+http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
+
+# 多选框
+- https://stackoverflow.com/questions/9993939/django-display-values-of-the-selected-multiple-choice-field-in-a-template
+- https://stackoverflow.com/questions/23572341/initializing-a-multiplechoicefield-in-django-cms
+- https://codedump.io/share/cRQMqEnmg5HD/1/django-setting-initial-vals-of-multiplechoicefield-only-works-first-time
+- https://stackoverflow.com/questions/25534811/django-display-selected-choices-in-multiplechoicefield
+- http://www.programcreek.com/python/example/58199/django.forms.MultipleChoiceField
+- https://pypi.python.org/pypi/django-multiselectfield
+- [django下ChoiceField等, queryset 动态设定](http://blog.csdn.net/kevin6216/article/details/7103078)
+
+ 
+
+
+
+
 
 
