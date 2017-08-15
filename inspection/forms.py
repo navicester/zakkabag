@@ -18,8 +18,6 @@ class OfficeInspectionForm(forms.ModelForm):
         ]
         
 
-               
-    #plug = forms.MultipleChoiceField(
     plug = forms.ChoiceField(
             choices=RESULT_OPTION,
             widget = forms.RadioSelect,
@@ -36,15 +34,51 @@ class OfficeInspectionForm(forms.ModelForm):
         return self.data.get('plug')
     '''
 
-daily_insepction_impact = (
-    ('people', 'People'),
-    ('device', 'Device'),
-    ('machine', 'Machine'),
-    ('method', 'Method'),
-    ('environment', 'Environment'),
-)
-
 class DailyInspectionForm(forms.ModelForm):
+    '''
+    impact = forms.ModelMultipleChoiceField(
+            queryset = OfficeInspection.objects.all(),
+            widget = forms.SelectMultiple(),
+            #widget=forms.CheckboxSelectMultiple(),
+            initial = [OfficeInspection.objects.all()[0]],
+            #data = [OfficeInspection.objects.all()[0]],
+            required=False
+            )
+    '''
+
+    
+    impact = forms.MultipleChoiceField(
+            choices = lambda: (item for item in DailyInspection.daily_insepction_impact),
+            widget = forms.SelectMultiple(),
+            #widget=forms.CheckboxSelectMultiple(),
+            initial = ['environment'],
+            #initial= lambda: [item for item in DailyInspection.daily_insepction_impact if item],
+            required=False
+            )
+    
+
+    def __init__(self, *args, **kwargs):
+        '''
+        impact_selcted = None
+        try:
+            impact_selcted = kwargs.pop('selected')
+        except:
+            pass
+        '''
+
+        super(DailyInspectionForm, self).__init__(*args, **kwargs)
+
+        '''
+        self.fields['impact'] = forms.MultipleChoiceField(
+            choices= DailyInspection.daily_insepction_impact,
+            widget = forms.SelectMultiple,
+            #initial = [impact_selcted],
+            initial = ['people'],
+            required=False
+            )
+        '''
+
+
     class Meta:
         model = DailyInspection
 
@@ -54,10 +88,6 @@ class DailyInspectionForm(forms.ModelForm):
         ]
         
 
-    impact = forms.MultipleChoiceField(
-            choices=daily_insepction_impact,
-            widget = forms.SelectMultiple,
-            )
 
     # ModelChoiceField
 

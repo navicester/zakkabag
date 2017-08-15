@@ -30,31 +30,6 @@ class OfficeInspection(models.Model):
 	def get_absolute_url(self):
 		return reverse("OfficeInspection_detail", kwargs={"pk": self.id })
 
-daily_insepction_category = (
-    ('people', 'People'),
-    ('device', 'Device'),
-    ('machine', 'Machine'),
-    ('method', 'Method'),
-    ('environment', 'Environment'),
-)
-
-daily_insepction_impact = (
-    ('people', 'People'),
-    ('device', 'Device'),
-    ('machine', 'Machine'),
-    ('method', 'Method'),
-    ('environment', 'Environment'),
-)
-
-daily_insepction_correction_status = (
-    ('complete', 'Complete'),
-    ('notcomplete', 'Not Complete'),
-)
-
-daily_insepction_warehouse = (
-    ('3', '3#'),
-    ('5', '5#'),
-)
 
 
 def image_upload_to_dailyinspection(instance, filename):
@@ -63,9 +38,36 @@ def image_upload_to_dailyinspection(instance, filename):
     return "dailyinspection/%s/%s" %(instance.cateory, new_filename)
 
 class DailyInspection(models.Model):
+    daily_insepction_category = (
+        ('people', _('People')),
+        ('device', _('Device')),
+        ('machine', _('Machine')),
+        ('method', _('Method')),
+        ('environment', _('Environment')),
+    )
+
+    # index can only be 1 char, see SelectMultiple:render & Select(Widget):render_options / selected_choices = set(force_text(v) for v in selected_choices) ==> bug ?
+    daily_insepction_impact = (
+        ('1', 'People'),
+        ('2', 'Device'),
+        ('3', 'Machine'),
+        ('4', 'Method'),
+        ('5', 'Environment'),
+    )
+
+    daily_insepction_correction_status = (
+        ('complete', 'Complete'),
+        ('notcomplete', 'Not Complete'),
+    )
+
+    daily_insepction_warehouse = (
+        ('3', '3#'),
+        ('5', '5#'),
+    )
+
     cateory = models.CharField(_('cateory'), max_length=30, choices = daily_insepction_category, blank=False, default = 'people')
     item = models.CharField(_('item'), max_length=30, blank=False)
-    impact = models.TextField(_('impact'), max_length=30, blank=False)
+    impact = models.CharField(_('impact'), max_length=30, blank=False)
     correct = models.TextField(_('correct'), max_length=30, blank=False)
     correct_status = models.CharField(_('correct status'), max_length=30, choices = daily_insepction_correction_status, blank=False, default = 'notcomplete')
     owner = models.CharField(_('owner'), max_length=30, blank=False)

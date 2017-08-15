@@ -1,5 +1,5 @@
 {% extends "inspection/base_inspection.html" %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
 
@@ -12,7 +12,7 @@
 		<hr>
 
 		<div>	
-            {% include "form_horizontal.html" with submitvalue="Submit" file=True %}            
+            {% include "form_horizontal.html" with submitvalue="Submit" file=True %} 
 		</div>
 
 		<div>

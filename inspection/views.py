@@ -143,8 +143,14 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(DailyInspectionDetailView, self).get_context_data(*args, **kwargs)
-        context["object"] = self.get_object()
-        context["form"] = self.form_class(instance = self.get_object()) 
+        object = self.get_object()
+        context["object"] =object 
+        selected = object.impact
+        #selected = [item for item in object.impact]
+        form = self.form_class(instance = self.get_object()) 
+        #form = self.form_class(instance = self.get_object(), initial={'impact':selected}, selected = object.impact) 
+        #form.fields['impact'].initial = selected
+        context["form"] = form
         return context        
 
     def get_object(self, *args, **kwargs):
