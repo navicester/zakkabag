@@ -177,3 +177,13 @@ $(document).ready(function(){
 http://caibaojian.com/responsive-tables.html  
 http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 
+# 多选框
+- https://stackoverflow.com/questions/9993939/django-display-values-of-the-selected-multiple-choice-field-in-a-template
+- https://stackoverflow.com/questions/23572341/initializing-a-multiplechoicefield-in-django-cms
+- https://codedump.io/share/cRQMqEnmg5HD/1/django-setting-initial-vals-of-multiplechoicefield-only-works-first-time
+
+
+
+
+
+
