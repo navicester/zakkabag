@@ -69,11 +69,11 @@ class DailyInspection(models.Model):
     correct = models.TextField(_('correct'), max_length=30, blank=False)
     correct_status = models.CharField(_('correct status'), max_length=30, choices = daily_insepction_correction_status, blank=False, default = 'notcomplete')
     owner = models.CharField(_('owner'), max_length=30, blank=False)
-    due_date = models.DateField(auto_now_add=False, auto_now=False)
+    due_date = models.DateField(_('due date'), auto_now_add=False, auto_now=False)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    image_before = models.ImageField(upload_to=image_upload_to_dailyinspection, blank=True, null=True)
-    image_after = models.ImageField(upload_to=image_upload_to_dailyinspection, blank=True, null=True)
+    image_before = models.ImageField(_('image before'), upload_to=image_upload_to_dailyinspection, blank=True, null=True)
+    image_after = models.ImageField(_('image after'), upload_to=image_upload_to_dailyinspection, blank=True, null=True)
     warehouse = models.CharField(_('warehouse'), max_length=30, choices = daily_insepction_warehouse, blank=False, default = '3#')
     
     def __unicode__(self): 
