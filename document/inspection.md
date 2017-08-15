@@ -12,7 +12,7 @@ urlpatterns = [
 ```
 
 # 表单显示 Form
-## 1. 单选改为水平展开
+## 内联单选框 inline
 方法一
 
 设置form中的field为 ChoiceField / RadioSelect，在template中它会以ul,li方式进行显示
