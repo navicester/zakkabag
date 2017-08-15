@@ -181,6 +181,12 @@ http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 - https://stackoverflow.com/questions/9993939/django-display-values-of-the-selected-multiple-choice-field-in-a-template
 - https://stackoverflow.com/questions/23572341/initializing-a-multiplechoicefield-in-django-cms
 - https://codedump.io/share/cRQMqEnmg5HD/1/django-setting-initial-vals-of-multiplechoicefield-only-works-first-time
+- https://stackoverflow.com/questions/25534811/django-display-selected-choices-in-multiplechoicefield
+- http://www.programcreek.com/python/example/58199/django.forms.MultipleChoiceField
+- https://pypi.python.org/pypi/django-multiselectfield
+- [django下ChoiceField等, queryset 动态设定](http://blog.csdn.net/kevin6216/article/details/7103078)
+
+ 
 
 
 
