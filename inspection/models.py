@@ -46,7 +46,7 @@ class DailyInspection(models.Model):
         ('environment', _('Environment')),
     )
 
-    # index can only be 1 char, see SelectMultiple:render & Select(Widget):render_options / selected_choices = set(force_text(v) for v in selected_choices) ==> bug ?
+    # index can only be 1 char, see SelectMultiple:render & Select(Widget):render_options / selected_choices = set(force_text(v) for v in selected_choices) ==> bug ? set([force_text(v)]
     daily_insepction_impact = (
         ('1', 'People'),
         ('2', 'Device'),
