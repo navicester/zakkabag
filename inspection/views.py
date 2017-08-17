@@ -145,11 +145,9 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
         context = super(DailyInspectionDetailView, self).get_context_data(*args, **kwargs)
         object = self.get_object()
         context["object"] =object 
-        selected = object.impact
         #selected = [item for item in object.impact]
+        #initial=selected
         form = self.form_class(instance = self.get_object()) 
-        #form = self.form_class(instance = self.get_object(), initial={'impact':selected}, selected = object.impact) 
-        #form.fields['impact'].initial = selected
         context["form"] = form
         return context        
 
@@ -193,6 +191,19 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
         instance = self.get_object()
         obj.id = instance.id
         obj.created = instance.created
+        if form.cleaned_data['image_before']:
+            if form.clear_image_before_clear():
+                obj.image_before = None
+        else:
+            if form.clear_image_before_clear() is None:
+                obj.image_before = instance.image_before
+
+        if form.cleaned_data['image_after']:
+            if form.clear_image_after_clear():
+                obj.image_after = None
+        else:
+            if form.clear_image_after_clear() is None:                
+                obj.image_after = instance.image_after
         #obj.image = gen_qrcode(self.request.get_host() + reverse("dailyinspection_create", kwargs={}))
         obj.save()
 

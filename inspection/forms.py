@@ -53,7 +53,7 @@ class DailyInspectionForm(forms.ModelForm):
             #widget=forms.CheckboxSelectMultiple(),
             initial = ['environment'],
             #initial= lambda: [item for item in DailyInspection.daily_insepction_impact if item],
-            required=False
+            required=True
             )
     
 
@@ -78,6 +78,17 @@ class DailyInspectionForm(forms.ModelForm):
             )
         '''
 
+    def clear_image_after_clear(self):
+        a = self.data.get('image_after_clear')
+        if self.data.get('image_after_clear'):
+            return "on"
+        return None
+
+    def clear_image_before_clear(self):
+        a = self.data.get('image_before_clear')
+        if self.data.get('image_before-clear'):
+            return "on"
+        return None
 
     class Meta:
         model = DailyInspection
