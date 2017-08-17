@@ -1,5 +1,23 @@
 {% extends "base.html" %}
 
+<style type="text/css">
+{% block style %}
+
+{% endblock%}
+</style>
+
+<script>
+{% block js %}
+
+$(document).ready(function(){
+	$("td:contains('notcomplete')").css("background-color","red");
+	$("td:contains('completed')").css("background-color","green");
+
+});
+
+{% endblock %}
+</script>
+
 {% block content %}
 
 <div class='row'>

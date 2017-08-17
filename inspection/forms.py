@@ -79,13 +79,11 @@ class DailyInspectionForm(forms.ModelForm):
         '''
 
     def clear_image_after_clear(self):
-        a = self.data.get('image_after_clear')
-        if self.data.get('image_after_clear'):
+        if self.data.get('image_after-clear'):
             return "on"
         return None
 
     def clear_image_before_clear(self):
-        a = self.data.get('image_before_clear')
         if self.data.get('image_before-clear'):
             return "on"
         return None

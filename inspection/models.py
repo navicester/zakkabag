@@ -56,7 +56,7 @@ class DailyInspection(models.Model):
     )
 
     daily_insepction_correction_status = (
-        ('complete', 'Complete'),
+        ('completed', 'Complete'),
         ('notcomplete', 'Not Complete'),
     )
 

@@ -5,6 +5,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin, ModelFormMixin
 from django.http import HttpResponseRedirect
+from django.conf import settings
 
 # Create your views here.
 from .models import OfficeInspection, DailyInspection
@@ -147,8 +148,11 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
         context["object"] =object 
         #selected = [item for item in object.impact]
         #initial=selected
-        form = self.form_class(instance = self.get_object()) 
+        form = kwargs.get('form',None) # called in form_invalid
+        if form is None:
+            form = self.form_class(instance = self.get_object()) 
         context["form"] = form
+        context["media"] = settings.MEDIA_URL
         return context        
 
     def get_object(self, *args, **kwargs):
