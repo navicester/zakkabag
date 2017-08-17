@@ -186,6 +186,10 @@ http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 - https://pypi.python.org/pypi/django-multiselectfield
 - [django下ChoiceField等, queryset 动态设定](http://blog.csdn.net/kevin6216/article/details/7103078)
 
+# ImageField 删除
+- http://timonweb.com/posts/cleanup-files-and-images-on-model-delete-in-django/
+- https://stackoverflow.com/questions/41329858/how-to-delete-an-imagefield-image-in-a-django-model
+
  
 
 
