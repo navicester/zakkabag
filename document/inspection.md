@@ -193,7 +193,90 @@ http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 
 # 用户不能缩放网页
 
-# i18n
+# 国际化 i18n
+Django 官方教程：https://docs.djangoproject.com/en/1.8/#internationalization-and-localization
+
+Django 支持国际化，多语言。Django的国际化是默认开启的，如果您不需要国际化支持，那么您可以在您的设置文件中设置 USE_I18N = False，那么Django会进行一些优化，不加载国际化支持机制。
+
+NOTE: 18表示Internationlization这个单词首字母I和结尾字母N之间的字母有18个。I18N就是Internationlization的意思。
+
+在settings.py文件中设置
+``` python
+MIDDLEWARE_CLASSES = (
+    ...
+    'django.middleware.locale.LocaleMiddleware',
+)
+
+LANGUAGE_CODE = 'en'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+LANGUAGES = (
+    ('en', ('English')),
+    ('zh-cn', ('中文简体')),
+    ('zh-tw', ('中文繁體')),
+)
+
+或者
+
+LANGUAGES = (
+    ('en-us', ugettext('English')),
+    ('zh-cn', ugettext('Chinese Simple')),
+    ('zh-tw', ugettext('Chinese taiwan')),
+)
+
+#翻译文件所在目录，需要手工创建
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    ...
+    "django.core.context_processors.i18n",
+)
+```
+生成需要翻译的文件：
+```
+django-admin.py makemessages -l zh_CN
+django-admin.py makemessages -l zh-tw
+```
+Django 1.9 及以上版本要改成
+```
+python manage.py makemessages -l zh_hans
+python manage.py makemessages -l zh_hant
+```
+手工翻译 locale 中的 django.po
+```
+此处省去500字
+...
+ 
+ 
+#: .\tutorial\models.py:23
+msgid "created at"
+msgstr "创建于"
+ 
+#: .\tutorial\models.py:24
+msgid "updated at"
+msgstr "更新于"
+ 
+...
+此处省去几百字
+
+```
+手工翻译 locale 中的文本后，我们需要编译一下，这样翻译才会生效
+```
+django-admin.py compilemessages
+
+```
+下载翻译编辑工具[poedit](http://www.poedit.net/download.php#win32)
+
+如果翻译不生效，请检查你的语言包的文件夹是不是有 中划线，请用下划线代替它。  
+比如 zh-hans 改成 zh_hans
+
+[gettext-0.17-win32-setup.exe](http://www.lijiejie.com/python/gettext-0.17-win32-setup.exe)
+
 
 # 网页调用摄像头
 
