@@ -189,6 +189,7 @@ http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 # ImageField 删除
 - http://timonweb.com/posts/cleanup-files-and-images-on-model-delete-in-django/
 - https://stackoverflow.com/questions/41329858/how-to-delete-an-imagefield-image-in-a-django-model
+- https://docs.djangoproject.com/en/1.11/topics/signals/
 
 # 用户不能缩放网页
 
