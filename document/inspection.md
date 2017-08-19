@@ -277,6 +277,15 @@ django-admin.py compilemessages
 
 [gettext-0.17-win32-setup.exe](http://www.lijiejie.com/python/gettext-0.17-win32-setup.exe)
 
+## 参考
+- [django多语言支持](http://www.it165.net/pro/html/201303/5220.html)
+- [Django i18n国际化](http://www.cnblogs.com/oubo/archive/2012/04/05/2433690.html)
+- https://stackoverflow.com/questions/21166356/django-i18n-doesnt-change-language
+- https://stackoverflow.com/questions/27845749/django-switch-language-with-i18n-pattern-and-normal-url-pattern
+- https://stackoverflow.com/questions/5489601/django-i18n-change-language
+- https://stackoverflow.com/questions/5816033/django-default-language-i18n
+- https://stackoverflow.com/questions/8265077/django-how-to-get-language-code-in-template
+
 
 # 网页调用摄像头
 
