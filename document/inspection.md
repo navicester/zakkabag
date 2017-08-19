@@ -295,11 +295,115 @@ LANGUAGES = (
 LANGUAGE_CODE = 'en-us'
 ```
 
-## 语言切换
-执行函数在
+## 语言切换 （不修改path）
+添加
 ``` python
 url(r'^setlang/$', 'django.views.i18n.set_language', name = 'setlang'),
 ```
+django.views.i18n.set_language
+
+该函数会完成语言转换和next设定
+
+``` python
+def set_language(request):
+    """
+    Redirect to a given url while setting the chosen language in the
+    session or cookie. The url and the language code need to be
+    specified in the request parameters.
+
+    Since this view changes how the user will see the rest of the site, it must
+    only be accessed as a POST request. If called as a GET request, it will
+    redirect to the page in the request (the 'next' parameter) without changing
+    any state.
+    """
+    next = request.POST.get('next', request.GET.get('next'))
+    if not is_safe_url(url=next, host=request.get_host()):
+        next = request.META.get('HTTP_REFERER')
+        if not is_safe_url(url=next, host=request.get_host()):
+            next = '/'
+    response = http.HttpResponseRedirect(next)
+    if request.method == 'POST':
+        lang_code = request.POST.get('language', None)
+        if lang_code and check_for_language(lang_code):
+            if hasattr(request, 'session'):
+                request.session[LANGUAGE_SESSION_KEY] = lang_code
+            else:
+                response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code,
+                                    max_age=settings.LANGUAGE_COOKIE_AGE,
+                                    path=settings.LANGUAGE_COOKIE_PATH,
+                                    domain=settings.LANGUAGE_COOKIE_DOMAIN)
+    return response
+```
+
+语言的激活在middleware中完成
+
+django.middleware.locale.py
+``` python
+class LocaleMiddleware(object):
+    def process_request(self, request):
+        check_path = self.is_language_prefix_patterns_used()
+        language = translation.get_language_from_request(
+            request, check_path=check_path)
+        translation.activate(language)
+        request.LANGUAGE_CODE = translation.get_language()
+```
+
+django.utils.translation.trans_real.py
+
+获取language的信息的顺序
+- path \en\..
+- LANGUAGE_SESSION_KEY
+- settings.LANGUAGE_COOKIE_NAME
+
+``` python
+def get_language_from_request(request, check_path=False):
+    """
+    Analyzes the request to find what language the user wants the system to
+    show. Only languages listed in settings.LANGUAGES are taken into account.
+    If the user requests a sublanguage where we have a main language, we send
+    out the main language.
+
+    If check_path is True, the URL path prefix will be checked for a language
+    code, otherwise this is skipped for backwards compatibility.
+    """
+    if check_path:
+        lang_code = get_language_from_path(request.path_info)
+        if lang_code is not None:
+            return lang_code
+
+    supported_lang_codes = get_languages()
+
+    if hasattr(request, 'session'):
+        lang_code = request.session.get(LANGUAGE_SESSION_KEY)
+        if lang_code in supported_lang_codes and lang_code is not None and check_for_language(lang_code):
+            return lang_code
+
+    lang_code = request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME)
+
+    try:
+        return get_supported_language_variant(lang_code)
+    except LookupError:
+        pass
+
+    accept = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+    for accept_lang, unused in parse_accept_lang_header(accept):
+        if accept_lang == '*':
+            break
+
+        if not language_code_re.search(accept_lang):
+            continue
+
+        try:
+            return get_supported_language_variant(accept_lang)
+        except LookupError:
+            continue
+
+    try:
+        return get_supported_language_variant(settings.LANGUAGE_CODE)
+    except LookupError:
+        return settings.LANGUAGE_CODE
+```	
+
 
 ## 参考
 - [django多语言支持](http://www.it165.net/pro/html/201303/5220.html)
