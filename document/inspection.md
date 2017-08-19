@@ -654,6 +654,11 @@ GET方式没有成功，后面再看吧
 
 # 网页调用摄像头
 
+# 禁止网页缩放
+``` html
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+```
+
 # 新浪云直接访问文件存储
 
 
