@@ -378,7 +378,7 @@ LANGUAGES_SUPPORTED = ('en', 'zh-cn',)
 {% load langs %}
 {% language_select LANGUAGE_CODE %}
 
-官方文档
+官方文档的实现如下，它用了get_current_language，get_available_languages和get_language_info_list来获取系统language相关的信息
 
 https://docs.djangoproject.com/en/1.8/topics/i18n/translation/#the-set-language-redirect-view
 
