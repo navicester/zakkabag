@@ -329,8 +329,7 @@ trans标记只能翻译字符串，不能使用变量，如果有变量需要翻
 {% blocktrans %}Log in site {{ site_name }}{% endblocktrans %}
 ```
 另外RequestContext对象有三个针对翻译的变量LANGUAGES,LANGUAGE_CODE和LANGUAGE_BIDI，分别表示语言列表，当前用户语言的偏好，和语言的书写方式：
-> 
-LANGUAGES 是一系列元组组成的列表，每个元组的第一个元素是语言代码，第二个元素是用该语言表示的语言名称。  
+> LANGUAGES 是一系列元组组成的列表，每个元组的第一个元素是语言代码，第二个元素是用该语言表示的语言名称。  
 LANGUAGE_CODE是以字符串表示的当前用户偏好语言（例如， en-us ）。（详见 Django 如何确定语言偏好。）  
 LANGUAGE_BIDI是当前语言的书写方式。若设为 True，则该语言书写方向为从右到左（如希伯来语和阿拉伯语）；若设为 False，则该语言书写方向为从左到右（如英语、法语和德语）。
 
@@ -357,7 +356,7 @@ for lang_code in settings.LANGUAGES_SUPPORTED:
 	
 register = template.Library()
 
-@register.inclusion_tag('app/parts/languages_select_part.html')
+@register.inclusion_tag('languages_select_part.html')
 def language_select(default):
 	return {'languages':LANGUAGES, 'default':default}
 ```	
@@ -365,7 +364,7 @@ def language_select(default):
 ``` python
 LANGUAGES_SUPPORTED = ('en', 'zh-cn',)
 ```
-“app/parts/languages_select_part.html”模板的定义如下：
+“languages_select_part.html”模板的定义如下：
 ``` html
 {% if languages %}
 <form id="language-select-form" method="post" action="{% url django.views.i18n.set_language %}">{% csrf_token %}
@@ -378,6 +377,29 @@ LANGUAGES_SUPPORTED = ('en', 'zh-cn',)
 那么在网站的模板中，就可以通过如下代码将该下拉框添加到页面中：
 {% load langs %}
 {% language_select LANGUAGE_CODE %}
+
+官方文档
+
+https://docs.djangoproject.com/en/1.8/topics/i18n/translation/#the-set-language-redirect-view
+
+``` python
+{% load i18n %}
+
+<form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}" />
+    <select name="language">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+                {{ language.name_local }} ({{ language.code }})
+            </option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Go" />
+</form>
+```
 
 ## 后端的实现 （不修改path）
 添加
@@ -491,9 +513,66 @@ def get_language_from_request(request, check_path=False):
         return settings.LANGUAGE_CODE
 ```	
 
+## lang url
+``` python
+from django.conf.urls.i18n import i18n_patterns
+urlpatterns += i18n_patterns('',
+)
+```
+如果要全部使用
+``` python
+from django.conf.urls.i18n import i18n_patterns
+urlpatterns = i18n_patterns('',
+)
+```
+To enable change lang url requests add (make sure this is outside i18n_patterns
+``` python
+(r'^i18n/', include('django.conf.urls.i18n'))
+)
+```
+url的形式如下：
+http://127.0.0.1:8000/en/inspection/dailyinspection
+
+切换的时候碰到一点问题，从set_language函数里可以看到，next url首先是从next里面获取，如果没有，则从request.META.get('HTTP_REFERER')里面。
+
+如果不设next，那么request.META.get('HTTP_REFERER')重定向的还是当前的页面（en），切换不成功
+
+如果设置next，如下
+``` python
+{% load langs %}
+
+{% if languages %}
+<form class="navbar-form navbar-left" id="language-select-form" method="post" action="{% url 'setlang' %}">{% csrf_token %}
+	<select class="dropdown form-control" onchange="this.form.submit();" name="language">
+		{% for lang in languages %}
+		<option value="{{ lang.code }}" {% if lang.code == default %}selected="selected"{% endif %}>{{ lang.name_local }}</option>
+		{% endfor %}
+	</select>
+	<input name="next" type="hidden" value="{{ request.get_full_path|strip_lang }}" >
+</form>
+{% endif %}
+```
+``` python
+@register.filter(name="strip_lang")
+def strip_lang(value):
+    lang = translation.get_language()
+    print lang, value
+    strip_url = '/%s' % value.lstrip('/%s/' % lang)	
+    return strip_url
+```    
+
+则重定向到http://127.0.0.1:8000/inspection/dailyinspection，这个又是不合法的url，因为url pattern已经改成了i18n_patterns
+
+可以在next的url中插入新语言的key，将来再实现。。。
+
+
+
+
+## get方式切换语言
 
 
 ## 参考
+- https://docs.djangoproject.com/en/1.8/topics/i18n/translation/#explicitly-setting-the-active-language
 - [django多语言支持](http://www.it165.net/pro/html/201303/5220.html)
 - [Django i18n国际化](http://www.cnblogs.com/oubo/archive/2012/04/05/2433690.html)
 - https://stackoverflow.com/questions/21166356/django-i18n-doesnt-change-language
