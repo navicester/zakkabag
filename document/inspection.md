@@ -277,6 +277,30 @@ django-admin.py compilemessages
 
 [gettext-0.17-win32-setup.exe](http://www.lijiejie.com/python/gettext-0.17-win32-setup.exe)
 
+## 语言的名字
+```django.utils.translation.get_language_info```函数可以获取当前版本支持的语言
+
+具体的定义在```django.conf.locale.__init__.py```里的LANG_INFO表中
+
+
+``` python
+LANGUAGES = (
+    ('en', ('English')),
+    ('zh-cn', ('中文简体')),
+    ('zh-tw', ('中文繁體')),
+)
+```
+默认生成的文件里，使用的是en-us，原因不明，但是这会导致语言切换失败
+``` python
+LANGUAGE_CODE = 'en-us'
+```
+
+## 语言切换
+执行函数在
+``` python
+url(r'^setlang/$', 'django.views.i18n.set_language', name = 'setlang'),
+```
+
 ## 参考
 - [django多语言支持](http://www.it165.net/pro/html/201303/5220.html)
 - [Django i18n国际化](http://www.cnblogs.com/oubo/archive/2012/04/05/2433690.html)
