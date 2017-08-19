@@ -537,7 +537,7 @@ http://127.0.0.1:8000/en/inspection/dailyinspection
 
 如果不设next，那么request.META.get('HTTP_REFERER')重定向的还是当前的页面（en），切换不成功
 
-如果设置next，如下
+在form里设置next，如下
 ``` python
 {% load langs %}
 
@@ -563,7 +563,41 @@ def strip_lang(value):
 
 则重定向到http://127.0.0.1:8000/inspection/dailyinspection，这个又是不合法的url，因为url pattern已经改成了i18n_patterns
 
-可以在next的url中插入新语言的key，将来再实现。。。
+尝试在middleware中修改next，系统报错这个字典是immutable
+``` python
+if request.method == "POST":
+	lang = request.POST.get("language", None)
+	if lang:
+		next_url = request.POST.get('next',None)
+		if next_url:
+			next_url_modified = '/%s%s' % (lang, next_url)
+			request.POST.update({'next': next_url_modified})
+```			
+
+最后用了修改set_language的方法，照着系统的方法修改了一下
+``` python
+url(r'^setlang/$', 'zakkabag.views.set_language', name='setlang'),
+
+def set_language(request):
+	next = request.POST.get('next', request.GET.get('next'))
+	if not is_safe_url(url=next, host=request.get_host()):
+		next = request.META.get('HTTP_REFERER', None)
+		if not is_safe_url(url=next, host=request.get_host()):
+			next = reverse("home", kwargs={}) 
+	response = http.HttpResponseRedirect(next)
+
+	lang_code = request.POST.get('language', None) if request.method == 'POST' else request.GET.get('language', None)
+	if lang_code and check_for_language(lang_code):
+		if hasattr(request, 'session'):
+			request.session[LANGUAGE_SESSION_KEY] = lang_code
+		else:
+			response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code,
+				max_age=settings.LANGUAGE_COOKIE_AGE,
+				path=settings.LANGUAGE_COOKIE_PATH,
+				domain=settings.LANGUAGE_COOKIE_DOMAIN)
+
+	return response
+```
 
 
 
@@ -605,7 +639,7 @@ def set_language(request):
       {% endfor %}
 </ul>
 ```
-
+GET方式没有成功，后面再看吧
 
 ## 参考
 - https://docs.djangoproject.com/en/1.8/topics/i18n/translation/#explicitly-setting-the-active-language
