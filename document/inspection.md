@@ -653,6 +653,9 @@ GET方式没有成功，后面再看吧
 
 
 # 网页调用摄像头
+``` html
+<input type="file" accept="video/*;capture=camcorder">
+```
 
 # 禁止网页缩放
 ``` html
