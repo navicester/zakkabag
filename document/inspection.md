@@ -295,11 +295,98 @@ LANGUAGES = (
 LANGUAGE_CODE = 'en-us'
 ```
 
-## 语言切换 （不修改path）
+## 代码中标记
+model的定义
+``` python
+class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
+    first_name = models.CharField(_('first name'), max_length=30, blank=True)
+```
+
+view的定义
+``` python
+class DailyInspectionListView(ListView): 
+    def dispatch(self, request, *args, **kwargs):
+        request.breadcrumbs([
+            (_("Home"),reverse("home", kwargs={})),
+            (_('Daily Inspection'),request.path_info),
+        ])
+        return super(DailyInspectionListView, self).dispatch(request,args,kwargs)   
+```
+
+模板中的定义
+
+添加“{% load i18n %}”，然后就可以使用trans标记
+
+``` html
+<button type='submit' class='btn btn-default btn-block'>{% trans 'Log in' %}</button>
+```
+如果你只想标记字符串而想以后再翻译，可以添加noop选项：
+``` html
+<button type='submit' class='btn btn-default btn-block'>{% trans 'Log in' noop %}</button>
+```
+trans标记只能翻译字符串，不能使用变量，如果有变量需要翻译，那么需要使用{% blocktrans %}标记
+``` html
+{% blocktrans %}Log in site {{ site_name }}{% endblocktrans %}
+```
+另外RequestContext对象有三个针对翻译的变量LANGUAGES,LANGUAGE_CODE和LANGUAGE_BIDI，分别表示语言列表，当前用户语言的偏好，和语言的书写方式：
+> 
+LANGUAGES 是一系列元组组成的列表，每个元组的第一个元素是语言代码，第二个元素是用该语言表示的语言名称。  
+LANGUAGE_CODE是以字符串表示的当前用户偏好语言（例如， en-us ）。（详见 Django 如何确定语言偏好。）  
+LANGUAGE_BIDI是当前语言的书写方式。若设为 True，则该语言书写方向为从右到左（如希伯来语和阿拉伯语）；若设为 False，则该语言书写方向为从左到右（如英语、法语和德语）。
+
+还有另一种方式，也能达到在模板中使用上面三个变量的目的，如下代码：
+``` html
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+```
+这些值其实不需要特别去取，在前面的middleware的process_request里面已经赋值了
+
+## 添加前端
+定义一个templatetag，添加langs.py
+``` python
+# -*- coding:utf-8 -*-
+from django import template
+from django.utils.translation import get_language_info
+from django.conf import settings
+
+LANGUAGES = []
+for lang_code in settings.LANGUAGES_SUPPORTED:
+	LANGUAGES.append(get_language_info(lang_code))
+	
+register = template.Library()
+
+@register.inclusion_tag('app/parts/languages_select_part.html')
+def language_select(default):
+	return {'languages':LANGUAGES, 'default':default}
+```	
+在setting.py里添加LANGUAGES_SUPPORTED
+``` python
+LANGUAGES_SUPPORTED = ('en', 'zh-cn',)
+```
+“app/parts/languages_select_part.html”模板的定义如下：
+``` html
+{% if languages %}
+<form id="language-select-form" method="post" action="{% url django.views.i18n.set_language %}">{% csrf_token %}
+<select class="dropdown" onchange="this.form.submit();" name="language">
+{% for lang in languages %}<option value="{{ lang.code }}" {% if lang.code == default %}selected="selected"{% endif %}>{{ lang.name_local }}</option>
+{% endfor %}</select>
+</form>{% endif %}
+
+```
+那么在网站的模板中，就可以通过如下代码将该下拉框添加到页面中：
+{% load langs %}
+{% language_select LANGUAGE_CODE %}
+
+## 后端的实现 （不修改path）
 添加
 ``` python
 url(r'^setlang/$', 'django.views.i18n.set_language', name = 'setlang'),
 ```
+
+## 后端的原理
+
 django.views.i18n.set_language
 
 该函数会完成语言转换和next设定
@@ -403,6 +490,7 @@ def get_language_from_request(request, check_path=False):
     except LookupError:
         return settings.LANGUAGE_CODE
 ```	
+
 
 
 ## 参考
