@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
+from django.db.models.signals import post_delete
+from .utils import file_cleanup
 # Create your models here.
 
 RESULT_OPTION = (
@@ -94,4 +96,6 @@ class DailyInspection(models.Model):
         img = self.image_after
         if img:
             return img.url
-        return img                       
+        return img 
+
+post_delete.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")

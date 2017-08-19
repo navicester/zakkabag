@@ -2,4 +2,5 @@ eclipse.preferences.version=1
 encoding//site-packages/requests/api.py=utf-8
 encoding//site-packages/weixin/oauth2.py=utf-8
 encoding//zakkabag/settings/base.py=utf-8
+encoding//zakkabag/templatetags/langs.py=utf-8
 encoding//zakkabag/views.py=utf-8

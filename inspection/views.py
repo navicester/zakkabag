@@ -6,6 +6,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin, ModelFormMixin
 from django.http import HttpResponseRedirect
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 # Create your views here.
 from .models import OfficeInspection, DailyInspection
@@ -180,7 +181,7 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
     def dispatch(self, request, *args, **kwargs):
         instance = self.get_object()
         request.breadcrumbs([
-            ("Home",reverse("home", kwargs={})),
+            (_("Home"),reverse("home", kwargs={})),
             ("Daily Inspection",reverse("dailyinspection_list", kwargs={})),
             (instance,request.path_info),
         ])
@@ -196,18 +197,24 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
         obj.id = instance.id
         obj.created = instance.created
         if form.cleaned_data['image_before']:
+            instance.image_before.delete(save=True)
             if form.clear_image_before_clear():
                 obj.image_before = None
         else:
             if form.clear_image_before_clear() is None:
                 obj.image_before = instance.image_before
+            else:
+                instance.image_before.delete(save=True)
 
         if form.cleaned_data['image_after']:
+            instance.image_after.delete(save=True)
             if form.clear_image_after_clear():
                 obj.image_after = None
         else:
             if form.clear_image_after_clear() is None:                
                 obj.image_after = instance.image_after
+            else:
+                instance.image_after.delete(save=True)
         #obj.image = gen_qrcode(self.request.get_host() + reverse("dailyinspection_create", kwargs={}))
         obj.save()
 
@@ -225,7 +232,7 @@ class DailyInspectionListView(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         request.breadcrumbs([
-            ("Home",reverse("home", kwargs={})),
-            ('Daily Inspection',request.path_info),
+            (_("Home"),reverse("home", kwargs={})),
+            (_('Daily Inspection'),request.path_info),
         ])
         return super(DailyInspectionListView, self).dispatch(request,args,kwargs)   

@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'personalcenter',
     'crowdfundings',
     'inspection',
+    'zakkabag',
     'crispy_forms',
     'registration',
     'django_filters',
@@ -99,6 +100,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 "django.core.context_processors.i18n",
+                "zakkabag.templatecontext.lang_context_processor",
             ],
         },
     },
@@ -124,7 +126,7 @@ if not 'SERVER_SOFTWARE' in os.environ:
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en' #'en-us', language switch fail
 
 TIME_ZONE = 'UTC'
 
@@ -135,15 +137,20 @@ USE_L10N = True
 USE_TZ = True
 
 
-
+LANGUAGES_SUPPORTED = ('en', 'zh-cn',)
 
 LANGUAGES = (
-    ('en-us', ('English')),
-    ('zh-cn', ('÷–ŒƒºÚÃÂ')),
-    ('zh-tw', ('÷–Œƒ∑±Ûw')),
+    ('en', ('English')),
+    ('zh-cn', ('‰∏≠ÊñáÁÆÄ‰Ωì')),
+    ('zh-tw', ('‰∏≠ÊñáÁπÅÈ´î')),
 )
+
+
 '''
+#from django.utils.translation import ugettext as _
+
 ugettext = lambda s: s
+
 LANGUAGES = (
     ('en-us', ugettext('English')),
     ('zh-cn', ugettext('Chinese Simple')),
@@ -250,3 +257,5 @@ ACCOUNT_REGISTER_TYPE = 'phone' #phone, mail
 ACCOUNT_ALLOW_MIX_TYPE_LOGIN = True
 
 PHONE_LOGIN_ATTEMPTS = 100
+
+USE_EXPLICIT_LANG_URL = False

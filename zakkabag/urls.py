@@ -1,6 +1,9 @@
 from django.conf import settings
 from django.conf.urls.static import static
-
+if settings.USE_EXPLICIT_LANG_URL:
+    from django.conf.urls.i18n import i18n_patterns as url_patterns
+else:    
+    from django.conf.urls import patterns as url_patterns
 from django.conf.urls import patterns, include, url
 from wechat.views import handleRequest
 
@@ -19,13 +22,13 @@ def i18n_javascript(request):
     return admin.site.i18n_javascript(request)
 
 
-urlpatterns = patterns('',
+urlpatterns = url_patterns('',
     # Examples:
     url(r'^$', 'wechat.views.handleRequest'),
 
     url(r'^home$', 'newsletter.views.home', name='home'),
     url(r'^contact/$', 'newsletter.views.contact', name='contact'),   
-    url(r'^about/$', 'zakkabag.views.about', name='about'),
+    url(r'^about/$', 'zakkabag.views.about', name='about'),    
     url(r'^about/sitemap$', 'zakkabag.views.sitemap', name='sitemap'),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
@@ -59,10 +62,18 @@ urlpatterns = patterns('',
 
     url(r'^phone_login/', include('phone_login.urls')),    
 
+    #url(r'^setlang/$', 'django.views.i18n.set_language', name = 'setlang'),
+    url(r'^setlang/$', 'zakkabag.views.set_language', name='setlang'),
+
     #url(r'^ckeditor/', include('ckeditor.urls')),
     
     # url(r'^articles/comments/', include('django_comments.urls')),   
 )
+
+urlpatterns += patterns(
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+)
+
 
 '''
 urlpatterns += patterns('',
