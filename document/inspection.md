@@ -569,6 +569,42 @@ def strip_lang(value):
 
 
 ## get方式切换语言
+模仿后台
+``` python
+def set_language(request):
+	next = request.REQUEST.get('next', None)
+	if not next:
+		next = request.META.get('HTTP_REFERER', None)
+	if not next:
+		next = reverse("home", kwargs={}) 
+	response = http.HttpResponseRedirect(next)
+	if request.method == 'GET':
+		lang_code = request.GET.get('language', None)
+		if lang_code and check_for_language(lang_code):
+			if hasattr(request, 'session'):
+				request.session[LANGUAGE_SESSION_KEY] = lang_code
+			else:
+				response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
+	return response
+```	
+前台
+``` html
+           <li><a href="{% url 'set_language' %}?language='zh-cn'&next={{request.path}}">chinese</a></li>
+           <li><a href="{% url 'set_language' %}?language='en'&next={{request.path}}">english</a></li>  
+```
+但是check_for_language这个函数总是失败，实际上还没有进入该函数，在它的wrapper就返回False了
+
+前台也可以用下面方式
+``` python
+<ul class="lang-switch">
+    {% get_language_info_list for LANGUAGES as languages %}
+      {% for language in languages %}
+      {% language lang_code %}
+      <li><a href="#" rel="{{ language.code }}">{{ language.code|upper }}</a></li>
+      {% endlanguage %}
+      {% endfor %}
+</ul>
+```
 
 
 ## 参考
