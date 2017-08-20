@@ -200,13 +200,21 @@ class ProfileDetailView(FormMixin, DetailView):
 
             from os import environ  
             online = environ.get("APP_NAME", "")   
-            if online:  
+            if not online:  
+                from sae.ext.storage import monkey
+                monkey.patch_all()
+
+            if 1:
+
                 from sae.storage import Bucket
                 bucket = Bucket('media')
                 try:
                     bucket.put()
                 except:
                     pass
+                bucket.post(acl='.r:.sinaapp.com,.r:sae.sina.com.cn', metadata={'expires': '1d'})
+                attrs = bucket.stat()
+
                 bucket.put_object('1.txt', 'hello, world')
                 url = bucket.generate_url('1.txt')
                 bucket.put_object('1.txt', url)
