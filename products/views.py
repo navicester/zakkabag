@@ -218,12 +218,12 @@ def product_detail_view_func(request, id):
 from PIL import Image 
 from django.conf import settings
 import os
-def upload_to(filename, title):
+def upload_to(filename, title, id):
     if filename:
         img=Image.open(filename)
         slug = slugify(title)
         basename, file_extension = filename.name.split(".")
-        new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)        
+        new_filename = "%s-%s.%s" %(slug, id, file_extension)        
         photoname = os.path.join("products", slug, new_filename)
         if 'SERVER_SOFTWARE' in os.environ: 
             pass
@@ -259,7 +259,7 @@ class ProductCreateView(CreateView):
         if 1:
             in_mem_image_file=request.FILES['image']     
             if in_mem_image_file:
-                photoname = upload_to(in_mem_image_file, self.object.title)
+                photoname = upload_to(in_mem_image_file, self.object.title, self.object.id)
 
                 if 'SERVER_SOFTWARE' in os.environ: 
                     #from sae.storage import Bucket
