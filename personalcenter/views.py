@@ -205,8 +205,9 @@ class ProfileDetailView(FormMixin, DetailView):
                 monkey.patch_all()
 
             if 1:
-                '''
+                
                 from sae.storage import Bucket
+                '''
                 bucket = Bucket('media')
                 try:
                     bucket.put()
