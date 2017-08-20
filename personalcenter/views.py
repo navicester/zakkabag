@@ -205,8 +205,10 @@ class ProfileDetailView(FormMixin, DetailView):
                 monkey.patch_all()
 
             if 1:
-                
-                from sae.storage import Bucket
+                try:                    
+                    from sae.storage import Bucket
+                except:
+                    return redirect(reverse("home", kwargs={}))
                 '''
                 bucket = Bucket('media')
                 try:
