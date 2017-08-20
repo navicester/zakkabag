@@ -262,6 +262,7 @@ class ProductCreateView(CreateView):
                 photoname = upload_to(in_mem_image_file, self.object.title, self.object.id)
 
                 if 'SERVER_SOFTWARE' in os.environ: 
+                    import sae
                     #from sae.storage import Bucket
                     #bucket = Bucket('media')
                     c = sae.storage.Connection()
