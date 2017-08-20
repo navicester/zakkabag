@@ -9,6 +9,7 @@ from django.utils.translation import (
 from django.utils.http import is_safe_url
 
 def set_language(request):
+	print request.META.get('HTTP_REFERER', None)
 	next = request.POST.get('next', request.GET.get('next'))
 	if not is_safe_url(url=next, host=request.get_host()):
 		next = request.META.get('HTTP_REFERER', None)

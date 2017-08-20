@@ -17,7 +17,6 @@ def language_select(default, request):
 @register.filter(name="strip_lang")
 def strip_lang(value):
     lang = translation.get_language()
-    print lang, value
     #strip_url = '/%s' % value.lstrip('/%s/' % lang)	
     strip_url = value.replace('/{0}/'.format(lang), '/')
     return strip_url

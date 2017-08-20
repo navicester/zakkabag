@@ -27,13 +27,3 @@ class openidmiddleware():
 				except  UserModel.DoesNotExist:
 					pass
 		       '''
-
-		'''
-		if request.method == "POST":
-			lang = request.POST.get("language", None)
-			if lang:
-				next_url = request.POST.get('next',None)
-				if next_url:
-					next_url_modified = '/%s%s' % (lang, next_url)
-					request.POST.update({'next': next_url_modified})
-		'''
