@@ -205,7 +205,7 @@ class ProfileDetailView(FormMixin, DetailView):
                 monkey.patch_all()
 
             if 1:
-
+                '''
                 from sae.storage import Bucket
                 bucket = Bucket('media')
                 try:
@@ -218,8 +218,7 @@ class ProfileDetailView(FormMixin, DetailView):
                 bucket.put_object('1.txt', 'hello, world')
                 url = bucket.generate_url('1.txt')
                 bucket.put_object('1.txt', url)
-                '''
-
+                
 
                 import sae.const  
                 access_key = sae.const.ACCESS_KEY  
