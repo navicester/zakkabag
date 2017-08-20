@@ -204,10 +204,11 @@ class ProfileDetailView(FormMixin, DetailView):
                 from sae.ext.storage import monkey
                 monkey.patch_all()
 
-            if 0:
+            if 1:
                 try:                    
                     from sae.storage import Bucket
                 except:
+                    raise RuntimeError('env setup')
                     return redirect(reverse("home", kwargs={}))
                 
                 bucket = Bucket('media')
@@ -226,22 +227,7 @@ class ProfileDetailView(FormMixin, DetailView):
                 if filename:
                     img=Image.open(filename)
                 bucket.put_object(filename.name, img.fp)#open(filename.name, 'rb'))
-                '''
-                url = bucket.generate_url('1.txt')
-                bucket.put_object('1.txt', url)
-                
 
-                import sae.const  
-                access_key = sae.const.ACCESS_KEY  
-                secret_key = sae.const.SECRET_KEY  
-                appname = sae.const.APP_NAME  
-                domain_name = "domain-name"     
-
-                import sae.storage  
-                s = sae.storage.Client()  
-                ob = sae.storage.Object(content.read())  
-                url = s.put(domain_name, content.name, ob)  
-                '''
             else:
                 # use plugin
                 if 'image' in form.cleaned_data:

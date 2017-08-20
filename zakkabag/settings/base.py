@@ -175,8 +175,7 @@ STATICFILES_DIRS = (
     #'/var/www/static/',
 )
 
-if 'SERVER_SOFTWARE' in os.environ:
-    raise RuntimeError('env setup')
+if 'SERVER_SOFTWARE' in os.environ:    
     FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10M
     DEFAULT_FILE_STORAGE = 'sae.ext.django.storage.backend.Storage'
     #DEFAULT_FILE_STORAGE = 'saewrapper.storage.SAEStorage'
@@ -188,10 +187,10 @@ if 'SERVER_SOFTWARE' in os.environ:
     STORAGE_SECRETKEY = 'jx3531ximhkk5z5h3l4myx41w330x3lyz0zz1x3m'
     os.environ.setdefault("sae.storage.path", os.path.join(BASE_DIR, "static_in_env2"))
     '''
-
+else:    
+    MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
 CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads')
 
 #print "base dir" + BASE_DIR
