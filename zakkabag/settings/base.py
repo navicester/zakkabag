@@ -176,6 +176,7 @@ STATICFILES_DIRS = (
 )
 
 if 'SERVER_SOFTWARE' in os.environ:
+    raise RuntimeError('env setup')
     FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10M
     DEFAULT_FILE_STORAGE = 'sae.ext.django.storage.backend.Storage'
     #DEFAULT_FILE_STORAGE = 'saewrapper.storage.SAEStorage'
