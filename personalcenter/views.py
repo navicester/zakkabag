@@ -205,7 +205,7 @@ class ProfileDetailView(FormMixin, DetailView):
                 bucket = Bucket('media')
                 try:
                     bucket.put()
-                else:
+                except:
                     pass
                 bucket.put_object('1.txt', 'hello, world')
                 url = bucket.generate_url('1.txt')
@@ -217,7 +217,7 @@ class ProfileDetailView(FormMixin, DetailView):
                 access_key = sae.const.ACCESS_KEY  
                 secret_key = sae.const.SECRET_KEY  
                 appname = sae.const.APP_NAME  
-                domain_name = "domain-name"  #刚申请的domain         
+                domain_name = "domain-name"     
 
                 import sae.storage  
                 s = sae.storage.Client()  
