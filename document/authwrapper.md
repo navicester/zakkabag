@@ -215,6 +215,7 @@ SESSION_KEY会在后面_get_user_session_key中使用，用于获取用户
                 'django.contrib.auth.context_processors.auth',
 ```
 
+
 ## context_processors
 django.contrib.auth.context_processors.auth
 ``` python
@@ -470,7 +471,7 @@ def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
 ```
 pre_save.connect(myuser_pre_save_receiver, sender=MyUser)
 
-## 添加用户管理
+## 添加用户及管理
 authwrapper\models.py
 ``` python
     def _create_user(self, username, email, phone, password, **extra_fields):
@@ -965,7 +966,128 @@ def account_link_to_wechat(request):
 
 # 用户扩展 (支持头像)
 
+# 用户注册 （邮箱）
 
+# 用户注册 （手机）
+
+# 登陆后跳转
+登录成功或者密码修改成功之后，跳转回原来的网址或者指定的地址
+
+以admin的auth为例：  
+在template里面定义好’next’网址，并通过GET/POST方法传递给后台，后台在login成功之后会重定向到该网址
+有时需要获取当前site网址，可以使用get_current_site方法
+
+__init__.py (site-packages\django\contrib\auth)
+``` python
+REDIRECT_FIELD_NAME = 'next'
+```
+Views.py (site-packages\django\contrib\auth)
+``` python
+@sensitive_post_parameters()
+@csrf_protect
+@never_cache
+def login(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm,
+          current_app=None, extra_context=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.POST.get(redirect_field_name,
+                                   request.GET.get(redirect_field_name, ''))
+
+    if request.method == "POST":
+        form = authentication_form(request, data=request.POST)
+        if form.is_valid():
+
+            # Ensure the user-originating redirection url is safe.
+            if not is_safe_url(url=redirect_to, host=request.get_host()):
+                redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+
+            # Okay, security check complete. Log the user in.
+            auth_login(request, form.get_user())
+
+            return HttpResponseRedirect(redirect_to)
+    else:
+        form = authentication_form(request)
+
+    current_site = get_current_site(request)
+
+    context = {
+        'form': form,
+        redirect_field_name: redirect_to,
+        'site': current_site,
+        'site_name': current_site.name,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    if current_app is not None:
+        request.current_app = current_app
+
+    return TemplateResponse(request, template_name, context)
+
+```
+redirect_to变量的赋值顺序
+- POST['next']
+- settings.LOGIN_REDIRECT_URL
+
+顺便讲一下这儿获取网址用到了get_current_site去获取完整域名，有的地方也用了request.META.get('HTTP_REFERER')去获取带域名网址
+
+Shortcuts.py (site-packages\django\contrib\sites)
+``` python
+def get_current_site(request):
+    """
+    Checks if contrib.sites is installed and returns either the current
+    ``Site`` object or a ``RequestSite`` object based on the request.
+    """
+    # Imports are inside the function because its point is to avoid importing
+    # the Site models when django.contrib.sites isn't installed.
+    if apps.is_installed('django.contrib.sites'):
+        from .models import Site
+        return Site.objects.get_current(request)
+    else:
+        from .requests import RequestSite
+        return RequestSite(request)
+```
+
+Models.py (site-packages\django\contrib\sites)
+``` python
+class SiteManager(models.Manager):
+     def get_current(self, request=None):
+        """
+        Returns the current Site based on the SITE_ID in the project's settings.
+        If SITE_ID isn't defined, it returns the site with domain matching
+        request.get_host(). The ``Site`` object is cached the first time it's
+        retrieved from the database.
+        """
+        from django.conf import settings
+        if getattr(settings, 'SITE_ID', ''):
+            site_id = settings.SITE_ID
+            return self._get_site_by_id(site_id)
+        elif request:
+            return self._get_site_by_request(request)
+
+        raise ImproperlyConfigured(
+            "You're using the Django \"sites framework\" without having "
+            "set the SITE_ID setting. Create a site in your database and "
+            "set the SITE_ID setting or pass a request to "
+            "Site.objects.get_current() to fix this error."
+        )
+```
+
+应用举例：
+
+Login.html (site-packages\registration\templates\registration)
+``` html
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="{% trans 'Log in' %}" />
+    <input type="hidden" name="next" value="{{ next }}" />
+</form>
+```
+该next值会传递给login函数
 
 
 

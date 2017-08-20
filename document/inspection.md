@@ -191,8 +191,6 @@ http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 - https://stackoverflow.com/questions/41329858/how-to-delete-an-imagefield-image-in-a-django-model
 - https://docs.djangoproject.com/en/1.11/topics/signals/
 
-# 用户不能缩放网页
-
 # 国际化 i18n
 Django 官方教程：https://docs.djangoproject.com/en/1.8/#internationalization-and-localization
 
@@ -653,6 +651,14 @@ GET方式没有成功，后面再看吧
 
 
 # 网页调用摄像头
+``` html
+<input type="file" accept="video/*;capture=camcorder">
+```
+
+# 禁止网页缩放
+``` html
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+```
 
 # 新浪云直接访问文件存储
 
