@@ -15,7 +15,8 @@ pip-selfcheck.json
 #*.sqlite3
 .DS_STORE
 .Python
-*.py[cod]
+#*.py[cod]
+*.py[co]
 
 .pydevproject
 .project
@@ -30,7 +31,9 @@ dev_server.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
+#*.py[cod]
+*.py[co]
+
 
 # C extensions
 *.so
