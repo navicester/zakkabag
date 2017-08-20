@@ -8,6 +8,8 @@ libraries:
   version: "2.3.0"
 - name: "six"
   version: "1.8.0"
+- name: "Pillow"
+  version: "4.1.0"  
   
 handlers:
 - url: /static/
