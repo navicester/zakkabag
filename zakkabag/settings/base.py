@@ -175,6 +175,16 @@ STATICFILES_DIRS = (
     #'/var/www/static/',
 )
 
+if 'SERVER_SOFTWARE' in os.environ:
+    # 修改上传时文件在内存中可以存放的最大 size 为 10m
+    FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
+    # 新浪云的本地文件系统是只读的，修改 django 的 file storage backend 为 Storage
+    DEFAULT_FILE_STORAGE = 'sae.ext.django.storage.backend.Storage'
+    # 使用 media 这个 bucket
+    STORAGE_BUCKET_NAME = 'media'
+    # ref: https://docs.djangoproject.com/en/dev/topics/files/
+
+
 MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "media_root")
 MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
@@ -259,3 +269,4 @@ ACCOUNT_ALLOW_MIX_TYPE_LOGIN = True
 PHONE_LOGIN_ATTEMPTS = 100
 
 USE_EXPLICIT_LANG_URL = False
+
