@@ -14,9 +14,7 @@ static_in_env2/
 pip-selfcheck.json
 #*.sqlite3
 .DS_STORE
-.Python
-#*.py[cod]
-*.py[co]
+
 
 .pydevproject
 .project

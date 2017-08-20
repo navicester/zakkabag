@@ -198,36 +198,35 @@ class ProfileDetailView(FormMixin, DetailView):
             usermodel.nickname = form.cleaned_data['nickname']
             usermodel.birthday = form.cleaned_data['birthday']
 
-            from os import environ  
-            online = environ.get("APP_NAME", "")   
-            if not online:  
-                from sae.ext.storage import monkey
-                monkey.patch_all()
+            if 0:
+                from os import environ  
+                online = environ.get("APP_NAME", "")   
+                if not online:  
+                    from sae.ext.storage import monkey
+                    monkey.patch_all()
 
-            if 1:
-                try:                    
-                    from sae.storage import Bucket
-                except:
-                    raise RuntimeError('env setup')
-                    return redirect(reverse("home", kwargs={}))
-                
-                bucket = Bucket('media')
-                try:
-                    bucket.put()
-                except:
-                    pass
+                    try:                    
+                        from sae.storage import Bucket
+                    except:
+                        raise RuntimeError('env setup')
+                        return redirect(reverse("home", kwargs={}))
+                    
+                    bucket = Bucket('media')
+                    try:
+                        bucket.put()
+                    except:
+                        pass
 
-                bucket.post(acl='.r:.sinaapp.com,.r:sae.sina.com.cn', metadata={'expires': '1d'})
+                    bucket.post(acl='.r:.sinaapp.com,.r:sae.sina.com.cn', metadata={'expires': '1d'})
 
-                attrs = bucket.stat()
-                print attrs
+                    attrs = bucket.stat()
+                    print attrs
 
-                filename=request.FILES['image']
-                from PIL import Image
-                if filename:
-                    img=Image.open(filename)
-                bucket.put_object(filename.name, img.fp)#open(filename.name, 'rb'))
-
+                    filename=request.FILES['image']
+                    from PIL import Image
+                    if filename:
+                        img=Image.open(filename)
+                    bucket.put_object(filename.name, img.fp)#open(filename.name, 'rb'))
             else:
                 # use plugin
                 if 'image' in form.cleaned_data:

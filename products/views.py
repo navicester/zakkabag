@@ -215,6 +215,24 @@ def product_detail_view_func(request, id):
     return render(request, template, context)
 
 
+from PIL import Image 
+from django.conf import settings
+import os
+def upload_to(filename, title):
+    if filename:
+        img=Image.open(filename)
+        slug = slugify(title)
+        basename, file_extension = filename.name.split(".")
+        new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)        
+        photoname = os.path.join("products", slug, new_filename)
+        if 'SERVER_SOFTWARE' in os.environ: 
+            pass
+        else:
+            photopath = os.path.join(settings.MEDIA_ROOT, "products", slug)
+            if not os.path.exists(photopath):
+                os.makedirs(photopath)
+        return photoname
+    
 class ProductCreateView(CreateView):
     template_name = 'products/product_create.html'
     form_class = ProductCreateForm
@@ -234,27 +252,26 @@ class ProductCreateView(CreateView):
 
         return form
 
+    
     def post(self, request, *args, **kwargs):
         postresult = super(ProductCreateView, self).post(request, *args, **kwargs)
 
-        if 0:
-            filename=request.FILES['image']
-            from PIL import Image 
-            if filename:
-                img=Image.open(filename)
-                title = self.object.title
-                slug = slugify(title)
-                basename, file_extension = filename.name.split(".")
-                new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)
-                from django.conf import settings
-                import os
-                photoname = os.path.join("products", slug, new_filename)
-                photopath = os.path.join(settings.MEDIA_ROOT, "products", slug)
-                if not os.path.exists(photopath):
-                    os.makedirs(photopath)
-                img.save(os.path.join(settings.MEDIA_ROOT, photoname))
-                ProductImage.objects.create(product = self.object, 
-                    image = photoname)
+        if 1:
+            in_mem_image_file=request.FILES['image']     
+            if in_mem_image_file:
+                photoname = upload_to(in_mem_image_file, self.object.title)
+
+                if 'SERVER_SOFTWARE' in os.environ: 
+                    #from sae.storage import Bucket
+                    #bucket = Bucket('media')
+                    c = sae.storage.Connection()
+                    bucket = c.get_bucket('media')
+                    #obj = bucket.get_object_contents(photoname) 
+                    bucket.put_object(photoname,open(in_mem_image_file.file, 'rb'))                    
+                else:                
+                    img.save(os.path.join(settings.MEDIA_ROOT, photoname))
+                    ProductImage.objects.create(product = self.object, 
+                        image = photoname)
 
         # BELOW ALSO WORKS
         else:
