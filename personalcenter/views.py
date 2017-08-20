@@ -204,21 +204,29 @@ class ProfileDetailView(FormMixin, DetailView):
                 from sae.ext.storage import monkey
                 monkey.patch_all()
 
-            if 1:
+            if 0:
                 try:                    
                     from sae.storage import Bucket
                 except:
                     return redirect(reverse("home", kwargs={}))
-                '''
+                
                 bucket = Bucket('media')
                 try:
                     bucket.put()
                 except:
                     pass
-                bucket.post(acl='.r:.sinaapp.com,.r:sae.sina.com.cn', metadata={'expires': '1d'})
-                attrs = bucket.stat()
 
-                bucket.put_object('1.txt', 'hello, world')
+                bucket.post(acl='.r:.sinaapp.com,.r:sae.sina.com.cn', metadata={'expires': '1d'})
+
+                attrs = bucket.stat()
+                print attrs
+
+                filename=request.FILES['image']
+                from PIL import Image
+                if filename:
+                    img=Image.open(filename)
+                bucket.put_object(filename.name, img.fp)#open(filename.name, 'rb'))
+                '''
                 url = bucket.generate_url('1.txt')
                 bucket.put_object('1.txt', url)
                 

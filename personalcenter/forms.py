@@ -14,7 +14,8 @@ class MyUserForm(forms.ModelForm):
             'last_name',
             'nickname',
             'birthday',
-            'sex'
+            'sex',
+            'image'
         ]
 
     def __init__(self, *args, **kwargs):

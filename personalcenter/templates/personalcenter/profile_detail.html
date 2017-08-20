@@ -36,7 +36,7 @@ $(document).ready(function(){
 <div class='col-sm-6 col-sm-offset-3'>
     <h3>{{ object }}</h3><hr>
     {% comment %}
-    <form id="form_profile" method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
+    <form id="form_profile" enctype="multipart/form-data" method="POST" enctype="multipart/form-data" action=""> {% csrf_token %}
         {% form|crispy %}         
         <br>
         <input type="submit" value='Update' class='btn' />

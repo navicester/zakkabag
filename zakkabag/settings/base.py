@@ -176,17 +176,20 @@ STATICFILES_DIRS = (
 )
 
 if 'SERVER_SOFTWARE' in os.environ:
-    # 修改上传时文件在内存中可以存放的最大 size 为 10m
-    FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
-    # 新浪云的本地文件系统是只读的，修改 django 的 file storage backend 为 Storage
+    FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10M
     DEFAULT_FILE_STORAGE = 'sae.ext.django.storage.backend.Storage'
-    # 使用 media 这个 bucket
+    #DEFAULT_FILE_STORAGE = 'saewrapper.storage.SAEStorage'
     STORAGE_BUCKET_NAME = 'media'
     # ref: https://docs.djangoproject.com/en/dev/topics/files/
+    '''
+    STORAGE_ACCOUNT = 'zakkabag'
+    STORAGE_ACCESSKEY = 'lno2o5x0ox'
+    STORAGE_SECRETKEY = 'jx3531ximhkk5z5h3l4myx41w330x3lyz0zz1x3m'
+    os.environ.setdefault("sae.storage.path", os.path.join(BASE_DIR, "static_in_env2"))
+    '''
 
 
 MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "media_root")
 MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
 CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads')
 
