@@ -198,14 +198,41 @@ class ProfileDetailView(FormMixin, DetailView):
             usermodel.nickname = form.cleaned_data['nickname']
             usermodel.birthday = form.cleaned_data['birthday']
 
-            # use plugin
-            if 'image' in form.cleaned_data:
-                usermodel.image = form.cleaned_data['image']
-            #use ajax
-            if not cache.get('cache_key_upload',None) is None:
-                usermodel.image = cache.get('cache_key_upload',None)
-                if cache.has_key('cache_key_upload'):
-                    cache.delete('cache_key_upload')
+            from os import environ  
+            online = environ.get("APP_NAME", "")   
+            if online:  
+                from sae.storage import Bucket
+                bucket = Bucket('media')
+                try:
+                    bucket.put()
+                else:
+                    pass
+                bucket.put_object('1.txt', 'hello, world')
+                url = bucket.generate_url('1.txt')
+                bucket.put_object('1.txt', url)
+                '''
+
+
+                import sae.const  
+                access_key = sae.const.ACCESS_KEY  
+                secret_key = sae.const.SECRET_KEY  
+                appname = sae.const.APP_NAME  
+                domain_name = "domain-name"  #刚申请的domain         
+
+                import sae.storage  
+                s = sae.storage.Client()  
+                ob = sae.storage.Object(content.read())  
+                url = s.put(domain_name, content.name, ob)  
+                '''
+            else:
+                # use plugin
+                if 'image' in form.cleaned_data:
+                    usermodel.image = form.cleaned_data['image']
+                #use ajax
+                if not cache.get('cache_key_upload',None) is None:
+                    usermodel.image = cache.get('cache_key_upload',None)
+                    if cache.has_key('cache_key_upload'):
+                        cache.delete('cache_key_upload')
             usermodel.save()
             return self.form_valid(form)
         else:
