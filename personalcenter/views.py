@@ -217,7 +217,7 @@ class ProfileDetailView(FormMixin, DetailView):
                 usermodel.image = form.cleaned_data['image']
             #use ajax
             if not cache.get('cache_key_upload',None) is None:
-                raise RuntimeError('env setup %s' % (cache.get('cache_key_upload',None)))
+                #raise RuntimeError('env setup %s' % (cache.get('cache_key_upload',None)))
                 usermodel.image = cache.get('cache_key_upload',None)
                 if cache.has_key('cache_key_upload'):
                     cache.delete('cache_key_upload')
