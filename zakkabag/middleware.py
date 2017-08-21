@@ -14,6 +14,7 @@ class openidmiddleware():
 
 	def process_request(self, request):
 		request.register_type = settings.ACCOUNT_REGISTER_TYPE
+		request.media = settings.MEDIA_URL
 		    		    
 		if request.user.is_anonymous:
 		       from django.utils.module_loading import import_string
