@@ -16,7 +16,7 @@
 {% block content %}
 <div class='row'>
 	<div class='col-sm-6 col-sm-offset-3'>
-        {% comment %}
+        
 		<div class="row">
 			<div class="text-center">
 				<lead><h2>{{object.item}}</h2></lead>
@@ -25,7 +25,7 @@
 			
 		</div>
         
-
+		{% comment %}
 		<div class="row">	
             {# include "form_horizontal.html" with submitvalue="Submit" file=True #} 
             <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' style="padding: 3px">{% csrf_token %}
