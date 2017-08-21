@@ -75,11 +75,14 @@
         var xPos = null;
         var yPos = null;
         window.addEventListener( "touchmove", function ( event ) {
-            var touch = event.originalEvent.touches[ 0 ];
+            //var touch = event.originalEvent.touches[0];
+            var touch = event.targetTouches[0];
             oldX = xPos;
             oldY = yPos;
-            xPos = touch.pageX;
-            yPos = touch.pageY;
+            //xPos = touch.pageX;
+            //yPos = touch.pageY;
+            xPos = touch.screenX;
+            yPos = touch.screenY;
             $('.navbar-brand').text(xPos);
             if ( oldX == null && oldY == null ) {
                 return false;
