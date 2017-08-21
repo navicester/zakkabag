@@ -190,7 +190,8 @@ if 'SERVER_SOFTWARE' in os.environ:
 
     CKEDITOR_UPLOAD_PATH = 'ckeditor/uploads' #not valid
 
-    MEDIA_URL = '/'
+    from saewrapper.storage.bucket import SAEBucket
+    MEDIA_URL = SAEBucket().url('')
 else:
     MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
     CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads') #not used
