@@ -41,20 +41,15 @@
 
         }
 
-        document.body.addEventListener('touchmove',function(event){
-            event.stopPropagation();
-            event.preventDefault();
-        })
-
-        /*
+       
         document.body.addEventListener('touchstart',function(event){
-             event.stopPropagation(); //prevent propagatin
-             event.preventDefault();  //prevent default brower event
-             xx = event.targetTouches[0].screenX ;
-             yy = event.targetTouches[0].screenY ;
-             swipeX = true;
-             swipeY = true ;
-         })
+            //event.stopPropagation(); //prevent propagatin
+            //event.preventDefault();  //prevent default brower event
+            xx = event.targetTouches[0].screenX ;
+            yy = event.targetTouches[0].screenY ;
+            swipeX = true;
+            swipeY = true ;
+        })
 
         document.body.addEventListener('touchmove',function(event){
             XX = event.targetTouches[0].screenX ;
@@ -72,10 +67,10 @@
             }
         })
         document.body.addEventListener('touchend',function(event){
-            event.stopPropagation();//阻止冒泡
-            event.preventDefault();//阻止浏览器默认事件
-            })
-        */
+            //event.stopPropagation();
+            //event.preventDefault();
+        })
+        
 
         $(document).ready(function(){
             updateCartItemCount()
