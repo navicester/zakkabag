@@ -5,28 +5,20 @@
     {{ field.label_tag }}  
     <div class="col-sm-10 {% if image %}image-field{% endif %}">
         {% if image %}            
-            <div class="row">
-            	<div class="col-sm-2">
-	            	<label for="{{field.name}}-modify" style="float:left; clear: both">{% if field.value %}修改:&nbsp{% else %} 添加:&nbsp{% endif %}</label>
-	            </div>
-	            <div class="col-sm-10">
-	            	<input id="id_{{field.name}}" name="{{field.name}}" type="file" accept="video/*;capture=camcorder"> 
-            	</div>             
+            <div>
+            	<label for="{{field.name}}-modify" style="float:left; clear: both">{% if field.value %}修改: {% else %} 添加 {% endif %}</label>
+	            <input id="id_{{field.name}}" name="{{field.name}}" type="file" accept="video/*;capture=camcorder">             
             </div>
             <br>
-            <div class="row">
-            	<div class="col-sm-12">
-            		{% if field.value %}
-            			<img  class= 'img-responsive' src="{{request.media}}{{field.value}}"/>
-            		{% endif %}
-            	</div>
+            <div >
+            	{% if field.value %}
+            		<img  class= 'img-responsive' src="{{request.media}}{{field.value}}"/>
+            	{% endif %}
             </div>
             {% if field.value %}
-            <div class="row">
-            	<div class="col-sm-12">
-            		<label for="{{field.name}}-clear_id" >清除</label>
-            		<input id="{{field.name}}-clear_id" name="{{field.name}}-clear" type="checkbox">
-            	</div>
+            <div>
+            	<label for="{{field.name}}-clear_id" >清除</label>
+            	<input id="{{field.name}}-clear_id" name="{{field.name}}-clear" type="checkbox">
             </div>
             {% endif %}
         {% else %}
