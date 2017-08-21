@@ -188,8 +188,11 @@ if 'SERVER_SOFTWARE' in os.environ:
     os.environ.setdefault("sae.storage.path", os.path.join(BASE_DIR, "static_in_env2"))
     '''
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
-CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads') #not used yet
+    CKEDITOR_UPLOAD_PATH = 'ckeditor/uploads' #not valid
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
+    CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads') #not used
+
 MEDIA_URL = '/media/'
 
 #print "base dir" + BASE_DIR

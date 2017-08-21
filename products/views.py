@@ -285,4 +285,4 @@ class ProductCreateView(CreateView):
                 productImage.save()
                 return postresult
 
-        return postresult        
+        return postresult
