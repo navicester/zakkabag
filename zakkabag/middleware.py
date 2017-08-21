@@ -2,7 +2,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from authwrapper.models import WechatUserProfile
 from django.conf import settings
-from saewrapper.storage.storage import SAEBucket
+from saewrapper.storage.bucket import SAEBucket
+import os
 
 UserModel = get_user_model()
 
