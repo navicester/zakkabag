@@ -6,7 +6,6 @@
         {{ field.label_tag }}  
     </div>
     <div class="col-sm-10 {% if image %}image-field{% endif %}">
-        {% comment %} 
         {% if image %}            
             <div class="row">
             	<div class="col-sm-2">
@@ -35,6 +34,5 @@
         {% else %}
             {{ field }} 
         {% endif %}
-        {% endcomment %}
     </div>
 </div>
