@@ -41,35 +41,55 @@
 
         }
 
-       
+       /*
         document.body.addEventListener('touchstart',function(event){
             //event.stopPropagation(); //prevent propagatin
             //event.preventDefault();  //prevent default brower event
-            xx = event.targetTouches[0].screenX ;
-            yy = event.targetTouches[0].screenY ;
+            start_x = event.targetTouches[0].screenX ;
+            start_y = event.targetTouches[0].screenY ;
             swipeX = true;
             swipeY = true ;
         })
 
         document.body.addEventListener('touchmove',function(event){
-            XX = event.targetTouches[0].screenX ;
-            YY = event.targetTouches[0].screenY ;
-            if(swipeX && Math.abs(XX-xx)-Math.abs(YY-yy)>0)  //左右滑动
+            moveto_x = event.targetTouches[0].screenX ;
+            moveto_y = event.targetTouches[0].screenY ;
+
+            //left-rigth move
+            if(swipeX && Math.abs(moveto_x-start_x)-Math.abs(moveto_y-start_y)>0)
             {
-                event.stopPropagation();//阻止冒泡
-                event.preventDefault();//阻止浏览器默认事件
+                event.stopPropagation();
+                event.preventDefault(); //prevent brower default event
                 swipeY = false ;
-                //左右滑动
             }
-            else if(swipeY && Math.abs(XX-xx)-Math.abs(YY-yy)<0){  //上下滑动
-                swipeX = false ;
-                //上下滑动，使用浏览器默认的上下滑动
+            // up-down move, use default behavior
+            else if(swipeY && Math.abs(moveto_x-start_x)-Math.abs(moveto_y-start_y)<0){
+                swipeX = false ;                
             }
         })
         document.body.addEventListener('touchend',function(event){
             //event.stopPropagation();
             //event.preventDefault();
         })
+        */
+        var xPos = null;
+        var yPos = null;
+        window.addEventListener( "touchmove", function ( event ) {
+            var touch = event.originalEvent.touches[ 0 ];
+            oldX = xPos;
+            oldY = yPos;
+            xPos = touch.pageX;
+            yPos = touch.pageY;
+            if ( oldX == null && oldY == null ) {
+                return false;
+            }
+            else {
+                if ( Math.abs( oldX-xPos ) > Math.abs( oldY-yPos ) ) {
+                    event.preventDefault();
+                    return false;
+                }
+            }
+        } );
         
 
         $(document).ready(function(){
