@@ -26,7 +26,8 @@
 		</div>
         
 		
-		<div class="row">	
+		<div class="row">
+            {% comment %} 
             {# include "form_horizontal.html" with submitvalue="Submit" file=True #} 
             <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' style="padding: 3px">{% csrf_token %}
 			    {% if form.errors %}
@@ -37,7 +38,7 @@
                                 
 				
 			    {% include "dailyinspection/field.html" with field=form.cateory%}                
-				{% comment %} 
+				
 			    {% include "dailyinspection/field.html" with field=form.item%} 
 
 			    {% include "dailyinspection/field.html" with field=form.impact%} 
