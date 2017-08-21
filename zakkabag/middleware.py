@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from authwrapper.models import WechatUserProfile
 from django.conf import settings
+from saewrapper.storage.storage import SAEBucket
 
 UserModel = get_user_model()
 
@@ -14,7 +15,10 @@ class openidmiddleware():
 
 	def process_request(self, request):
 		request.register_type = settings.ACCOUNT_REGISTER_TYPE
-		request.media = settings.MEDIA_URL
+		if 'SERVER_SOFTWARE' in os.environ: 
+			request.media = SAEBucket().url('')
+		else:
+			request.media = settings.MEDIA_URL
 		    		    
 		if request.user.is_anonymous:
 		       from django.utils.module_loading import import_string

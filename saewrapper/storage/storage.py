@@ -7,6 +7,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import sae.storage
 import re
+from sae import storage
 
 
 class SAEStorage(Storage):
@@ -48,3 +49,17 @@ class SAEStorage(Storage):
         r = re.compile('^%s' % path)
         remove_prefix = lambda name: r.sub('', name)
         return [(remove_prefix(attr['name']), None) for attr inself.__bucket.list(path = path)]
+
+class SAEBucket(object):
+    def __init__(self, bucket_name='media'):
+        c = storage.Connection()
+        if not bucket_name:
+            bucket_name = 'media'
+        self.__bucket = c.get_bucket(bucket_name)
+
+    def put_object(self, name, content): 
+        self.__bucket.put_object(name, content)
+        return name
+
+    def url(self, name):  
+        return self.__bucket.generate_url(name)        
