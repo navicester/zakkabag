@@ -784,7 +784,10 @@ dailyinspection这个view调了很长时间，原因就是一个row和column之�
             //event.preventDefault();
         })
 ```
-
+参考
+- https://mobiforge.com/design-development/html5-mobile-web-touch-events
+- https://stackoverflow.com/questions/30636930/disable-web-page-navigation-on-swipeback-and-forward
+- [HTML5 移动端的上下左右滑动问题](https://segmentfault.com/q/1010000002585476/a-1020000002586382)
 
 
 
