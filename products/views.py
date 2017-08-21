@@ -267,7 +267,7 @@ class ProductCreateView(CreateView):
                     #bucket = Bucket('media')
                     c = storage.Connection()
                     bucket = c.get_bucket('media')
-                    print "1"
+                    assert( "1")
                     #obj = bucket.get_object_contents(photoname) 
                     #bucket.put_object(photoname,open(in_mem_image_file.file, 'rb'))
                     bucket.put_object(photoname,in_mem_image_file.file.getvalue())
