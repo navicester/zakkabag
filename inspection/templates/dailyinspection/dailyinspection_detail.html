@@ -20,11 +20,10 @@
 			<lead><h2>{{object.item}}</h2></lead>
 			<span><b>Create</b></span> : {{object.created}}	    <span><b>Last Update</b></span> : {{object.updated}}			
 		</div>
-		<hr>
 
 		<div class="row">	
             {# include "form_horizontal.html" with submitvalue="Submit" file=True #} 
-            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' >{% csrf_token %}
+            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' style="padding: 3px">{% csrf_token %}
 			    {% if form.errors %}
 			        <p style="color: #b75f33;">
 			            {{form.non_field_errors}}
