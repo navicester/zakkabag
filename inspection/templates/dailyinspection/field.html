@@ -6,7 +6,7 @@
     <div class="col-sm-10 {% if image %}image-field{% endif %}">
         {% if image %}            
             <div>
-            	<label for="{{field.name}}-modify" style="float:left; clear: both">{% if field.value %}修改: {% else %} 添加 {% endif %}</label>
+            	<label for="{{field.name}}-modify" class="control-label " style="float:left; clear: both">{% if field.value %}修改: {% else %} 添加 {% endif %}</label>
 	            <input id="id_{{field.name}}" name="{{field.name}}" type="file" accept="video/*;capture=camcorder">             
             </div>
             <div >
