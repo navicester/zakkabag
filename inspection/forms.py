@@ -35,17 +35,6 @@ class OfficeInspectionForm(forms.ModelForm):
     '''
 
 class DailyInspectionForm(forms.ModelForm):
-    '''
-    impact = forms.ModelMultipleChoiceField(
-            queryset = OfficeInspection.objects.all(),
-            widget = forms.SelectMultiple(),
-            #widget=forms.CheckboxSelectMultiple(),
-            initial = [OfficeInspection.objects.all()[0]],
-            #data = [OfficeInspection.objects.all()[0]],
-            required=False
-            )
-    '''
-
     
     impact = forms.MultipleChoiceField(
             choices = lambda: (item for item in DailyInspection.daily_insepction_impact),
@@ -58,25 +47,7 @@ class DailyInspectionForm(forms.ModelForm):
     
 
     def __init__(self, *args, **kwargs):
-        '''
-        impact_selcted = None
-        try:
-            impact_selcted = kwargs.pop('selected')
-        except:
-            pass
-        '''
-
         super(DailyInspectionForm, self).__init__(*args, **kwargs)
-
-        '''
-        self.fields['impact'] = forms.MultipleChoiceField(
-            choices= DailyInspection.daily_insepction_impact,
-            widget = forms.SelectMultiple,
-            #initial = [impact_selcted],
-            initial = ['people'],
-            required=False
-            )
-        '''
 
     def clear_image_after_clear(self):
         if self.data.get('image_after-clear'):
@@ -104,3 +75,28 @@ class DailyInspectionForm(forms.ModelForm):
     def clean_plug(self):
         return self.data.get('plug')
     '''
+
+class InspectionFilterForm(forms.Form):
+    q = forms.CharField(label='Search', required=False)
+    '''
+    category_id = forms.ModelMultipleChoiceField(
+        label='Category',
+        queryset=Category.objects.all(), 
+        widget=forms.CheckboxSelectMultiple, 
+        required=False)
+    '''
+    cateory = forms.ChoiceField(
+            label='Category',
+            choices = DailyInspection.daily_insepction_category,
+            #widget = forms.SelectMultiple(),
+            widget=forms.CheckboxSelectMultiple(),
+            initial = None,
+            required=False
+            )    
+    correct_status = forms.ChoiceField(
+            label='correct status',
+            choices = DailyInspection.daily_insepction_correction_status,
+            widget=forms.RadioSelect(),
+            required=False
+            )   
+    owner = forms.CharField(required=False)

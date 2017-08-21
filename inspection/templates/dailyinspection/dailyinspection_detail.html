@@ -30,28 +30,37 @@
 			        <p style="color: #b75f33;">
 			            {{form.non_field_errors}}
 			        </p>
-			    {% endif %}            
-				
+			    {% endif %}
+
+			    {% for field in form %}
+			        {% if not 'image_' in field.name %}
+			    		{% include "dailyinspection/field.html" %}			    	
+			        {% endif %}
+			    {% endfor %}
+
+			    {% for field in form %}
+			        {% if 'image_' in field.name %}
+			        	<hr>
+			        	{% include "dailyinspection/field.html" with image=True %}
+			        {% endif %}
+			    {% endfor %}
+
+				{% comment %}
 			    {% include "dailyinspection/field.html" with field=form.cateory%}                
-                
-			    {% include "dailyinspection/field.html" with field=form.item%} 
-
-			    {% include "dailyinspection/field.html" with field=form.impact%} 
-
-			    {% include "dailyinspection/field.html" with field=form.correct%} 
-
-			    {% include "dailyinspection/field.html" with field=form.correct_status%} 
-
-			    {% include "dailyinspection/field.html" with field=form.owner%} 
-
-			    {% include "dailyinspection/field.html" with field=form.due_date%} 
-
-			    {% include "dailyinspection/field.html" with field=form.warehouse%} 
-
+			    {% include "dailyinspection/field.html" with field=form.item%}
+			    {% include "dailyinspection/field.html" with field=form.impact%}
+			    {% include "dailyinspection/field.html" with field=form.correct%}
+			    {% include "dailyinspection/field.html" with field=form.correct_status%}
+			    {% include "dailyinspection/field.html" with field=form.owner%}
+			    {% include "dailyinspection/field.html" with field=form.due_date%}
+			    {% include "dailyinspection/field.html" with field=form.warehouse%}
 			    <hr>
 			    {% include "dailyinspection/field.html" with field=form.image_before image=True %}
 			    <hr>                
-			    {% include "dailyinspection/field.html" with field=form.image_after image=True %}                     
+			    {% include "dailyinspection/field.html" with field=form.image_after image=True %}    
+			    {% endcomment %}
+
+			    <hr>                 
 	            		            
 			    <input style="width:30%" type="submit" name="submit" class="btn btn-default pull-right" value="submit" />
 

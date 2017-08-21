@@ -1,0 +1,7 @@
+<div class="thumbnail text-center">
+	{% if inspection.get_image_url_before %} 
+		<a href='{{ inspection.get_absolute_url }}'><div class="pdb"><img  id='img' class= 'img-responsive' src='{{inspection.get_image_url_before}}'/></div></a><br/>
+	{% endif %}	
+
+	<h5><a href='{{ inspection.get_absolute_url }}'>{{inspection.item}}</a></h5>	
+</div>
