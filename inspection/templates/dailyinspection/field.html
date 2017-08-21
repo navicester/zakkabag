@@ -1,7 +1,7 @@
 
-<div class="row">
+
 {% if field.errors %}<div class="error" style="color:#b75f33">{{ field.errors }}</div>{% endif %}
-<div class="field-area form-group list-unstyled list-inline  {% if field.errors %}error has-error{% endif %}">   
+<div class="row field-area form-group list-unstyled list-inline  {% if field.errors %}error has-error{% endif %}">   
     <div class="col-sm-2">
         {{ field.label_tag }}  
     </div>
@@ -38,4 +38,3 @@
         {% endcomment %}
     </div>
 </div>
-</div>    
