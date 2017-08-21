@@ -265,9 +265,8 @@ class ProductCreateView(CreateView):
                     from sae import storage
                     #from sae.storage import Bucket
                     #bucket = Bucket('media')
-                    c = storage.Connection()
-                    bucket = c.get_bucket('media')                    
-                    bucket.put_object(photoname,in_mem_image_file.file.getvalue())
+                    from saewrapper.storage.bucket import SAEBucket
+                    SAEBucket().put_object(photoname,in_mem_image_file.file.getvalue())
                     #object_content = bucket.get_object_contents(photoname) 
                 else:
                     img=Image.open(in_mem_image_file)

@@ -32,10 +32,8 @@ def upload_file(request):
             filepath = os.path.join(get_upload_path(), in_mem_image_file.name)
             if in_mem_image_file:
                 if 'SERVER_SOFTWARE' in os.environ: 
-                    from sae import storage
-                    c = storage.Connection()
-                    bucket = c.get_bucket('media')
-                    bucket.put_object(filepath,in_mem_image_file.file.getvalue())
+                    from saewrapper.storage.bucket import SAEBucket
+                    SAEBucket().put_object(filepath,in_mem_image_file.file.getvalue())
                 else:
                     img = Image.open(in_mem_image_file)                          
                     img.save(filepath)
