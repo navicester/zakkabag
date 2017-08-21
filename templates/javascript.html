@@ -41,8 +41,14 @@
 
         }
 
+        document.body.addEventListener('touchmove',function(event){
+            event.stopPropagation();
+            event.preventDefault();
+        })
+
+        /*
         document.body.addEventListener('touchstart',function(event){
-             //event.stopPropagation(); //prevent propagatin
+             event.stopPropagation(); //prevent propagatin
              event.preventDefault();  //prevent default brower event
              xx = event.targetTouches[0].screenX ;
              yy = event.targetTouches[0].screenY ;
@@ -66,9 +72,10 @@
             }
         })
         document.body.addEventListener('touchend',function(event){
-            //event.stopPropagation();//阻止冒泡
+            event.stopPropagation();//阻止冒泡
             event.preventDefault();//阻止浏览器默认事件
             })
+        */
 
         $(document).ready(function(){
             updateCartItemCount()
