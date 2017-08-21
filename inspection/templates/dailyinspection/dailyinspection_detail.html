@@ -17,7 +17,7 @@
 <div class='row'>
 	<div class='col-sm-6 col-sm-offset-3'>
         
-		<div class="row">
+		<div class="row1">
 			<div class="text-center">
 				<lead><h2>{{object.item}}</h2></lead>
 				<span><b>Create</b></span> : {{object.created}}	    <span><b>Last Update</b></span> : {{object.updated}}			
@@ -26,7 +26,7 @@
 		</div>
         
 		
-		<div class="row"><div class='col-sm-12'>
+		<div class="row1">
             
             {# include "form_horizontal.html" with submitvalue="Submit" file=True #} 
             <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' style="padding: 3px">{% csrf_token %}
@@ -67,7 +67,7 @@
 			</form>   
             
 			
-		</div></div>
+		</div>
         
 	</div>
 </div>
