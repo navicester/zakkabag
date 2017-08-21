@@ -267,10 +267,13 @@ class ProductCreateView(CreateView):
                     #bucket = Bucket('media')
                     c = storage.Connection()
                     bucket = c.get_bucket('media')
+                    print "1"
                     #obj = bucket.get_object_contents(photoname) 
                     #bucket.put_object(photoname,open(in_mem_image_file.file, 'rb'))
                     bucket.put_object(photoname,in_mem_image_file.file.getvalue())
-                else:                
+                    assert("2")
+                else:
+                    img=Image.open(in_mem_image_file)
                     img.save(os.path.join(settings.MEDIA_ROOT, photoname))
                     ProductImage.objects.create(product = self.object, 
                         image = photoname)
