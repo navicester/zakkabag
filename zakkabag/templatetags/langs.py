@@ -20,3 +20,7 @@ def strip_lang(value):
     #strip_url = '/%s' % value.lstrip('/%s/' % lang)	
     strip_url = value.replace('/{0}/'.format(lang), '/')
     return strip_url
+
+@register.filter(name="get_lang")
+def get_lang(value):
+    return '/'+ value.split('/')[0]    

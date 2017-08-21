@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django_filters import FilterSet, CharFilter, NumberFilter
+from django.db.models import Q
 
 # Create your views here.
 from .models import OfficeInspection, DailyInspection
@@ -268,6 +269,7 @@ class DailyInspectionListView(FilterMixin, ListView):
         context = super(DailyInspectionListView, self).get_context_data(*args, **kwargs)
         context["objects"] = DailyInspection.objects.all()
         context["objects_sort"] = DailyInspection.objects.order_by('-updated')
+        context["query"] = self.request.GET.get("q")
         context["InspectionFilterForm"] = InspectionFilterForm(data=self.request.GET or None)        
         return context       
 
