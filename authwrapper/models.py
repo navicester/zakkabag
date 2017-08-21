@@ -192,7 +192,6 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
 
     def get_image_url(self):
         if self.image:
-            raise RuntimeError('env setup %s' % self.image.url)
             return self.image.url
         else:
             return '/media/profile/bhe001/bhe001-1.jpg'
