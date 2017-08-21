@@ -715,8 +715,75 @@ GET方式没有成功，后面再看吧
 ``` html
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 ```
+有些浏览器还是有问题，比如努比亚
 
-# 新浪云直接访问文件存储
+# 禁止网页滑动
+正常情况下，如果页面写的比较良好，不会出现这个问题
+
+dailyinspection这个view调了很长时间，原因就是一个row和column之间隔了一级
+
+所以div的处理要恰当，如果是水平排列，一定要```<div class="row"><div class="col-sm-?"></div></div>```，如果是垂直排列的话，并不一定要```<div class="row"</div></div>```，只要div就可以不溢出了。
+
+另外，如果实在要通过脚本的方式的话，下面是参考
+
+网上有用originalEvent也有用targetTouches，应该都能工作，这儿没有去追
+``` html
+        var xPos = null;
+        var yPos = null;
+        window.addEventListener( "touchmove", function ( event ) {
+            oldX = xPos;
+            oldY = yPos;
+            //var touch = event.originalEvent.touches[0];            
+            //xPos = touch.pageX;
+            //yPos = touch.pageY;
+            var touch = event.targetTouches[0];            
+            xPos = touch.screenX;
+            yPos = touch.screenY;
+            $('.navbar-brand').text(xPos);
+            if ( oldX == null && oldY == null ) {
+                return false;
+            }
+            else {
+                if ( Math.abs( oldX-xPos ) > Math.abs( oldY-yPos ) ) {
+                    event.preventDefault();
+                    return false;
+                }
+            }
+        } );
+```	
+或者
+``` html
+        document.body.addEventListener('touchstart',function(event){
+            //event.stopPropagation(); //prevent propagatin
+            //event.preventDefault();  //prevent default brower event
+            start_x = event.targetTouches[0].screenX ;
+            start_y = event.targetTouches[0].screenY ;
+            swipeX = true;
+            swipeY = true ;
+        })
+
+        document.body.addEventListener('touchmove',function(event){
+            moveto_x = event.targetTouches[0].screenX ;
+            moveto_y = event.targetTouches[0].screenY ;
+
+            //left-rigth move
+            if(swipeX && Math.abs(moveto_x-start_x)-Math.abs(moveto_y-start_y)>0)
+            {
+                event.stopPropagation();
+                event.preventDefault(); //prevent brower default event
+                swipeY = false ;
+            }
+            // up-down move, use default behavior
+            else if(swipeY && Math.abs(moveto_x-start_x)-Math.abs(moveto_y-start_y)<0){
+                swipeX = false ;                
+            }
+        })
+        document.body.addEventListener('touchend',function(event){
+            //event.stopPropagation();
+            //event.preventDefault();
+        })
+```
+
 
 
 
