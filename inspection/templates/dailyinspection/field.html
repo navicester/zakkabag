@@ -9,7 +9,6 @@
             	<label for="{{field.name}}-modify" style="float:left; clear: both">{% if field.value %}修改: {% else %} 添加 {% endif %}</label>
 	            <input id="id_{{field.name}}" name="{{field.name}}" type="file" accept="video/*;capture=camcorder">             
             </div>
-            <br>
             <div >
             	{% if field.value %}
             		<img  class= 'img-responsive' src="{{request.media}}{{field.value}}"/>
