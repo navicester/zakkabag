@@ -41,7 +41,7 @@
 
         }
 
-        document.addEventListener('touchstart',function(event){
+        document.body.addEventListener('touchstart',function(event){
              event.stopPropagation(); //prevent propagatin
              event.preventDefault();  //prevent default brower event
              xx = event.targetTouches[0].screenX ;
@@ -50,7 +50,7 @@
              swipeY = true ;
          })
 
-        document.addEventListener('touchmove',function(event){
+        document.body.addEventListener('touchmove',function(event){
             XX = event.targetTouches[0].screenX ;
             YY = event.targetTouches[0].screenY ;
             if(swipeX && Math.abs(XX-xx)-Math.abs(YY-yy)>0)  //左右滑动
@@ -64,8 +64,8 @@
                 swipeX = false ;
                 //上下滑动，使用浏览器默认的上下滑动
             }
-            })
-        document.addEventListener('touchend',function(event){
+        })
+        document.body.addEventListener('touchend',function(event){
             event.stopPropagation();//阻止冒泡
             event.preventDefault();//阻止浏览器默认事件
             })
