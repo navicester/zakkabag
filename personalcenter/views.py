@@ -26,6 +26,7 @@ UserModel = get_user_model()
 
 from authwrapper.backends.auth import WechatBackend
 
+import os
 # Create your views here.
 
 @login_required
@@ -198,44 +199,29 @@ class ProfileDetailView(FormMixin, DetailView):
             usermodel.nickname = form.cleaned_data['nickname']
             usermodel.birthday = form.cleaned_data['birthday']
 
-            if 0:
-                from os import environ  
-                online = environ.get("APP_NAME", "")   
-                if not online:  
-                    from sae.ext.storage import monkey
-                    monkey.patch_all()
+            if 'SERVER_SOFTWARE' in os.environ: 
+                from sae import storage
+                c = storage.Connection()
+                bucket = c.get_bucket('media')
+                #from sae.storage import Bucket
+                #bucket = Bucket('media')
+                #bucket.post(acl='.r:.sinaapp.com,.r:sae.sina.com.cn', metadata={'expires': '1d'})
+                #attrs = bucket.stat()
 
-                    try:                    
-                        from sae.storage import Bucket
-                    except:
-                        raise RuntimeError('env setup')
-                        return redirect(reverse("home", kwargs={}))
-                    
-                    bucket = Bucket('media')
-                    try:
-                        bucket.put()
-                    except:
-                        pass
+                #raise RuntimeError('env setup')
 
-                    bucket.post(acl='.r:.sinaapp.com,.r:sae.sina.com.cn', metadata={'expires': '1d'})
+                #filename=request.FILES['image']
 
-                    attrs = bucket.stat()
-                    print attrs
+            # use plugin
+            if 'image' in form.cleaned_data:
+                usermodel.image = form.cleaned_data['image']
+            #use ajax
+            if not cache.get('cache_key_upload',None) is None:
+                raise RuntimeError('env setup %s' % (cache.get('cache_key_upload',None)))
+                usermodel.image = cache.get('cache_key_upload',None)
+                if cache.has_key('cache_key_upload'):
+                    cache.delete('cache_key_upload')
 
-                    filename=request.FILES['image']
-                    from PIL import Image
-                    if filename:
-                        img=Image.open(filename)
-                    bucket.put_object(filename.name, img.fp)#open(filename.name, 'rb'))
-            else:
-                # use plugin
-                if 'image' in form.cleaned_data:
-                    usermodel.image = form.cleaned_data['image']
-                #use ajax
-                if not cache.get('cache_key_upload',None) is None:
-                    usermodel.image = cache.get('cache_key_upload',None)
-                    if cache.has_key('cache_key_upload'):
-                        cache.delete('cache_key_upload')
             usermodel.save()
             return self.form_valid(form)
         else:

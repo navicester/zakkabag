@@ -189,11 +189,12 @@ if 'SERVER_SOFTWARE' in os.environ:
     '''
 
     CKEDITOR_UPLOAD_PATH = 'ckeditor/uploads' #not valid
+
+    MEDIA_URL = ''
 else:
     MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
     CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads') #not used
-
-MEDIA_URL = '/media/'
+    MEDIA_URL = '/media/'
 
 #print "base dir" + BASE_DIR
 #print "STATIC_ROOT" + STATIC_ROOT
