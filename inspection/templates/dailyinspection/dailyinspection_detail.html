@@ -30,15 +30,16 @@
             
             {# include "form_horizontal.html" with submitvalue="Submit" file=True #} 
             <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' style="padding: 3px">{% csrf_token %}
+                {% comment %} 
 			    {% if form.errors %}
 			        <p style="color: #b75f33;">
 			            {{form.non_field_errors}}
 			        </p>
 			    {% endif %}
-                                
-				{% comment %} 
-			    {% include "dailyinspection/field.html" with field=form.cateory%}                
+                {% endcomment %}                   
 				
+			    {% include "dailyinspection/field.html" with field=form.cateory%}                
+				{% comment %} 
 			    {% include "dailyinspection/field.html" with field=form.item%} 
 
 			    {% include "dailyinspection/field.html" with field=form.impact%} 
