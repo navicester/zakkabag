@@ -177,7 +177,63 @@ $(document).ready(function(){
 http://caibaojian.com/responsive-tables.html  
 http://blog.sina.com.cn/s/blog_66d8992d0100pb5i.html
 
-# 多选框
+# 多选框、
+正常的设置之后，多选框总是无法初始化选择
+``` python
+class DailyInspectionForm(forms.ModelForm):
+   
+    impact = forms.MultipleChoiceField(
+            choices = lambda: (item for item in DailyInspection.daily_insepction_impact),
+            widget = forms.SelectMultiple(),
+            #widget=forms.CheckboxSelectMultiple(),
+            initial = ['environment'],
+            required=True
+            )
+```
+最后查下来应该是django代码bug
+
+```
+class SelectMultiple(Select):
+    allow_multiple_selected = True
+
+    def render(self, name, value, attrs=None, choices=()):
+        if value is None:
+            value = []
+        final_attrs = self.build_attrs(attrs, name=name)
+        output = [format_html('<select multiple="multiple"{}>', flatatt(final_attrs))]
+        options = self.render_options(choices, value)
+        if options:
+            output.append(options)
+        output.append('</select>')
+        return mark_safe('\n'.join(output))
+
+    def value_from_datadict(self, data, files, name):
+        if isinstance(data, (MultiValueDict, MergeDict)):
+            return data.getlist(name)
+        return data.get(name, None)
+	
+class Select(Widget):
+
+    def render_options(self, choices, selected_choices):
+        # Normalize to strings.
+        selected_choices = set(force_text(v) for v in selected_choices)
+        output = []
+        for option_value, option_label in chain(self.choices, choices):
+            if isinstance(option_label, (list, tuple)):
+                output.append(format_html('<optgroup label="{}">', force_text(option_value)))
+                for option in option_label:
+                    output.append(self.render_option(selected_choices, *option))
+                output.append('</optgroup>')
+            else:
+                output.append(self.render_option(selected_choices, option_value, option_label))
+        return '\n'.join(output)	
+```
+```selected_choices = set(force_text(v) for v in selected_choices)```这句话应该改为
+``` python
+selected_choices = set([force_text(v) for v in selected_choices])
+```
+
+参考
 - https://stackoverflow.com/questions/9993939/django-display-values-of-the-selected-multiple-choice-field-in-a-template
 - https://stackoverflow.com/questions/23572341/initializing-a-multiplechoicefield-in-django-cms
 - https://codedump.io/share/cRQMqEnmg5HD/1/django-setting-initial-vals-of-multiplechoicefield-only-works-first-time
