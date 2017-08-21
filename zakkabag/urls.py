@@ -81,6 +81,7 @@ urlpatterns += patterns('',
 )
 '''
 
+import os
 if settings.DEBUG:
     if 'SERVER_SOFTWARE' in os.environ:
         pass
