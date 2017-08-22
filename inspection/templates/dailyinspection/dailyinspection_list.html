@@ -35,7 +35,7 @@ $(document).ready(function(){
 	</div>		
 	<div class='col-sm-9 col-md-10 container'>	
         
-	    <div class="row">
+	    <div >
             
 			{% autopaginate object_list 6 %}
             
@@ -53,7 +53,7 @@ $(document).ready(function(){
             
 		</div>
         
-		<div class="row">
+		<div >
 	    	<h4><a href='{% url "dailyinspection_create" %}'>Create New Item</a></h4>
 	    </div>
         
