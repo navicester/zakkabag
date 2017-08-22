@@ -280,11 +280,12 @@ class DailyInspectionListView(FilterMixin, ListView):
             qs = self.model.objects.filter(
                 Q(impact__icontains=query) |
                 Q(correct__icontains=query) |
+                Q(owner__icontains=query) |
                 Q(item__icontains=query)
                 )
             try:
                 qs2 = self.model.objects.filter(
-                    Q(owner=query)
+                    Q(correct_status=query)
                 )
                 qs = (qs | qs2).distinct()
             except:

@@ -24,7 +24,7 @@
             <li><a href="{% url 'set_language' %}?language='en'&next={{request.path}}">english</a></li>               
             {% endcomment %} 
 
-            <form class="navbar-form navbar-left" method="GET" role="search" action='{% url "products" %}'>
+            <form class="navbar-form navbar-left" method="GET" role="search" action='{% url "dailyinspection_list" %}'>
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search" name="q"  value='{{ request.GET.q }}'>
               </div>

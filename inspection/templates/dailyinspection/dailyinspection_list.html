@@ -12,7 +12,7 @@
 {% block js %}
 
 $(document).ready(function(){
-	$("td:contains('notcomplete')").css("background-color","red");
+	$("td:contains('uncompleted')").css("background-color","red");
 	$("td:contains('completed')").css("background-color","green");
 
 });
@@ -30,7 +30,8 @@ $(document).ready(function(){
 			<input type='hidden' name='q' value='{{ request.GET.q }}' />
 			<input type='submit' value='Apply Filter' class='btn btn-default'>
 		</form>
-		<a href="{% url 'dailyinspection_list' %}">Clear Filters</a>  
+		<br>
+		<a class="btn btn-default" href="{% url 'dailyinspection_list' %}"  >Clear Filters</a>  
 	    <hr>
 	</div>		
 	<div class='col-sm-9 col-md-10 container'>	

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-19 00:14+0800\n"
+"POT-Creation-Date: 2017-08-22 21:23+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -202,6 +202,14 @@ msgstr ""
 msgid "Environment"
 msgstr ""
 
+#: .\inspection\models.py:61
+msgid "Completed"
+msgstr "已完成"
+
+#: .\inspection\models.py:62
+msgid "Uncompleted"
+msgstr "未完成"
+
 #: .\inspection\models.py:70
 msgid "cateory"
 msgstr ""
@@ -242,7 +250,7 @@ msgstr ""
 msgid "warehouse"
 msgstr ""
 
-#: .\inspection\views.py:184 .\inspection\views.py:235
+#: .\inspection\views.py:187 .\inspection\views.py:296
 #: .\site-packages\breadcrumbs\breadcrumbs.py:81
 #: .\site-packages\django\contrib\admin\templates\admin\500.html.py:6
 #: .\site-packages\django\contrib\admin\templates\admin\app_index.html.py:9
@@ -274,7 +282,7 @@ msgstr ""
 msgid "Home"
 msgstr "主页"
 
-#: .\inspection\views.py:236
+#: .\inspection\views.py:297
 msgid "Daily Inspection"
 msgstr "巡检"
 
@@ -965,7 +973,7 @@ msgstr ""
 #: .\site-packages\django\contrib\admin\templates\registration\password_reset_complete.html.py:18
 #: .\site-packages\registration\templates\registration\login.html.py:4
 #: .\site-packages\registration\templates\registration\login.html.py:10
-#: .\templates\navbar.html.py:73 .\templates\registration\login.html.py:5
+#: .\templates\navbar.html.py:80 .\templates\registration\login.html.py:5
 #: .\templates\registration\login.html.py:19
 msgid "Log in"
 msgstr ""
@@ -5078,4 +5086,157 @@ msgstr ""
 #: .\site-packages\rest_framework\templates\rest_framework\inline\select_multiple.html.py:3
 #: .\site-packages\rest_framework\templates\rest_framework\vertical\select_multiple.html.py:3
 msgid "No items to select."
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:319
+msgid "usage: "
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:827
+msgid ".__call__() not defined"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1122
+#, python-format
+msgid "unknown parser %r (choices: %s)"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1163
+#, python-format
+msgid "argument \"-\" with mode %r"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1174
+#, python-format
+msgid "can't open '%s': %s"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1371
+#, python-format
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1409
+msgid "'required' is an invalid argument for positionals"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1429
+#, python-format
+msgid "invalid option string %r: must start with a character %r"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1450
+#, python-format
+msgid "dest= is required for options like %r"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1467
+#, python-format
+msgid "invalid conflict_resolution value: %r"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1485
+#, python-format
+msgid "conflicting option string(s): %s"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1548
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1618
+msgid "positional arguments"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1619
+msgid "optional arguments"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1637
+msgid "show this help message and exit"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1643
+msgid "show program's version number and exit"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1675
+msgid "cannot have multiple subparser arguments"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1727
+#, python-format
+msgid "unrecognized arguments: %s"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1821
+#, python-format
+msgid "not allowed with argument %s"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1867
+#: .\site-packages\sae-dependency\argparse.py:1881
+#, python-format
+msgid "ignored explicit argument %r"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1971
+msgid "too few arguments"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:1978
+#, python-format
+msgid "argument %s is required"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2003
+#, python-format
+msgid "one of the arguments %s is required"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2049
+msgid "expected one argument"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2050
+msgid "expected at most one argument"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2051
+msgid "expected at least one argument"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2053
+#, python-format
+msgid "expected %s argument(s)"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2110
+#, python-format
+msgid "ambiguous option: %s could match %s"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2172
+#, python-format
+msgid "unexpected option string: %s"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2273
+#, python-format
+msgid "%r is not callable"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2289
+#, python-format
+msgid "invalid %s value: %r"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2299
+#, python-format
+msgid "invalid choice: %r (choose from %s)"
+msgstr ""
+
+#: .\site-packages\sae-dependency\argparse.py:2392
+#, python-format
+msgid "%s: error: %s\n"
 msgstr ""

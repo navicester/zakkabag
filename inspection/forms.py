@@ -1,6 +1,6 @@
 from django import forms
 from .models import OfficeInspection, DailyInspection
-
+from django.utils.translation import ugettext_lazy as _
 
 RESULT_OPTION = (
     ('yes', 'Yes'),
@@ -94,9 +94,16 @@ class InspectionFilterForm(forms.Form):
             required=False
             )    
     correct_status = forms.ChoiceField(
-            label='correct status',
+            label='Correct Status',
             choices = DailyInspection.daily_insepction_correction_status,
             widget=forms.RadioSelect(),
             required=False
             )   
-    owner = forms.CharField(required=False)
+    #owner = forms.CharField(label='Owner',required=False)
+    owner = forms.ChoiceField(
+            label='Owner',
+            choices = set((dailyinspection.owner,dailyinspection.owner) for dailyinspection in DailyInspection.objects.all()),
+            widget=forms.RadioSelect(),
+            initial = None,
+            required=False
+            )    
