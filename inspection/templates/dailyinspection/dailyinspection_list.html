@@ -38,13 +38,15 @@ $(document).ready(function(){
 	    <div class="row">
             
 			{% autopaginate object_list 6 %}
-            {% comment %}
+            
 			{% if object_list.count == 0 %}
 				Nothing found
 			{% else %}
+            	{% comment %}
 				{% include "dailyinspection/inspections.html" with object_list=object_list %}
-			{% endif %}
             {% endcomment %}
+			{% endif %}
+            
 			<div class="text-center">
 			{% paginate %}
 			</div>
