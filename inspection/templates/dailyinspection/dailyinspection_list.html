@@ -42,9 +42,9 @@ $(document).ready(function(){
 			{% if object_list.count == 0 %}
 				Nothing found
 			{% else %}
-            	{% comment %}
+            	{% comment %}{% endcomment %}
 				{% include "dailyinspection/inspections.html" with object_list=object_list %}
-            	{% endcomment %}
+            	
 			{% endif %}
             
 			<div class="text-center">
