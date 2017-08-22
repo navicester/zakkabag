@@ -85,7 +85,7 @@ class InspectionFilterForm(forms.Form):
         widget=forms.CheckboxSelectMultiple, 
         required=False)
     '''
-    cateory = forms.ChoiceField(
+    cateory = forms.MultipleChoiceField(
             label='Category',
             choices = DailyInspection.daily_insepction_category,
             #widget = forms.SelectMultiple(),
