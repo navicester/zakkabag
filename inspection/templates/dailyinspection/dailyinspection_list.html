@@ -34,8 +34,9 @@ $(document).ready(function(){
 	    <hr>
 	</div>		
 	<div class='col-sm-9 col-md-10 container'>	
-        {% comment %}
+        
 	    <div class="row">
+            {% comment %}
 			{% autopaginate object_list 6 %}
 			{% if object_list.count == 0 %}
 				Nothing found
@@ -45,8 +46,9 @@ $(document).ready(function(){
 			<div class="text-center">
 			{% paginate %}
 			</div>
+            {% endcomment %}
 		</div>
-        {% endcomment %}
+        
 		<div class="row">
 	    	<h4><a href='{% url "dailyinspection_create" %}'>Create New Item</a></h4>
 	    </div>
