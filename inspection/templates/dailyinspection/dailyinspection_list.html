@@ -34,6 +34,7 @@ $(document).ready(function(){
 	    <hr>
 	</div>		
 	<div class='col-sm-9 col-md-10 container'>	
+        {% comments %}
 	    <div class="row">
 			{% autopaginate object_list 6 %}
 			{% if object_list.count == 0 %}
@@ -48,6 +49,7 @@ $(document).ready(function(){
 		<div class="row">
 	    	<h4><a href='{% url "dailyinspection_create" %}'>Create New Item</a></h4>
 	    </div>
+        {% endcomment %}
 	</div>
 </div>
 
