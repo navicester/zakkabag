@@ -4,7 +4,7 @@
 			{% include "dailyinspection/inspection_thumbnail.html" with inspection=inspection %}
 		</div>
 		{% if not col_class_set %}
-		{% cycle '' '' '' '</div><div class="row">'%} <!-- if set additional class, then it will float dynamically-->
+		{% cycle '' '' '' '</div><div class="row">'%} <!-- if not set additional class, then it will float dynamically every 4 -->
 		{% endif %}	
 	{% endfor %}
 </div>
