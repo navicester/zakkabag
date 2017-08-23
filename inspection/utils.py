@@ -65,12 +65,11 @@ def file_cleanup2(sender, **kwargs):
                         continue
                 
                 if getattr(inst_raw, fieldname) == getattr(inst, fieldname):                    
-                    continue
-                
-                raise RuntimeError('env setup %s' % getattr(inst_raw, fieldname))
+                    continue                
                 
                 if not m.filter(**{'%s__exact' % fieldname: getattr(inst_raw, fieldname)})\
                 .exclude(pk=inst_raw._get_pk_val()):
+                    raise RuntimeError('env setup %s' % getattr(inst_raw, fieldname))
                     try:
                         if 'SERVER_SOFTWARE' in os.environ:                            
                             raise RuntimeError('env setup' % path)
