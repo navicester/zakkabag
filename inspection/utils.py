@@ -40,6 +40,8 @@ def file_cleanup2(sender, **kwargs):
     inst = kwargs['instance']
     cache_key = ("%s %d") % (inst.__class__.__name__ , inst._get_pk_val())
     inst_raw = cache.get(cache_key)
+    
+    raise RuntimeError('env setup'）
 
     for fieldname in sender._meta.get_all_field_names():
         try:
