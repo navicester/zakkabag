@@ -47,7 +47,7 @@ def file_cleanup2(sender, **kwargs):
         except:
             field = None
         if field and isinstance(field, FileField):
-             raise RuntimeError('env setup')
+            raise RuntimeError('env setup1')
             if (not inst_raw is None) and (inst_raw.__class__.__name__ == inst.__class__.__name__):
                 f = getattr(inst_raw, fieldname)
                 m = inst_raw.__class__._default_manager
