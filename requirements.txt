@@ -8,7 +8,7 @@ django-filter==0.15.3
 django-mptt==0.8.6
 django-pagination==1.0.7
 django-registration-redux==1.4
-MySQL-python==1.2.3
+#MySQL-python==1.2.3
 Pillow==4.1.0
 python-weixin==0.1.6.1
 requests==2.11.1
