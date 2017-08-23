@@ -46,11 +46,11 @@ def file_cleanup2(sender, **kwargs):
             field = sender._meta.get_field(fieldname)
         except:
             field = None
-        if field and isinstance(field, FileField):
-            raise RuntimeError('env setup1')
+        if field and isinstance(field, FileField):            
             if (not inst_raw is None) and (inst_raw.__class__.__name__ == inst.__class__.__name__):
                 f = getattr(inst_raw, fieldname)
                 m = inst_raw.__class__._default_manager
+                raise RuntimeError('env setup1')
                 if hasattr(f, 'path') and os.path.exists(f.path)\
                 and getattr(inst_raw, fieldname) != getattr(inst, fieldname) \
                 and not m.filter(**{'%s__exact' % fieldname: getattr(inst_raw, fieldname)})\
