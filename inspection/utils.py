@@ -56,6 +56,8 @@ def file_cleanup2(sender, **kwargs):
                 f = getattr(inst_raw, fieldname)
                 m = inst_raw.__class__._default_manager
                 path = None
+                
+                # check file exist
                 if 'SERVER_SOFTWARE' in os.environ:                     
                     path = SAEBucket().url(f.name)
                     if not path:
@@ -64,9 +66,11 @@ def file_cleanup2(sender, **kwargs):
                     if not (hasattr(f, 'path') and os.path.exists(f.path)):
                         continue
                 
+                # check whether file changed
                 if getattr(inst_raw, fieldname) == getattr(inst, fieldname):                    
                     continue                
                 
+                # check whether exact same instance
                 if not m.filter(**{'%s__exact' % fieldname: getattr(inst_raw, fieldname)})\
                 .exclude(pk=inst_raw._get_pk_val()):
                     try:
