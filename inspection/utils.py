@@ -69,7 +69,7 @@ def file_cleanup2(sender, **kwargs):
                 
                 if not m.filter(**{'%s__exact' % fieldname: getattr(inst_raw, fieldname)})\
                 .exclude(pk=inst_raw._get_pk_val()):
-                    #raise RuntimeError('env setup %s' % getattr(inst_raw, fieldname))
+                    SAEBucket().delete(path)
                     try:
                         if 'SERVER_SOFTWARE' in os.environ:                            
                             raise RuntimeError('env setup %s' % path)
