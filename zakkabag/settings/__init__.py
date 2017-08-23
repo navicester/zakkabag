@@ -2,7 +2,7 @@ from .base import *
 from django.conf import settings
 
 heroku = False
-mysql = False
+mysql = True
 sae = False
 
 
