@@ -243,6 +243,83 @@ selected_choices = set([force_text(v) for v in selected_choices])
 - [django下ChoiceField等, queryset 动态设定](http://blog.csdn.net/kevin6216/article/details/7103078)
 
 # ImageField 删除
+``` python
+class FileField(Field):
+    def pre_save(self, model_instance, add):
+        "Returns field's value just before saving."
+        file = super(FileField, self).pre_save(model_instance, add)
+        if file and not file._committed:
+            # Commit the file to storage prior to saving the model
+            file.save(file.name, file, save=False)
+        return file
+```
+
+``` python
+class FieldFile(File):
+    def save(self, name, content, save=True):
+        name = self.field.generate_filename(self.instance, name)
+
+        args, varargs, varkw, defaults = getargspec(self.storage.save)
+        if 'max_length' in args:
+            self.name = self.storage.save(name, content, max_length=self.field.max_length)
+        else:
+            warnings.warn(
+                'Backwards compatibility for storage backends without '
+                'support for the `max_length` argument in '
+                'Storage.save() will be removed in Django 1.10.',
+                RemovedInDjango110Warning, stacklevel=2
+            )
+            self.name = self.storage.save(name, content)
+
+        setattr(self.instance, self.field.name, self.name)
+
+        # Update the filesize cache
+        self._size = content.size
+        self._committed = True
+
+        # Save the object because it has changed, unless save is False
+        if save:
+            self.instance.save()
+    save.alters_data = True
+```
+
+如果是新浪云保存，下面的类要替换掉
+django.core.file.storage
+```
+class Storage(object):
+    def save(self, name, content, max_length=None):
+        """
+        Saves new content to the file specified by name. The content should be
+        a proper File object or any python file-like object, ready to be read
+        from the beginning.
+        """
+        # Get the proper name for the file, as it will actually be saved.
+        if name is None:
+            name = content.name
+
+        if not hasattr(content, 'chunks'):
+            content = File(content)
+
+        args, varargs, varkw, defaults = getargspec(self.get_available_name)
+        if 'max_length' in args:
+            name = self.get_available_name(name, max_length=max_length)
+        else:
+            warnings.warn(
+                'Backwards compatibility for storage backends without '
+                'support for the `max_length` argument in '
+                'Storage.get_available_name() will be removed in Django 1.10.',
+                RemovedInDjango110Warning, stacklevel=2
+            )
+            name = self.get_available_name(name)
+
+        name = self._save(name, content)
+
+        # Store filenames with forward slashes, even on Windows
+        return force_text(name.replace('\\', '/'))
+
+```
+
+
 - http://timonweb.com/posts/cleanup-files-and-images-on-model-delete-in-django/
 - https://stackoverflow.com/questions/41329858/how-to-delete-an-imagefield-image-in-a-django-model
 - https://docs.djangoproject.com/en/1.11/topics/signals/
