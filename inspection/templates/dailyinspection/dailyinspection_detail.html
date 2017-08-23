@@ -4,74 +4,71 @@
 
 {% block content2 %}
 <div class='row'>
-<div class='col-sm-6 col-sm-offset-3'>
-<form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' >{% csrf_token %}
-{{form|crispy}}
-<input style="width:30%" type="submit" name="submit" class="btn btn-default pull-right" value="submit" />
-</form> 
-</div>
+	<div class='col-sm-6 col-sm-offset-3'>
+		<form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' >{% csrf_token %}
+			{{form|crispy}}
+			<input style="width:30%" type="submit" name="submit" class="btn btn-default pull-right" value="submit" />
+		</form> 
+	</div>
 </div>
 {% endblock %}
 
 {% block content %}
-
 <div class='row'>
 	<div class='col-sm-6 col-sm-offset-3'>
-		<div class="text-center">
-			<lead><h2>{{object.item}}</h2></lead>
-			<span><b>Create</b></span> : {{object.created}}	    <span><b>Last Update</b></span> : {{object.updated}}			
-		</div>
-		<hr>
-
-		<div class="row">	
+        
+        <div class="text-center">
+            <lead><h2>{{object.item}}</h2></lead>
+            <span><b>Create</b></span> : {{object.created}}	    <span><b>Last Update</b></span> : {{object.updated}}	
+            <hr>
+        </div>         
+		
+		<div>            
             {# include "form_horizontal.html" with submitvalue="Submit" file=True #} 
-            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' >{% csrf_token %}
+            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action='' style="padding: 3px">{% csrf_token %}
 			    {% if form.errors %}
 			        <p style="color: #b75f33;">
 			            {{form.non_field_errors}}
 			        </p>
 			    {% endif %}
 
-			    {% include "dailyinspection/field.html" with field=form.cateory%} 
+			    {% for field in form %}
+			        {% if not 'image_' in field.name %}
+			    		{% include "dailyinspection/field.html" %}			    	
+			        {% endif %}
+			    {% endfor %}
 
-			    {% include "dailyinspection/field.html" with field=form.item%} 
+			    {% for field in form %}
+			        {% if 'image_' in field.name %}
+			        	<hr>
+			        	{% include "dailyinspection/field.html" with image=True %}
+			        {% endif %}
+			    {% endfor %}
 
-			    {% include "dailyinspection/field.html" with field=form.impact%} 
-
-			    {% include "dailyinspection/field.html" with field=form.correct%} 
-
-			    {% include "dailyinspection/field.html" with field=form.correct_status%} 
-
-			    {% include "dailyinspection/field.html" with field=form.owner%} 
-
-			    {% include "dailyinspection/field.html" with field=form.due_date%} 
-
-			    {% include "dailyinspection/field.html" with field=form.warehouse%} 
-
+				{% comment %}
+			    {% include "dailyinspection/field.html" with field=form.cateory%}                
+			    {% include "dailyinspection/field.html" with field=form.item%}
+			    {% include "dailyinspection/field.html" with field=form.impact%}
+			    {% include "dailyinspection/field.html" with field=form.correct%}
+			    {% include "dailyinspection/field.html" with field=form.correct_status%}
+			    {% include "dailyinspection/field.html" with field=form.owner%}
+			    {% include "dailyinspection/field.html" with field=form.due_date%}
+			    {% include "dailyinspection/field.html" with field=form.warehouse%}
 			    <hr>
 			    {% include "dailyinspection/field.html" with field=form.image_before image=True %}
+			    <hr>                
+			    {% include "dailyinspection/field.html" with field=form.image_after image=True %}    
+			    {% endcomment %}
 
-			    <hr>			    
-			    {% include "dailyinspection/field.html" with field=form.image_after image=True %}
+			    <hr>                 
 	            		            
 			    <input style="width:30%" type="submit" name="submit" class="btn btn-default pull-right" value="submit" />
+
 			</form>   
+            
+			
 		</div>
-
-		<hr>
-		{% comment %}
-		<div style="border: solid 1px #ddd; padding: 3px;">
-			<p><h3>before correction</h3></p>
-			<img  id='img_before' class= 'img-responsive' src="{{object.get_image_url_before}}"/>
-		</div>
-
-		<div style="border: solid 1px #ddd; padding: 3px;">
-			<p><h3>after correction</h3></p>
-			<img  id='img_before' class= 'img-responsive' src="{{object.get_image_url_after}}"/>
-		</div>
-		{% endcomment %}
-	</div>
-	<div class='col-sm-3'>
+        
 	</div>
 </div>
 

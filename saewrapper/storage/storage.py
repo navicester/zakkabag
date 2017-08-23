@@ -48,3 +48,4 @@ class SAEStorage(Storage):
         r = re.compile('^%s' % path)
         remove_prefix = lambda name: r.sub('', name)
         return [(remove_prefix(attr['name']), None) for attr inself.__bucket.list(path = path)]
+

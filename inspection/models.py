@@ -1,9 +1,14 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+ 
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from django.db.models.signals import post_delete
 from .utils import file_cleanup
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
+import datetime
+from django.utils import timezone
+
 # Create your models here.
 
 RESULT_OPTION = (
@@ -58,8 +63,8 @@ class DailyInspection(models.Model):
     )
 
     daily_insepction_correction_status = (
-        ('completed', 'Complete'),
-        ('notcomplete', 'Not Complete'),
+        ('completed', _('Completed')),
+        ('uncompleted', _('Uncompleted')),
     )
 
     daily_insepction_warehouse = (
@@ -71,7 +76,7 @@ class DailyInspection(models.Model):
     item = models.CharField(_('item'), max_length=30, blank=False)
     impact = models.CharField(_('impact'), max_length=30, blank=False)
     correct = models.TextField(_('correct'), max_length=30, blank=False)
-    correct_status = models.CharField(_('correct status'), max_length=30, choices = daily_insepction_correction_status, blank=False, default = 'notcomplete')
+    correct_status = models.CharField(_('correct status'), max_length=30, choices = daily_insepction_correction_status, blank=False, default = 'Uncompleted')
     owner = models.CharField(_('owner'), max_length=30, blank=False)
     due_date = models.DateField(_('due date'), auto_now_add=False, auto_now=False)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -97,5 +102,15 @@ class DailyInspection(models.Model):
         if img:
             return img.url
         return img 
+
+    def get_html_due_date(self):
+        if self.due_date is not None:
+            overdue = ''
+            if self.due_date <= datetime.datetime.now().date() - datetime.timedelta(days=1): # should be 0
+                overdue = 'overdue'
+            html_text = "<span class='due_date %s'>%s</span>" %(overdue, self.due_date)
+        else:
+            html_text = "<span class='due_date'></span>"
+        return mark_safe(html_text)
 
 post_delete.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")

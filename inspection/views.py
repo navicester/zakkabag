@@ -7,10 +7,12 @@ from django.views.generic.edit import FormMixin, ModelFormMixin
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django_filters import FilterSet, CharFilter, NumberFilter
+from django.db.models import Q
 
 # Create your views here.
 from .models import OfficeInspection, DailyInspection
-from .forms import OfficeInspectionForm, DailyInspectionForm
+from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm
 
 # Create your views here.
 
@@ -112,6 +114,7 @@ class OfficeInspectionListView(ListView):
         context = super(OfficeInspectionListView, self).get_context_data(*args, **kwargs)
         context["objects"] = OfficeInspection.objects.all()
         context["objects_sort"] = OfficeInspection.objects.order_by('-updated')
+        
         return context       
 
     def dispatch(self, request, *args, **kwargs):
@@ -220,15 +223,74 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-class DailyInspectionListView(ListView): 
+class InsepctionFilter(FilterSet):
+    cateory = CharFilter(name='cateory', lookup_type='icontains', distinct=True)
+    #category_id = CharFilter(name='categories__id', lookup_type='icontains', distinct=True)
+    correct_status = CharFilter(name='correct_status', lookup_type='icontains', distinct=True)
+    owner = CharFilter(name='owner', lookup_type='icontains', distinct=True)
+
+    class Meta:
+        model = DailyInspection
+        fields = [
+            'owner',
+            'correct_status',
+            'cateory',
+        ]
+
+class FilterMixin(object):
+    filter_class = None
+    search_ordering_param = "ordering"
+
+    def get_queryset(self, *args, **kwargs):
+        try:
+            qs = super(FilterMixin, self).get_queryset(*args, **kwargs)
+            return qs
+        except:
+            raise ImproperlyConfigured("You must have a queryset in order to use the FilterMixin")
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(FilterMixin, self).get_context_data(*args, **kwargs)
+        qs = self.get_queryset()
+        ordering = self.request.GET.get(self.search_ordering_param)
+        if ordering:
+            qs = qs.order_by(ordering)
+        filter_class = self.filter_class
+        if filter_class:
+            f = filter_class(self.request.GET, queryset=qs)
+            context["object_list"] = f
+        return context
+
+class DailyInspectionListView(FilterMixin, ListView): 
     model = DailyInspection
     template_name = "dailyinspection/dailyinspection_list.html"
+    filter_class = InsepctionFilter
 
     def get_context_data(self, *args, **kwargs):
         context = super(DailyInspectionListView, self).get_context_data(*args, **kwargs)
         context["objects"] = DailyInspection.objects.all()
         context["objects_sort"] = DailyInspection.objects.order_by('-updated')
+        context["query"] = self.request.GET.get("q")
+        context["InspectionFilterForm"] = InspectionFilterForm(data=self.request.GET or None)        
         return context       
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(DailyInspectionListView, self).get_queryset(*args, **kwargs)
+        query = self.request.GET.get("q")
+        if query:
+            qs = self.model.objects.filter(
+                Q(impact__icontains=query) |
+                Q(correct__icontains=query) |
+                Q(owner__icontains=query) |
+                Q(item__icontains=query)
+                )
+            try:
+                qs2 = self.model.objects.filter(
+                    Q(correct_status=query)
+                )
+                qs = (qs | qs2).distinct()
+            except:
+                pass
+        return qs
 
     def dispatch(self, request, *args, **kwargs):
         request.breadcrumbs([

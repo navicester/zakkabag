@@ -7,12 +7,16 @@ from .forms import UploadFileForm
 import json
 from django.conf import settings
 import os
+from PIL import Image
 
 def get_upload_path():
-    photopath = os.path.join(settings.MEDIA_ROOT, 'upload')
-    if not os.path.exists(photopath):
-        os.makedirs(photopath)
-    return photopath
+    if 'SERVER_SOFTWARE' in os.environ: 
+        return 'upload'
+    else:
+        photopath = os.path.join(settings.MEDIA_ROOT, 'upload')
+        if not os.path.exists(photopath):
+            os.makedirs(photopath)
+        return photopath
 
 def get_upload_url():
     photopath = os.path.join(settings.MEDIA_URL, 'upload')
@@ -24,14 +28,17 @@ def upload_file(request):
     if request.method == 'POST':
         upload_form = UploadFileForm(request.POST, request.FILES)
         if upload_form.is_valid():
-            filename=request.FILES['image']
-            filepath = os.path.join(get_upload_path(), filename.name)     
-            from PIL import Image
-            if filename:
-                img = Image.open(filename)
-                img.save(filepath)
-                cache.set('cache_key_upload', os.path.join(get_upload_url(), filename.name) ,60*15)
-            return HttpResponse(json.dumps({'message': 'Upload complete!','url': os.path.join(get_upload_url(), filename.name)}))
+            in_mem_image_file=request.FILES['image']
+            filepath = os.path.join(get_upload_path(), in_mem_image_file.name)
+            if in_mem_image_file:
+                if 'SERVER_SOFTWARE' in os.environ: 
+                    from saewrapper.storage.bucket import SAEBucket
+                    SAEBucket().put_object(filepath,in_mem_image_file.file.getvalue())
+                else:
+                    img = Image.open(in_mem_image_file)                          
+                    img.save(filepath)
+                cache.set('cache_key_upload', os.path.join(get_upload_url(), in_mem_image_file.name) ,60*15)
+            return HttpResponse(json.dumps({'message': 'Upload complete!','url': os.path.join(get_upload_url(), in_mem_image_file.name)}))
         else:
             return HttpResponse(json.dumps({'message': 'invalid form!'}))
     else:

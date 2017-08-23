@@ -218,12 +218,12 @@ def product_detail_view_func(request, id):
 from PIL import Image 
 from django.conf import settings
 import os
-def upload_to(filename, title):
+def upload_to(filename, title, id):
     if filename:
         img=Image.open(filename)
         slug = slugify(title)
         basename, file_extension = filename.name.split(".")
-        new_filename = "%s-%s.%s" %(slug, self.object.id, file_extension)        
+        new_filename = "%s-%s.%s" %(slug, id, file_extension)        
         photoname = os.path.join("products", slug, new_filename)
         if 'SERVER_SOFTWARE' in os.environ: 
             pass
@@ -259,18 +259,20 @@ class ProductCreateView(CreateView):
         if 1:
             in_mem_image_file=request.FILES['image']     
             if in_mem_image_file:
-                photoname = upload_to(in_mem_image_file, self.object.title)
+                photoname = upload_to(in_mem_image_file, self.object.title, self.object.id)
 
                 if 'SERVER_SOFTWARE' in os.environ: 
+                    from sae import storage
                     #from sae.storage import Bucket
                     #bucket = Bucket('media')
-                    c = sae.storage.Connection()
-                    bucket = c.get_bucket('media')
-                    #obj = bucket.get_object_contents(photoname) 
-                    bucket.put_object(photoname,open(in_mem_image_file.file, 'rb'))                    
-                else:                
+                    from saewrapper.storage.bucket import SAEBucket
+                    SAEBucket().put_object(photoname,in_mem_image_file.file.getvalue())
+                    #object_content = bucket.get_object_contents(photoname) 
+                else:
+                    img=Image.open(in_mem_image_file)
                     img.save(os.path.join(settings.MEDIA_ROOT, photoname))
-                    ProductImage.objects.create(product = self.object, 
+                
+                ProductImage.objects.create(product = self.object, 
                         image = photoname)
 
         # BELOW ALSO WORKS
@@ -282,4 +284,4 @@ class ProductCreateView(CreateView):
                 productImage.save()
                 return postresult
 
-        return postresult        
+        return postresult
