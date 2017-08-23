@@ -50,7 +50,7 @@ def file_cleanup2(sender, **kwargs):
             if (not inst_raw is None) and (inst_raw.__class__.__name__ == inst.__class__.__name__):
                 f = getattr(inst_raw, fieldname)
                 m = inst_raw.__class__._default_manager
-                raise RuntimeError('env setup1 %s' % f.path)
+                raise RuntimeError('env setup1 %s' % f)
                 if hasattr(f, 'path') and os.path.exists(f.path)\
                 and getattr(inst_raw, fieldname) != getattr(inst, fieldname) \
                 and not m.filter(**{'%s__exact' % fieldname: getattr(inst_raw, fieldname)})\
