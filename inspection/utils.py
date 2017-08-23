@@ -28,6 +28,7 @@ def file_cleanup(sender, **kwargs):
                     if 'SERVER_SOFTWARE' in os.environ: 
                         from sae import storage
                         from saewrapper.storage.bucket import SAEBucket
+                        raise RuntimeError('env setup' % f.path)
                         SAEBucket().delete(f.path)
                     else:
                         default_storage.delete(f.path)

@@ -114,3 +114,4 @@ class DailyInspection(models.Model):
         return mark_safe(html_text)
 
 post_delete.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")
+#post_save.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")
