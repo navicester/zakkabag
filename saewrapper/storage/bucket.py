@@ -13,5 +13,8 @@ class SAEBucket(object):
         self.__bucket.put_object(name, content)
         return name
 
+    def delete(self, name): 
+        self.__bucket.delete_object(name)
+        
     def url(self, name):  
         return self.__bucket.generate_url(name)     

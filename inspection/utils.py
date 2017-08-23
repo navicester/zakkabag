@@ -25,6 +25,11 @@ def file_cleanup(sender, **kwargs):
             and not m.filter(**{'%s__exact' % fieldname: getattr(inst, fieldname)})\
             .exclude(pk=inst._get_pk_val()):
                 try:
-                    default_storage.delete(f.path)
+                    if 'SERVER_SOFTWARE' in os.environ: 
+                        from sae import storage
+                        from saewrapper.storage.bucket import SAEBucket
+                        SAEBucket().delete(f.path)
+                    else:
+                        default_storage.delete(f.path)
                 except:
                     pass
