@@ -251,7 +251,7 @@ class FilterMixin(object):
     def get_context_data(self, *args, **kwargs):
         context = super(FilterMixin, self).get_context_data(*args, **kwargs)
         qs = self.get_queryset()
-        ordering = self.request.GET.get(self.search_ordering_param)
+        ordering = self.request.GET.get(self.search_ordering_param, '-updated')
         if ordering:
             qs = qs.order_by(ordering)
         filter_class = self.filter_class
@@ -267,7 +267,7 @@ class DailyInspectionListView(FilterMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(DailyInspectionListView, self).get_context_data(*args, **kwargs)
-        context["objects"] = DailyInspection.objects.all()
+        #context["objects_list"] = DailyInspection.objects.order_by('-updated')
         context["objects_sort"] = DailyInspection.objects.order_by('-updated')
         context["query"] = self.request.GET.get("q")
         context["InspectionFilterForm"] = InspectionFilterForm(data=self.request.GET or None)        

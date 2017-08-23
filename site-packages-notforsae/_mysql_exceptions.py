@@ -5,12 +5,7 @@ These classes are dictated by the DB API v2.0:
     http://www.python.org/topics/database/DatabaseAPI-2.0.html
 """
 
-try:
-    from exceptions import Exception, StandardError, Warning
-except ImportError:
-    # Python 3
-    StandardError = Exception
-
+from exceptions import Exception, StandardError, Warning
 
 class MySQLError(StandardError):
     
@@ -85,3 +80,4 @@ class NotSupportedError(DatabaseError):
     has transactions turned off."""
 
 
+del Exception, StandardError

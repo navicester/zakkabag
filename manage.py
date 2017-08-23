@@ -11,8 +11,8 @@ if __name__ == "__main__":
     #sys.path = filter(lambda x: x!='D:\\Python27',sys.path)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zakkabag.settings")
     
-    #for path in sys.path:
-    #    print path
+    for path in sys.path:
+        print path
 
     from django.core.management import execute_from_command_line
 
