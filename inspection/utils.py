@@ -39,7 +39,12 @@ def file_cleanup(sender, **kwargs):
 def file_cleanup2(sender, **kwargs):
     inst = kwargs['instance']
     cache_key = ("%s %d") % (inst.__class__.__name__ , inst._get_pk_val())
-    inst_raw = cache.get(cache_key)   
+    inst_raw = cache.get(cache_key)
+
+    if 'SERVER_SOFTWARE' in os.environ: 
+        from sae import storage
+        from saewrapper.storage.bucket import SAEBucket
+        pass
 
     for fieldname in sender._meta.get_all_field_names():
         try:
@@ -50,15 +55,19 @@ def file_cleanup2(sender, **kwargs):
             if (not inst_raw is None) and (inst_raw.__class__.__name__ == inst.__class__.__name__):
                 f = getattr(inst_raw, fieldname)
                 m = inst_raw.__class__._default_manager
-                raise RuntimeError('env setup1 %s' % f)
-                if hasattr(f, 'path') and os.path.exists(f.path)\
-                and getattr(inst_raw, fieldname) != getattr(inst, fieldname) \
+                path = None
+                if 'SERVER_SOFTWARE' in os.environ:                     
+                    path = SAEBucket().url(f.name)
+                    if not path:
+                        continue
+                else:
+                    if not (hasattr(f, 'path') and os.path.exists(f.path)):
+                        continue
+                if getattr(inst_raw, fieldname) != getattr(inst, fieldname) \
                 and not m.filter(**{'%s__exact' % fieldname: getattr(inst_raw, fieldname)})\
                 .exclude(pk=inst_raw._get_pk_val()):
-                    try:                        
-                        if 'SERVER_SOFTWARE' in os.environ: 
-                            from sae import storage
-                            from saewrapper.storage.bucket import SAEBucket
+                    try:
+                        if 'SERVER_SOFTWARE' in os.environ:                            
                             raise RuntimeError('env setup' % f.path)
                             SAEBucket().delete(f.path)
                         else:
