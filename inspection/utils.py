@@ -39,16 +39,15 @@ def file_cleanup(sender, **kwargs):
 def file_cleanup2(sender, **kwargs):
     inst = kwargs['instance']
     cache_key = ("%s %d") % (inst.__class__.__name__ , inst._get_pk_val())
-    inst_raw = cache.get(cache_key)
-    
-    raise RuntimeError('env setup')
+    inst_raw = cache.get(cache_key)   
 
     for fieldname in sender._meta.get_all_field_names():
         try:
             field = sender._meta.get_field(fieldname)
         except:
             field = None
-        if field and isinstance(field, FileField):            
+        if field and isinstance(field, FileField):
+             raise RuntimeError('env setup')
             if (not inst_raw is None) and (inst_raw.__class__.__name__ == inst.__class__.__name__):
                 f = getattr(inst_raw, fieldname)
                 m = inst_raw.__class__._default_manager
