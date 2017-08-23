@@ -2,8 +2,8 @@ from django.db import models
  
 from django.core.urlresolvers import reverse
 from django.utils.text import slugify
-from django.db.models.signals import post_delete
-from .utils import file_cleanup
+from django.db.models.signals import post_delete, post_save, pre_save
+from .utils import file_cleanup, file_cleanup2, save_raw_instance
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 import datetime
@@ -114,4 +114,5 @@ class DailyInspection(models.Model):
         return mark_safe(html_text)
 
 post_delete.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")
-#post_save.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")
+post_save.connect(file_cleanup2, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup2")
+pre_save.connect(save_raw_instance, sender=DailyInspection)
