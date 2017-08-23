@@ -72,7 +72,7 @@ def file_cleanup2(sender, **kwargs):
                     #raise RuntimeError('env setup %s' % getattr(inst_raw, fieldname))
                     try:
                         if 'SERVER_SOFTWARE' in os.environ:                            
-                            raise RuntimeError('env setup' % path)
+                            raise RuntimeError('env setup %s' % path)
                             SAEBucket().delete(path)
                         else:
                             default_storage.delete(f.path)
