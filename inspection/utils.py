@@ -58,7 +58,7 @@ def file_cleanup2(sender, **kwargs):
                 path = None
                 if 'SERVER_SOFTWARE' in os.environ:                     
                     path = SAEBucket().url(f.name)
-                    raise RuntimeError('env setup %s' % f.name)
+                    raise RuntimeError('env setup %s' % path)
                     if not path:
                         continue
                 else:
