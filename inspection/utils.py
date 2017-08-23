@@ -58,7 +58,7 @@ def file_cleanup2(sender, **kwargs):
                 path = None
                 if 'SERVER_SOFTWARE' in os.environ:                     
                     path = SAEBucket().url(f.name)
-                    raise RuntimeError('env setup %s' % path)
+                    #raise RuntimeError('env setup %s' % path)
                     if not path:
                         continue
                 else:
@@ -69,7 +69,7 @@ def file_cleanup2(sender, **kwargs):
                 .exclude(pk=inst_raw._get_pk_val()):
                     try:
                         if 'SERVER_SOFTWARE' in os.environ:                            
-                            raise RuntimeError('env setup' % f.path)
+                            raise RuntimeError('env setup' % path)
                             SAEBucket().delete(f.path)
                         else:
                             default_storage.delete(f.path)
