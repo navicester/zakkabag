@@ -38,8 +38,11 @@ def file_cleanup(sender, **kwargs):
 
 def file_cleanup2(sender, **kwargs):
     inst = kwargs['instance']
-    cache_key = ("%s %d") % (inst.__class__.__name__ , inst._get_pk_val())
-    inst_raw = cache.get(cache_key)
+    try:
+        cache_key = ("%s %d") % (inst.__class__.__name__ , inst._get_pk_val())
+        inst_raw = cache.get(cache_key)
+    except:
+        return
 
     if 'SERVER_SOFTWARE' in os.environ: 
         from sae import storage
@@ -83,7 +86,10 @@ def file_cleanup2(sender, **kwargs):
     cache.delete(cache_key)
     
 def save_raw_instance(sender, instance, *args, **kwargs):
-    pk = instance._get_pk_val()
-    inst = instance.__class__._default_manager.get(pk=pk)
-    cache_key = ("%s %d") % (inst.__class__.__name__ , inst._get_pk_val())
-    cache.set(cache_key, inst)                           
+    try:
+        pk = instance._get_pk_val()
+        inst = instance.__class__._default_manager.get(pk=pk)
+        cache_key = ("%s %d") % (inst.__class__.__name__ , inst._get_pk_val())
+        cache.set(cache_key, inst)                           
+    except:
+        pass

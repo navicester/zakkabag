@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import OfficeInspection, DailyInspection
+from .forms import DailyInspectionForm
 
 # Register your models here.
 class OfficeInspectionAdmin(admin.ModelAdmin):
@@ -9,8 +10,11 @@ class OfficeInspectionAdmin(admin.ModelAdmin):
 
 class DailyInspectionAdmin(admin.ModelAdmin):
 	list_display = ["cateory", "correct_status",'owner']
+	form = DailyInspectionForm
+	
 	class Meta:
 		model = DailyInspection
+		
 
 
 
