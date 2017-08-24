@@ -866,6 +866,12 @@ dailyinspection这个view调了很长时间，原因就是一个row和column之�
 - https://stackoverflow.com/questions/30636930/disable-web-page-navigation-on-swipeback-and-forward
 - [HTML5 移动端的上下左右滑动问题](https://segmentfault.com/q/1010000002585476/a-1020000002586382)
 
+# 重写Admin Overwrite
+
+- https://stackoverflow.com/questions/10040442/override-a-form-in-django-admin
+- https://docs.djangoproject.com/en/dev/ref/contrib/admin/#django.contrib.admin.ModelAdmin.form
+- https://docs.djangoproject.com/en/dev/ref/contrib/admin/#adding-custom-validation-to-the-admin
+- https://docs.djangoproject.com/en/dev/ref/contrib/admin/#custom-template-options
 
 
 
