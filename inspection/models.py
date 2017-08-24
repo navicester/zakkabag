@@ -138,10 +138,6 @@ class forklift(models.Model):
     fork_length = models.CharField(_('Fork Length'), max_length=30, blank=False)
     maximum_velocity = models.CharField(_('Maximum Velocity'), max_length=30, blank=False)
 
-    def __init__(self, arg):
-        super(forklift, self).__init__()
-        self.arg = arg
-
     def __unicode__(self): 
         return _("forklift") + self.internal_car_number
 
@@ -158,7 +154,7 @@ class forklift_maint(models.Model):
     fastening_tyre_nut = models.CharField(_('fastening tyre nut'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
     check_tyre_status = models.CharField(_('check tyre status'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
     check_gear_oil_level_and_leak = models.CharField(_('check gear oil level and leak'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
-    check_hydraulic_oil_level = models.CharField(_('clean forklift'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
+    check_hydraulic_oil_level = models.CharField(_('check hydraulic oil level'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
     clean_all_motor_and_accessories = models.CharField(_('clean all motor and accessories'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
     check_and_clean_motor_cooling_fan = models.CharField(_('check and clean motor cooling fan'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
     check_all_cable_and_connection_status = models.CharField(_('check all cable and connection status'), max_length=30, choices = RESULT_OPTION, blank=True, default = 'no')
@@ -200,7 +196,7 @@ class forklift_repair(models.Model):
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)
     
 class forklift_annual_inspection(models.Model):
-    date = models.DateField(_('Date'), auto_now_add=False, auto_now=False)
+    date = models.DateField(_('Annual Inspection Date'), auto_now_add=False, auto_now=False)
     next_date = models.DateField(_('Next Inspection Date'), auto_now_add=False, auto_now=False)
 
 class forklift_annual_inspection_image(models.Model):
