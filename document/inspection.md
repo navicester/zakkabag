@@ -873,8 +873,14 @@ dailyinspection这个view调了很长时间，原因就是一个row和column之�
 - https://docs.djangoproject.com/en/dev/ref/contrib/admin/#adding-custom-validation-to-the-admin
 - https://docs.djangoproject.com/en/dev/ref/contrib/admin/#custom-template-options
 
-
-
+- list_display
+- search_fields
+- list_filter
+- ordering
+- fieldsets
+- inlines
+- admin.TabularInline
+- admin.StackedInline
  
 
 
