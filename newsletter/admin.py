@@ -12,7 +12,7 @@ class SignUpAdmin(admin.ModelAdmin):
 
 
 class BannerAdmin(admin.ModelAdmin):
-	list_display = ["image", "title", "text", "active"]
+	list_display = [ "title", "text", "image","active"]
 	class Meta:
 		model = Banner
 

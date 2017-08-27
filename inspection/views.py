@@ -223,18 +223,36 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+'''
+operators = {
+        'exact': '= %s',
+        'iexact': 'LIKE %s',
+        'contains': 'LIKE BINARY %s',
+        'icontains': 'LIKE %s',
+        'regex': 'REGEXP BINARY %s',
+        'iregex': 'REGEXP %s',
+        'gt': '> %s',
+        'gte': '>= %s',
+        'lt': '< %s',
+        'lte': '<= %s',
+        'startswith': 'LIKE BINARY %s',
+        'endswith': 'LIKE BINARY %s',
+        'istartswith': 'LIKE %s',
+        'iendswith': 'LIKE %s',
+    }
+'''
 class InsepctionFilter(FilterSet):
-    cateory = CharFilter(name='cateory', lookup_type='icontains', distinct=True)
+    cateory = CharFilter(name='category', lookup_type='icontains', distinct=True)
     #category_id = CharFilter(name='categories__id', lookup_type='icontains', distinct=True)
-    correct_status = CharFilter(name='correct_status', lookup_type='icontains', distinct=True)
+    rectification_status = CharFilter(name='rectification_status', lookup_type='exact', distinct=True)
     owner = CharFilter(name='owner', lookup_type='icontains', distinct=True)
 
     class Meta:
         model = DailyInspection
         fields = [
             'owner',
-            'correct_status',
-            'cateory',
+            'rectification_status',
+            'category',
         ]
 
 class FilterMixin(object):
@@ -271,6 +289,7 @@ class DailyInspectionListView(FilterMixin, ListView):
         context["objects_sort"] = DailyInspection.objects.order_by('-updated')
         context["query"] = self.request.GET.get("q")
         context["InspectionFilterForm"] = InspectionFilterForm(data=self.request.GET or None)        
+        context["categories"] = DailyInspection.daily_insepction_category
         return context       
 
     def get_queryset(self, *args, **kwargs):
@@ -279,13 +298,14 @@ class DailyInspectionListView(FilterMixin, ListView):
         if query:
             qs = self.model.objects.filter(
                 Q(impact__icontains=query) |
-                Q(correct__icontains=query) |
+                Q(rectification_measures__icontains=query) |
                 Q(owner__icontains=query) |
-                Q(item__icontains=query)
+                Q(category__icontains=query) |
+                Q(inspection_content__icontains=query)
                 )
             try:
                 qs2 = self.model.objects.filter(
-                    Q(correct_status=query)
+                    Q(rectification_status=query)
                 )
                 qs = (qs | qs2).distinct()
             except:

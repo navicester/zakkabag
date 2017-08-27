@@ -8,11 +8,13 @@ import settings_security
 DATABASES = settings.DATABASES
 
 #exclusive database
+'''
 MYSQL_HOST = 'mclkvoqfrfqv.mysql.sae.sina.com.cn'
 MYSQL_PORT = '10099'
 MYSQL_USER = settings_security.MYSQL_USER
 MYSQL_PASS = settings_security.MYSQL_PASS
 MYSQL_DB   = 'szakkabag'
+'''
 
 # shared database
 MYSQL_HOST = 'w.rdc.sae.sina.com.cn'

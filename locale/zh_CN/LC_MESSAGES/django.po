@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-22 21:23+0800\n"
+"POT-Creation-Date: 2017-08-25 22:05+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,83 +174,357 @@ msgstr ""
 msgid "Designates whether this is favorite."
 msgstr ""
 
-#: .\inspection\models.py:21
+#: .\inspection\models.py:26
 msgid "plug"
 msgstr ""
 
-#: .\inspection\models.py:22
+#: .\inspection\models.py:27
 msgid "power"
 msgstr ""
 
-#: .\inspection\models.py:44
+#: .\inspection\models.py:49
 msgid "People"
 msgstr ""
 
-#: .\inspection\models.py:45
+#: .\inspection\models.py:50
 msgid "Device"
 msgstr ""
 
-#: .\inspection\models.py:46
+#: .\inspection\models.py:51
 msgid "Machine"
 msgstr ""
 
-#: .\inspection\models.py:47
+#: .\inspection\models.py:52
 msgid "Method"
 msgstr ""
 
-#: .\inspection\models.py:48
+#: .\inspection\models.py:53
 msgid "Environment"
 msgstr ""
 
-#: .\inspection\models.py:61
+#: .\inspection\models.py:58
+msgid "economic loss"
+msgstr "易造成经济损失"
+
+#: .\inspection\models.py:59
+msgid "personnel injury"
+msgstr "易造成人员伤害"
+
+#: .\inspection\models.py:60
+msgid "non-conformance 5SS standard"
+msgstr "不符合5SS标准"
+
+#: .\inspection\models.py:64
 msgid "Completed"
 msgstr "已完成"
 
-#: .\inspection\models.py:62
+#: .\inspection\models.py:65
 msgid "Uncompleted"
 msgstr "未完成"
 
-#: .\inspection\models.py:70
-msgid "cateory"
-msgstr ""
-
-#: .\inspection\models.py:71
-msgid "item"
-msgstr ""
-
-#: .\inspection\models.py:72
-msgid "impact"
-msgstr ""
-
 #: .\inspection\models.py:73
-msgid "correct"
-msgstr ""
+msgid "Category"
+msgstr "分类"
 
 #: .\inspection\models.py:74
-msgid "correct status"
-msgstr ""
+msgid "Inspection Content"
+msgstr "检查内容"
 
 #: .\inspection\models.py:75
-msgid "owner"
-msgstr ""
+msgid "Impact"
+msgstr "影响"
 
 #: .\inspection\models.py:76
-msgid "due date"
-msgstr ""
+msgid "Rectification Measures"
+msgstr "整改措施"
+
+#: .\inspection\models.py:77
+msgid "Rectification Status"
+msgstr "整改状态"
+
+#: .\inspection\models.py:78
+msgid "Owner"
+msgstr "责任人"
 
 #: .\inspection\models.py:79
-msgid "image before"
+msgid "Forecast Complete Date"
+msgstr "预计完成时间"
+
+#: .\inspection\models.py:82
+msgid "Picture before Rectification"
+msgstr "整改前照片"
+
+#: .\inspection\models.py:83
+msgid "Picture after Rectification"
+msgstr "整改后照片"
+
+#: .\inspection\models.py:84 .\inspection\models.py:206
+msgid "Warehouse"
+msgstr "仓库"
+
+#: .\inspection\models.py:87
+#, fuzzy
+msgid "Daily Inspection "
+msgstr "巡检"
+
+#: .\inspection\models.py:122
+msgid "Inner Car Number"
 msgstr ""
 
-#: .\inspection\models.py:80
-msgid "image after"
+#: .\inspection\models.py:123
+msgid "Inner Plate Number"
 msgstr ""
 
-#: .\inspection\models.py:81
-msgid "warehouse"
+#: .\inspection\models.py:124
+msgid "Forklift Model"
 msgstr ""
 
-#: .\inspection\views.py:187 .\inspection\views.py:296
+#: .\inspection\models.py:125
+msgid "SN"
+msgstr ""
+
+#: .\inspection\models.py:126
+msgid "Forklift Category"
+msgstr ""
+
+#: .\inspection\models.py:127
+msgid "Manufacturer"
+msgstr ""
+
+#: .\inspection\models.py:128
+msgid "Tip Height"
+msgstr ""
+
+#: .\inspection\models.py:129
+msgid "Carrying Capacity"
+msgstr ""
+
+#: .\inspection\models.py:130
+msgid "Self Weight"
+msgstr ""
+
+#: .\inspection\models.py:131
+msgid "Turning Radius"
+msgstr ""
+
+#: .\inspection\models.py:132
+msgid "Front Tyre Size"
+msgstr ""
+
+#: .\inspection\models.py:133
+msgid "Back Tyre Size"
+msgstr ""
+
+#: .\inspection\models.py:134
+msgid "Forklift Width"
+msgstr ""
+
+#: .\inspection\models.py:135
+msgid "Forklift Length"
+msgstr ""
+
+#: .\inspection\models.py:136
+msgid "Fork Length"
+msgstr ""
+
+#: .\inspection\models.py:137
+msgid "Maximum Velocity"
+msgstr ""
+
+#: .\inspection\models.py:140 .\inspection\models.py:180
+msgid "forklift"
+msgstr ""
+
+#: .\inspection\models.py:144 .\inspection\models.py:202
+msgid "image"
+msgstr ""
+
+#: .\inspection\models.py:148
+msgid "clean forklift"
+msgstr ""
+
+#: .\inspection\models.py:149
+msgid "clean and lubricate chain"
+msgstr ""
+
+#: .\inspection\models.py:150
+msgid "lubricate gateshelf and lean cylinder bearing"
+msgstr ""
+
+#: .\inspection\models.py:151
+msgid "lubricate sideswayfork and check work status"
+msgstr ""
+
+#: .\inspection\models.py:152
+msgid "fastening tyre nut"
+msgstr ""
+
+#: .\inspection\models.py:153
+msgid "check tyre status"
+msgstr ""
+
+#: .\inspection\models.py:154
+msgid "check gear oil level and leak"
+msgstr ""
+
+#: .\inspection\models.py:155
+msgid "check hydraulic oil level"
+msgstr ""
+
+#: .\inspection\models.py:156
+msgid "clean all motor and accessories"
+msgstr ""
+
+#: .\inspection\models.py:157
+msgid "check and clean motor cooling fan"
+msgstr ""
+
+#: .\inspection\models.py:158
+msgid "check all cable and connection status"
+msgstr ""
+
+#: .\inspection\models.py:159
+msgid "check battery electrolyte liquidometer ratio"
+msgstr ""
+
+#: .\inspection\models.py:160
+msgid "check charger status"
+msgstr ""
+
+#: .\inspection\models.py:161
+msgid "check pipeline fastening and leak"
+msgstr ""
+
+#: .\inspection\models.py:162
+msgid "check pallet fork and pin lock"
+msgstr ""
+
+#: .\inspection\models.py:163
+msgid "check lubricate pedal and control linkage"
+msgstr ""
+
+#: .\inspection\models.py:164
+msgid "check braking device"
+msgstr ""
+
+#: .\inspection\models.py:165
+msgid "check all motor carbon brush"
+msgstr ""
+
+#: .\inspection\models.py:166
+msgid "check overhead guard and counter weight"
+msgstr ""
+
+#: .\inspection\models.py:167
+msgid "check steering axle and drive axle"
+msgstr ""
+
+#: .\inspection\models.py:168
+msgid "check gateshelf and chain"
+msgstr ""
+
+#: .\inspection\models.py:169
+msgid "check hub bearing"
+msgstr ""
+
+#: .\inspection\models.py:170
+msgid "check steering axle bearing"
+msgstr ""
+
+#: .\inspection\models.py:171
+msgid "check gateshlf bearing"
+msgstr ""
+
+#: .\inspection\models.py:172
+msgid "change gear oil"
+msgstr ""
+
+#: .\inspection\models.py:173
+msgid "change oil suction filter"
+msgstr ""
+
+#: .\inspection\models.py:174
+msgid "change ventilate filter"
+msgstr ""
+
+#: .\inspection\models.py:175
+msgid "change hydraulic oil"
+msgstr ""
+
+#: .\inspection\models.py:188 .\inspection\models.py:205
+msgid "Damage Reason"
+msgstr ""
+
+#: .\inspection\models.py:189
+msgid "Accessories Name"
+msgstr ""
+
+#: .\inspection\models.py:190
+msgid "Accessories Number"
+msgstr ""
+
+#: .\inspection\models.py:191
+#: .\site-packages\django\contrib\admindocs\templates\admin_doc\model_detail.html.py:36
+msgid "Description"
+msgstr ""
+
+#: .\inspection\models.py:192
+msgid "Repaired"
+msgstr ""
+
+#: .\inspection\models.py:197
+#, fuzzy
+msgid "Annual Inspection Date"
+msgstr "巡检"
+
+#: .\inspection\models.py:198
+#, fuzzy
+msgid "Next Inspection Date"
+msgstr "巡检"
+
+#: .\inspection\models.py:207
+#, fuzzy
+msgid "Compartment"
+msgstr "已完成"
+
+#: .\inspection\models.py:208
+msgid "Warehouse Channel"
+msgstr ""
+
+#: .\inspection\models.py:209
+#: .\site-packages\django\contrib\auth\models.py:122
+msgid "group"
+msgstr ""
+
+#: .\inspection\models.py:210
+msgid "number"
+msgstr ""
+
+#: .\inspection\models.py:211
+msgid "Gradient Measurement Mandatory"
+msgstr ""
+
+#: .\inspection\models.py:215
+msgid "Use Condition"
+msgstr ""
+
+#: .\inspection\models.py:216
+msgid "Locked"
+msgstr ""
+
+#: .\inspection\models.py:217
+msgid "Check Person"
+msgstr ""
+
+#: .\inspection\models.py:218
+msgid "Gradient"
+msgstr ""
+
+#: .\inspection\models.py:219
+msgid "Comments"
+msgstr ""
+
+#: .\inspection\views.py:187 .\inspection\views.py:297
 #: .\site-packages\breadcrumbs\breadcrumbs.py:81
 #: .\site-packages\django\contrib\admin\templates\admin\500.html.py:6
 #: .\site-packages\django\contrib\admin\templates\admin\app_index.html.py:9
@@ -282,7 +556,7 @@ msgstr ""
 msgid "Home"
 msgstr "主页"
 
-#: .\inspection\views.py:297
+#: .\inspection\views.py:298
 msgid "Daily Inspection"
 msgstr "巡检"
 
@@ -1728,10 +2002,6 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: .\site-packages\django\contrib\admindocs\templates\admin_doc\model_detail.html.py:36
-msgid "Description"
-msgstr ""
-
 #: .\site-packages\django\contrib\admindocs\templates\admin_doc\model_detail.html.py:51
 msgid "Back to Model Documentation"
 msgstr ""
@@ -2021,10 +2291,6 @@ msgstr ""
 #: .\site-packages\django\contrib\auth\models.py:71
 #: .\site-packages\django\contrib\auth\models.py:117
 msgid "permissions"
-msgstr ""
-
-#: .\site-packages\django\contrib\auth\models.py:122
-msgid "group"
 msgstr ""
 
 #: .\site-packages\django\contrib\auth\models.py:123

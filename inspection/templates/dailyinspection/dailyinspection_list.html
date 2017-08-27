@@ -2,8 +2,33 @@
 {% load crispy_forms_tags %}
 {% load pagination_tags %}
 
+
 <style type="text/css">
 {% block style %}
+
+a:link {text-decoration: none;}
+a:visited {text-decoration: none;}
+a:active {text-decoration: none;}
+a:hover {text-decoration: none;}
+
+div.categorylist{
+	margin-right: 0px; /* if the value > 0, then next div will move to next line*/
+	padding: 15px 8px; 
+	/*background-color: #eef1f3;*/
+}
+
+.categorylist:hover, .category-content .active{
+	background-color: #d9edf7;
+}
+
+.category-content{
+	text-decoration: none; 
+	outline: none;
+	border-radius: 3px;
+	border: solid 1px #d9edf7;
+	overflow:hidden;
+}
+
 
 {% endblock%}
 </style>
@@ -27,7 +52,7 @@ $(document).ready(function(){
 		<form method="GET" action="{% url 'dailyinspection_list' %}">	
 			{{ InspectionFilterForm|crispy }}
 
-			<input type='hidden' name='q' value='{{ request.GET.q }}' />
+			<!-- <input type='hidden' name='q' value='{{ request.GET.q }}' /> -->
 			<input type='submit' value='Apply Filter' class='btn btn-default'>
 		</form>
 		<br>
@@ -36,7 +61,21 @@ $(document).ready(function(){
 	</div>		
 	<div class='col-sm-9 col-md-10 container'>	
         
-	    <div class="object_lists">            
+		<div class="row category-content">
+			<div class='col-xs-4 col-md-2 categorylist active text-center'>
+				<a href="{% url 'dailyinspection_list' %}">All Category</a>
+			</div>				
+
+			{% for category in categories%}
+			<div class='col-xs-4 col-md-2 categorylist  text-center'>
+				<a href="{% url 'dailyinspection_list' %}?category={{category.0}}" style="display: block; " >{{category.1}}</a>
+			</div>
+			{% cycle '' '' '' '' '' '</div><div class="row">'%} 
+			{% endfor %}
+		</div>
+		<br>
+		
+	    <div class="row object_lists"> <!-- 2 row together -->
 			{% autopaginate object_list 6 %}
             
 			{% if object_list.count == 0 %}

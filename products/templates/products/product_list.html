@@ -26,7 +26,7 @@ div.categorylist{
 	*/
 }
 
-.category-content .cate-body .categorylist:hover{
+.category-content .category-body .categorylist:hover{
 	background-color: #d9edf7;
 }
 
@@ -41,7 +41,7 @@ div.categorylist{
 	overflow:hidden;
 }
 
-.category-content .cate-suffix{
+.category-content .category-suffix{
 	border-right: solid 1px #d9edf7;
 	margin-bottom:-10000px; 
 	padding-bottom:10000px;
@@ -54,7 +54,7 @@ div.categorylist{
 	position:absolute; */
 }
 
-.category-content .cate-body{	
+.category-content .category-body{	
 	margin-bottom:-10000px; 
 	padding-bottom:10000px;
 	/*	
@@ -62,7 +62,7 @@ div.categorylist{
 	float:left; margin-left:150px; width: 100%*/
 }
 
-.category-content .cate-body .active{	
+.category-content .category-body .active{	
 	/*
 	background-color: #d9edf7;
 	font: bold;
@@ -101,10 +101,10 @@ div.categorylist{
 
 	{% block content-center %}
 	<div class='row category-content text-center'>
-		<div class='cate-suffix categorylist col-xs-3 col-sm-3 col-md-2'>
+		<div class='category-suffix categorylist col-xs-3 col-sm-3 col-md-2'>
 			<a href='{% url "categories" %}'>Categories</a>
 		</div>
-		<div class='cate-body  col-xs-9 col-sm-9 col-md-10'>
+		<div class='category-body  col-xs-9 col-sm-9 col-md-10'>
 			<div class="row">
 				<div class='col-xs-4 col-md-2 categorylist active'>
 					<a href="{% url 'products' %}">All Products</a>

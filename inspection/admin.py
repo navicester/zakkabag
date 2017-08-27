@@ -10,7 +10,7 @@ class OfficeInspectionAdmin(admin.ModelAdmin):
         model = OfficeInspection
 
 class DailyInspectionAdmin(admin.ModelAdmin):
-    list_display = ["cateory", "correct_status",'owner']
+    list_display = ["category", "rectification_status",'owner']
     form = DailyInspectionForm
     
     class Meta:

@@ -3,7 +3,7 @@
     <thead>
 	    <tr>
 	        <th>Index</th>
-	        <th>cateory</th>
+	        <th>category</th>
 	        <th style="width:40%;">item</th>
 	        <!--<th>impact</th>
 	        <th>correct</th>-->
@@ -20,11 +20,11 @@
         {% for object in objects %}
         <tr>
             <td><a href='{{object.get_absolute_url}}'}>{{forloop.counter}}</a></td>
-            <td>{{object.cateory}}</td>
+            <td>{{object.category}}</td>
             <td>{{object.item}}</td>
             <!--<td>{{object.impact}}</td>
             <td>{{object.correct}}</td>-->
-            <td>{{object.correct_status}}</td>
+            <td>{{object.rectification_status}}</td>
             <td>{{object.owner}}</td>
             <!--<td>{{object.updated}}</td>-->
             <td>{{object.created}}</td>

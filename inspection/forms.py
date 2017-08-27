@@ -36,6 +36,7 @@ class OfficeInspectionForm(forms.ModelForm):
 
 class DailyInspectionForm(forms.ModelForm):
     
+    
     impact = forms.MultipleChoiceField(
             choices = lambda: (item for item in DailyInspection.daily_insepction_impact),
             widget = forms.SelectMultiple(),
@@ -44,7 +45,6 @@ class DailyInspectionForm(forms.ModelForm):
             #initial= lambda: [item for item in DailyInspection.daily_insepction_impact if item],
             required=True
             )
-    
 
     def __init__(self, *args, **kwargs):
         super(DailyInspectionForm, self).__init__(*args, **kwargs)
@@ -85,23 +85,25 @@ class InspectionFilterForm(forms.Form):
         widget=forms.CheckboxSelectMultiple, 
         required=False)
     '''
-    cateory = forms.MultipleChoiceField(
-            label='Category',
+
+    category = forms.MultipleChoiceField(
+            label=_('Category'),
             choices = DailyInspection.daily_insepction_category,
             #widget = forms.SelectMultiple(),
             widget=forms.CheckboxSelectMultiple(),
             initial = None,
             required=False
             )    
-    correct_status = forms.ChoiceField(
-            label='Correct Status',
+
+    rectification_status = forms.ChoiceField(
+            label=_('Rectification Status'),
             choices = DailyInspection.daily_insepction_correction_status,
             widget=forms.RadioSelect(),
             required=False
             )   
     #owner = forms.CharField(label='Owner',required=False)
     owner = forms.ChoiceField(
-            label='Owner',
+            label=_('Owner'),
             choices = set((dailyinspection.owner,dailyinspection.owner) for dailyinspection in DailyInspection.objects.all()),
             widget=forms.RadioSelect(),
             initial = None,

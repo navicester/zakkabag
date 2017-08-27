@@ -42,7 +42,7 @@ class OfficeInspection(models.Model):
 def image_upload_to_dailyinspection(instance, filename):
     title, file_extension = filename.split(".")
     new_filename = "%s-%s.%s" %(instance.created.strftime('%Y-%m-%d-%H-%M-%S'), slugify(title), file_extension)
-    return "dailyinspection/%s/%s" %(instance.cateory, new_filename)
+    return "dailyinspection/%s/%s" %(instance.category, new_filename)
 
 class DailyInspection(models.Model):
     daily_insepction_category = (
@@ -55,11 +55,9 @@ class DailyInspection(models.Model):
 
     # index can only be 1 char, see SelectMultiple:render & Select(Widget):render_options / selected_choices = set(force_text(v) for v in selected_choices) ==> bug ? set([force_text(v)]
     daily_insepction_impact = (
-        ('1', 'People'),
-        ('2', 'Device'),
-        ('3', 'Machine'),
-        ('4', 'Method'),
-        ('5', 'Environment'),
+        ('1', _('economic loss')),
+        ('2', _('personnel injury')),
+        ('3', _('non-conformance 5SS standard')),
     )
 
     daily_insepction_correction_status = (
@@ -72,21 +70,26 @@ class DailyInspection(models.Model):
         ('5', '5#'),
     )
 
-    cateory = models.CharField(_('cateory'), max_length=30, choices = daily_insepction_category, blank=False, default = 'people')
-    item = models.CharField(_('item'), max_length=30, blank=False)
-    impact = models.CharField(_('impact'), max_length=30, blank=False)
-    correct = models.TextField(_('correct'), max_length=30, blank=False)
-    correct_status = models.CharField(_('correct status'), max_length=30, choices = daily_insepction_correction_status, blank=False, default = 'uncompleted')
-    owner = models.CharField(_('owner'), max_length=30, blank=False)
-    due_date = models.DateField(_('due date'), auto_now_add=False, auto_now=False)
-    created = models.DateTimeField(auto_now_add=True, auto_now=False)
-    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
-    image_before = models.ImageField(_('image before'), upload_to=image_upload_to_dailyinspection, blank=True, null=True)
-    image_after = models.ImageField(_('image after'), upload_to=image_upload_to_dailyinspection, blank=True, null=True)
-    warehouse = models.CharField(_('warehouse'), max_length=30, choices = daily_insepction_warehouse, blank=False, default = '3#')
+    daily_insepction_location = (
+        ('1', _('Storage Area')),
+    )
+
+    category = models.CharField(_('Category'), max_length=30, choices = daily_insepction_category, blank=False, default = _('People'))
+    inspection_content = models.CharField(_('Inspection Content'), max_length=30, blank=False)
+    impact = models.CharField(_('Impact'), max_length=30, blank=False)
+    rectification_measures = models.TextField(_('Rectification Measures'), max_length=30, blank=False)
+    rectification_status = models.CharField(_('Rectification Status'), max_length=30, choices = daily_insepction_correction_status, blank=False, default = _('Uncompleted'))
+    owner = models.CharField(_('Owner'), max_length=30, blank=False)
+    due_date = models.DateField(_('Due Date'), auto_now_add=False, auto_now=False)
+    created = models.DateTimeField(_('Inspection Created Date'), auto_now_add=True, auto_now=False)
+    updated = models.DateTimeField(_('Inspection Updated Date'), auto_now_add=False, auto_now=True)
+    image_before = models.ImageField(_('Picture before Rectification'), upload_to=image_upload_to_dailyinspection, blank=True, null=True)
+    image_after = models.ImageField(_('Picture after Rectification'), upload_to=image_upload_to_dailyinspection, blank=True, null=True)
+    #warehouse = models.CharField(_('Warehouse'), max_length=30, choices = daily_insepction_warehouse, blank=False, default = '3#')
+    location = models.CharField(_('Location'), max_length=30, choices = daily_insepction_location, blank=False, default = '1')
     
     def __unicode__(self): 
-        return "daily inspection " + self.item
+        return _("Daily Inspection ") + self.inspection_content
 
     def get_absolute_url(self):
         return reverse("dailyinspection_detail", kwargs={"pk": self.id })    
@@ -104,7 +107,7 @@ class DailyInspection(models.Model):
         return img 
 
     def get_html_due_date(self):
-        if self.due_date is not None:
+        if self.due_date is not None and self.rectification_status == 'uncompleted':
             overdue = ''
             if self.due_date <= datetime.datetime.now().date() - datetime.timedelta(days=1): # should be 0
                 overdue = 'overdue'
@@ -112,6 +115,9 @@ class DailyInspection(models.Model):
         else:
             html_text = "<span class='due_date'></span>"
         return mark_safe(html_text)
+
+    def get_rectification_status(self):
+        return _('Completed') if self.rectification_status == 'completed' else _('Uncompleted')
 
 post_delete.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")
 post_save.connect(file_cleanup2, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup2")
@@ -204,18 +210,59 @@ class forklift_annual_inspection_image(models.Model):
     image = models.ImageField(_('image'), upload_to='inspection/forklift_annual_inspection', blank=True, null=True)
 
 class shelf(models.Model):
-    type = models.CharField(_('Damage Reason'), max_length=30, blank=True)    
-    warehouse = models.CharField(_('Warehouse'), max_length=30, blank=True)
-    compartment = models.CharField(_('Compartment'), max_length=30, blank=True)
-    warehouse_channel = models.CharField(_('Warehouse Channel'), max_length=30, blank=True)
-    group = models.CharField(_('group'), max_length=30, blank=True)
-    number = models.CharField(_('number'), max_length=30, blank=True)    
+    type = models.CharField(_('Shelf Type'), max_length=30, blank=True)    
+    warehouse = models.CharField(_('Warehouse Number'), max_length=30, blank=True)
+    compartment = models.CharField(_('Compartment Number'), max_length=30, blank=True)
+    warehouse_channel = models.CharField(_('Warehouse Channel Number'), max_length=30, blank=True)
+    group = models.CharField(_('Shelf Group'), max_length=30, blank=True)
+    number = models.CharField(_('Warehouse Number'), max_length=30, blank=True)    
     is_gradient_measurement_mandatory = models.BooleanField(_('Gradient Measurement Mandatory'), blank=True)
 
 class shelf_inspection_record(models.Model):
+    shelf_inspection_record_use_condition = (
+        ('1', _('Normal')),
+        ('2', _('Breakdown')),
+    )
+
     shelf = models.ForeignKey(shelf)
-    use_condition = models.CharField(_('Use Condition'), max_length=30, blank=True) 
+    use_condition = models.CharField(_('Use Condition'), choices = shelf_inspection_record_use_condition, max_length=30, blank=True) 
     is_locked = models.BooleanField(_('Locked'), blank=True)
     check_person = models.CharField(_('Check Person'), max_length=30, blank=True)
     gradient = models.DecimalField(_('Gradient'), decimal_places=1, max_digits=20, blank=True)
+    forecast_complete_time = models.DateField(_('Forecast Complete Time'), auto_now_add=False, auto_now=False)
     comments = models.TextField(_('Comments'), max_length=30, blank=False)
+
+class shelf_annual_inspection(models.Model):
+    date = models.DateField(_('Annual Inspection Date'), auto_now_add=False, auto_now=False)
+    next_date = models.DateField(_('Next Inspection Date'), auto_now_add=False, auto_now=False)
+
+class shelf_annual_inspection_image(models.Model):
+    shelf_annual_inspection = models.ForeignKey(shelf_annual_inspection)
+    image = models.ImageField(_('image'), upload_to='inspection/shelf_annual_inspection', blank=True, null=True)
+
+class extinguisher(models.Model):
+    name = models.CharField(_('Name'), max_length=30, blank=True)   
+    capacity = models.CharField(_('Capacity'), max_length=30, blank=True)   
+
+class extinguisher_inspection(models.Model):
+    extinguisher = models.ForeignKey(extinguisher)
+    check_person = models.CharField(_('Check Person'), max_length=30, blank=True) 
+    check_result = models.CharField(_('Check Result'), max_length=30, blank=True) 
+    check_date = models.DateField(_('Check Date'),auto_now_add=False, auto_now=False)
+
+class hydrant(models.Model):
+    name = models.CharField(_('Name'), max_length=30, blank=True) 
+    accessories = models.CharField(_('Accessories'), max_length=30, blank=True)   
+
+class hydrant_inspection(models.Model):
+    extinguisher = models.ForeignKey(hydrant)
+    check_person = models.CharField(_('Check Person'), max_length=30, blank=True) 
+    check_result = models.CharField(_('Check Result'), max_length=30, blank=True) 
+    check_date = models.DateField(_('Check Date'),auto_now_add=False, auto_now=False)
+
+
+class rehearsal(models.Model):
+    title = models.TextField(_('Title'), max_length=30, blank=True)   
+    date = models.DateField(_('Date'),auto_now_add=False, auto_now=False)
+    attachment = models.FileField(_('Attachment'), blank=True) 
+    
