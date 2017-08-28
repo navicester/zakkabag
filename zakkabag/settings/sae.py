@@ -11,7 +11,7 @@ DATABASES = settings.DATABASES
 
 
 
-USE_SHARE_DB = True
+USE_SHARE_DB = False
 
 # shared database
 
