@@ -218,6 +218,17 @@ class shelf(models.Model):
     number = models.CharField(_('Warehouse Number'), max_length=30, blank=True)    
     is_gradient_measurement_mandatory = models.BooleanField(_('Gradient Measurement Mandatory'), blank=True)
 
+    def __unicode__(self): 
+        return _("shelf") + "%s %s %s %s %s" % (self.warehouse,self.compartment, self.warehouse_channel,self.group,self.number)
+
+
+class shelf_inspection(models.Model):
+    check_date = models.DateField(_('Check Date'),auto_now_add=False, auto_now=False)
+    comments = models.TextField(_('Comments'), max_length=30, blank=False)
+
+    def get_absolute_url(self):
+        return reverse("shelf_inspectionList", kwargs={"pk": self.id })
+
 class shelf_inspection_record(models.Model):
     shelf_inspection_record_use_condition = (
         ('1', _('Normal')),
@@ -225,12 +236,17 @@ class shelf_inspection_record(models.Model):
     )
 
     shelf = models.ForeignKey(shelf)
+    shelf_inspection = models.ForeignKey(shelf_inspection, default=None)
     use_condition = models.CharField(_('Use Condition'), choices = shelf_inspection_record_use_condition, max_length=30, blank=True) 
     is_locked = models.BooleanField(_('Locked'), blank=True)
     check_person = models.CharField(_('Check Person'), max_length=30, blank=True)
     gradient = models.DecimalField(_('Gradient'), decimal_places=1, max_digits=20, blank=True)
     forecast_complete_time = models.DateField(_('Forecast Complete Time'), auto_now_add=False, auto_now=False)
     comments = models.TextField(_('Comments'), max_length=30, blank=False)
+
+    def __unicode__(self): 
+        return _("shelf inspection record") + "%s" % (self.shelf)
+
 
 class shelf_annual_inspection(models.Model):
     date = models.DateField(_('Annual Inspection Date'), auto_now_add=False, auto_now=False)

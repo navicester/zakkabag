@@ -11,8 +11,9 @@ from django_filters import FilterSet, CharFilter, NumberFilter
 from django.db.models import Q
 
 # Create your views here.
-from .models import OfficeInspection, DailyInspection
+from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection
 from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm
+from .forms import shelf_inspection_record_Formset
 
 # Create your views here.
 
@@ -318,3 +319,43 @@ class DailyInspectionListView(FilterMixin, ListView):
             (_('Daily Inspection'),request.path_info),
         ])
         return super(DailyInspectionListView, self).dispatch(request,args,kwargs)   
+
+class shelf_inspectionView(ListView): 
+    model = shelf_inspection_record
+    template_name = "shelf/shelf_inspection.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(shelf_inspectionView, self).get_context_data(*args, **kwargs)
+        context["object_list"] = shelf_inspection.objects.all()
+        #context["records"] = [(object.pk, object.check_date) for object in shelf_inspection.objects.all()]
+        context["records"] = shelf_inspection.objects.all()
+        #context["formset"] = shelf_inspection_record_Formset(queryset=self.get_queryset(),initial=[{'owner': '11',}])        
+        return context       
+
+
+    def dispatch(self, request, *args, **kwargs):
+        request.breadcrumbs([
+            (_("Home"),reverse("home", kwargs={})),
+            (_('Shelf'),request.path_info),
+        ])
+        return super(shelf_inspectionView, self).dispatch(request,args,kwargs)       
+
+class shelf_inspectionListView(ListView): 
+    model = shelf_inspection
+    template_name = "shelf/shelf_inspection_list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(shelf_inspectionListView, self).get_context_data(*args, **kwargs)
+        pk = self.kwargs.get("pk", None)
+        shelf_inspection_instance = shelf_inspection.objects.get(id=pk)
+        context["object_list"] = shelf_inspection_record.objects.filter(shelf_inspection__id = shelf_inspection_instance.id).order_by('shelf__id')
+  
+        return context       
+
+
+    def dispatch(self, request, *args, **kwargs):
+        request.breadcrumbs([
+            (_("Home"),reverse("home", kwargs={})),
+            (_('Shelf Inspection List'),request.path_info),
+        ])
+        return super(shelf_inspectionListView, self).dispatch(request,args,kwargs)             

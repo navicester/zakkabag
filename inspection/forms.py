@@ -1,6 +1,8 @@
 from django import forms
-from .models import OfficeInspection, DailyInspection
+from .models import OfficeInspection, DailyInspection, shelf_inspection_record
 from django.utils.translation import ugettext_lazy as _
+from django.forms import BaseFormSet,BaseModelFormSet, formset_factory
+from django.forms.models import modelformset_factory
 
 RESULT_OPTION = (
     ('yes', 'Yes'),
@@ -109,3 +111,23 @@ class InspectionFilterForm(forms.Form):
             initial = None,
             required=False
             )    
+
+class shelf_inspection_recordForm(forms.ModelForm):
+    
+
+    class Meta:
+        model = shelf_inspection_record
+
+        exclude = [
+            'shelf',
+        ]
+
+
+class shelf_inspection_recordModelFormSet(BaseModelFormSet):
+    def is_valid(self):
+        return super(ExamLibItemModelFormSet, self).is_valid()
+
+shelf_inspection_record_Formset = modelformset_factory(shelf_inspection_record, 
+                                            form=shelf_inspection_recordForm, 
+                                            formset=shelf_inspection_recordModelFormSet, 
+                                            extra=0)           
