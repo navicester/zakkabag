@@ -25,12 +25,6 @@ class Migration(migrations.Migration):
             name='shelf_inspection',
             field=models.ForeignKey(default=None, to='inspection.shelf_inspection'),
         ),
-        migrations.AddField(
-            model_name='shelf_inspection_record',
-            name='forecast_complete_time',
-            field=models.DateField(default=datetime.datetime(2017, 8, 26, 7, 28, 54, 98000, tzinfo=utc), verbose_name='Forecast Complete Time'),
-            preserve_default=False,
-        ),      
         migrations.AlterField(
             model_name='shelf_inspection_record',
             name='use_condition',

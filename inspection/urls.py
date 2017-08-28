@@ -4,8 +4,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from .views import ( OfficeInspectionListView, OfficeInspectionDetailView, OfficeInspectionCreateView,
-	DailyInspectionListView, DailyInspectionDetailView, DailyInspectionCreateView, shelf_inspectionView,
-	shelf_inspectionListView)
+	DailyInspectionListView, DailyInspectionDetailView, DailyInspectionCreateView, shelf_inspection_ListView,
+	shelf_inspection_DetailView)
 
 urlpatterns = [
     url(r'^officeinspection$', OfficeInspectionListView.as_view(), name='OfficeInspection_list'),
@@ -14,6 +14,6 @@ urlpatterns = [
     url(r'^dailyinspection$', DailyInspectionListView.as_view(), name='dailyinspection_list'),
     url(r'^dailyinspection/create$', DailyInspectionCreateView.as_view(), name='dailyinspection_create'),
     url(r'^dailyinspection/(?P<pk>\d+)/$', DailyInspectionDetailView.as_view(), name='dailyinspection_detail'),   
-    url(r'^shelfinspection$', shelf_inspectionView.as_view(), name='shelf_inspection'),  
-    url(r'^shelf_inspectionList/(?P<pk>\d+)/$', shelf_inspectionListView.as_view(), name='shelf_inspectionList'),  
+    url(r'^shelfinspection$', shelf_inspection_ListView.as_view(), name='shelf_inspection_list'),  
+    url(r'^shelf_inspectionList/(?P<pk>\d+)/$', shelf_inspection_DetailView.as_view(), name='shelf_inspection_detail'),  
 ]
