@@ -19,19 +19,14 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=30, verbose_name='Name', blank=True)),
                 ('capacity', models.CharField(max_length=30, verbose_name='Capacity', blank=True)),
-                ('check_person', models.CharField(max_length=30, verbose_name='Check Person', blank=True)),
-                ('check_result', models.CharField(max_length=30, verbose_name='Check Result', blank=True)),
-                ('check_date', models.DateField(verbose_name='Check Date')),
             ],
         ),
         migrations.CreateModel(
             name='hydrant',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=30, verbose_name='Name', blank=True)),
                 ('accessories', models.CharField(max_length=30, verbose_name='Accessories', blank=True)),
-                ('check_person', models.CharField(max_length=30, verbose_name='Check Person', blank=True)),
-                ('check_result', models.CharField(max_length=30, verbose_name='Check Result', blank=True)),
-                ('check_date', models.DateField(verbose_name='Check Date')),
             ],
         ),
         migrations.CreateModel(
@@ -59,12 +54,7 @@ class Migration(migrations.Migration):
                 ('shelf_annual_inspection', models.ForeignKey(to='inspection.shelf_annual_inspection')),
             ],
         ),
-        migrations.AddField(
-            model_name='shelf_inspection_record',
-            name='forecast_complete_time',
-            field=models.DateField(default=datetime.datetime(2017, 8, 26, 7, 28, 54, 98000, tzinfo=utc), verbose_name='Forecast Complete Time'),
-            preserve_default=False,
-        ),
+
         migrations.AlterField(
             model_name='shelf',
             name='compartment',
@@ -95,9 +85,5 @@ class Migration(migrations.Migration):
             name='warehouse_channel',
             field=models.CharField(max_length=30, verbose_name='Warehouse Channel Number', blank=True),
         ),
-        migrations.AlterField(
-            model_name='shelf_inspection_record',
-            name='use_condition',
-            field=models.CharField(blank=True, max_length=30, verbose_name='Use Condition', choices=[(b'1', 'Normal'), (b'2', 'Breakdown')]),
-        ),
+
     ]
