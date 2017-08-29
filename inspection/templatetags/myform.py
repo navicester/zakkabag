@@ -9,3 +9,9 @@ def render_field(value):
         return '%s......'% value[0:30]
     else:
         return value
+
+@register.filter(name='get_field_value')
+def get_field_value(inst, fieldname):
+    if hasattr(inst, fieldname):
+        return getattr(inst, fieldname)
+    return None

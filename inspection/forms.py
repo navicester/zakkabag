@@ -118,8 +118,8 @@ class shelf_inspection_recordForm(forms.ModelForm):
         super(shelf_inspection_recordForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
-            self.fields['shelf'].widget.attrs['readonly'] = True
-            #self.fields['shelf'].widget.attrs['disabled'] = True
+            #self.fields['shelf'].widget.attrs['readonly'] = True
+            self.fields['shelf'].widget.attrs['disabled'] = True
 
     def clean_shelf():
         instance = getattr(self, 'instance', None)
@@ -133,7 +133,13 @@ class shelf_inspection_recordForm(forms.ModelForm):
 
         exclude = [
             'shelf_inspection',
-            'comments'
+            'comments',
+            'check_person'
+        ]
+
+        # workaround, not sure whether this function is already exist
+        disabled = [
+            'shelf'
         ]
 
 

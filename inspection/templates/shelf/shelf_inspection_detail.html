@@ -33,6 +33,16 @@ $(document).ready(function(){
 	    form_div.css("display","block");	    
 	}	
 
+	$(".edit-fields").bind("click",function(){
+	    show_edit_form($(this));
+	});	
+	function show_edit_form(this_expand_shrink){
+	    var instance_div = this_expand_shrink.parent().parent().find(".displayonly");  
+	    var form_div = this_expand_shrink.parent().parent().find(".edit");  
+	    instance_div.css("display","none");
+	    form_div.css("display","block");	    
+	}		
+
 {% endblock %}
 </script>
 
