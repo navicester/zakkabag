@@ -1,0 +1,30 @@
+
+
+<table class="table table-hover table-striped">
+	<caption>Shelf Inspections Record</caption>
+    <thead>
+	    <tr style="width:100%">
+	        <th style="width:30px">shelf</th>
+	        <th style="width:20%">use_condition</th>
+	        <th style="width:10%">is_locked</th>
+	        <th style="width:10%">check_person</th>
+	        <th style="width:10%">gradient</th>
+	        <th style="width:40%">forecast_complete_time</th>
+	    </tr>
+    </thead>
+    <tbody>
+        {% for form in formset %}
+        <tr>
+        {% for field in form %}
+            <td>
+                {% if field.is_readonly %}
+                    {{field.name}}
+                {% else %}
+                    {{field}}
+                {% endif%}            
+            </td>
+        {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

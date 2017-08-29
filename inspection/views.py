@@ -328,8 +328,7 @@ class shelf_inspection_ListView(ListView):
         context = super(shelf_inspection_ListView, self).get_context_data(*args, **kwargs)
         context["object_list"] = shelf_inspection.objects.all()
         #context["records"] = [(object.pk, object.check_date) for object in shelf_inspection.objects.all()]
-        context["records"] = shelf_inspection.objects.all()
-        #context["formset"] = shelf_inspection_record_Formset(queryset=self.get_queryset(),initial=[{'owner': '11',}])        
+        context["records"] = shelf_inspection.objects.all()        
         return context       
 
 
@@ -344,11 +343,19 @@ class shelf_inspection_DetailView(DetailView):
     model = shelf_inspection
     template_name = "shelf/shelf_inspection_detail.html"
 
+    def get_record_queryset(self, *args, **kwargs):
+        pk = self.kwargs.get('pk', None)
+        if pk:
+            shelf_inspection_instance = get_object_or_404(shelf_inspection, pk=pk)
+            queryset =  shelf_inspection_record.objects.filter(shelf_inspection__id = pk).order_by('shelf__id')
+            return queryset
+        return None
+
     def get_context_data(self, *args, **kwargs):
         context = super(shelf_inspection_DetailView, self).get_context_data(*args, **kwargs)
-        pk = self.kwargs.get("pk", None)
-        shelf_inspection_instance = shelf_inspection.objects.get(id=pk)
-        context["object_list"] = shelf_inspection_record.objects.filter(shelf_inspection__id = shelf_inspection_instance.id).order_by('shelf__id')
+        context["object_list"] = self.get_record_queryset()
+        context["formset"] = shelf_inspection_record_Formset(queryset=self.get_record_queryset(),
+            initial=[{'use_condition': _('Normal'),}])        
   
         return context       
 

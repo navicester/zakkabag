@@ -114,20 +114,34 @@ class InspectionFilterForm(forms.Form):
 
 class shelf_inspection_recordForm(forms.ModelForm):
     
+    def __init__(self, *args, **kwargs):
+        super(shelf_inspection_recordForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['shelf'].widget.attrs['readonly'] = True
+            #self.fields['shelf'].widget.attrs['disabled'] = True
+
+    def clean_shelf():
+        instance = getattr(self, 'instance', None)
+        if instance and instance.id:
+            return instance.shelf
+        else:
+            return self.cleaned_data['shelf']
 
     class Meta:
         model = shelf_inspection_record
 
         exclude = [
-            'shelf',
+            'shelf_inspection',
+            'comments'
         ]
 
 
 class shelf_inspection_recordModelFormSet(BaseModelFormSet):
     def is_valid(self):
-        return super(ExamLibItemModelFormSet, self).is_valid()
+        return super(shelf_inspection_recordModelFormSet, self).is_valid()
 
 shelf_inspection_record_Formset = modelformset_factory(shelf_inspection_record, 
                                             form=shelf_inspection_recordForm, 
                                             formset=shelf_inspection_recordModelFormSet, 
-                                            extra=0)           
+                                            extra=0)
