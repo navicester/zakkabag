@@ -1,28 +1,43 @@
 
 
+<style type="text/css">
+td input, td select{
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+</style>
+
 <table class="table table-hover table-striped">
 	<caption>Shelf Inspections Record</caption>
     <thead>
 	    <tr style="width:100%">
-	        <th style="width:30px">shelf</th>
-	        <th style="width:20%">use_condition</th>
-	        <th style="width:10%">is_locked</th>
-	        <th style="width:10%">check_person</th>
-	        <th style="width:10%">gradient</th>
-	        <th style="width:40%">forecast_complete_time</th>
+        {% for field in formset.0 %}
+            {% if not field.name == 'id' %}
+            <th>{{field.label}}</th>
+            {% endif %}
+        {% endfor %}
 	    </tr>
     </thead>
     <tbody>
         {% for form in formset %}
         <tr>
         {% for field in form %}
-            <td>
-                {% if field.is_readonly %}
-                    {{field.name}}
-                {% else %}
-                    {{field}}
-                {% endif%}            
-            </td>
+            
+            {% if field.is_readonly %}
+                <td>{{field.name}}</td>
+            {% elif field.name == 'id' %}
+            {% else %}
+                <td>{{field}}</td>
+            {% endif%}            
+        
         {% endfor %}
         </tr>
         {% endfor %}
