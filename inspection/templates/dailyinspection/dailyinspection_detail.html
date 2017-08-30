@@ -45,21 +45,6 @@
 			        {% endif %}
 			    {% endfor %}
 
-				{% comment %}
-			    {% include "dailyinspection/field.html" with field=form.category%}                
-			    {% include "dailyinspection/field.html" with field=form.item%}
-			    {% include "dailyinspection/field.html" with field=form.impact%}
-			    {% include "dailyinspection/field.html" with field=form.correct%}
-			    {% include "dailyinspection/field.html" with field=form.rectification_status%}
-			    {% include "dailyinspection/field.html" with field=form.owner%}
-			    {% include "dailyinspection/field.html" with field=form.due_date%}
-			    {% include "dailyinspection/field.html" with field=form.warehouse%}
-			    <hr>
-			    {% include "dailyinspection/field.html" with field=form.image_before image=True %}
-			    <hr>                
-			    {% include "dailyinspection/field.html" with field=form.image_after image=True %}    
-			    {% endcomment %}
-
 			    <hr>                 
 	            		            
 			    <input style="width:30%" type="submit" name="submit" class="btn btn-default pull-right" value="submit" />

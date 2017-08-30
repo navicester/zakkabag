@@ -9,6 +9,9 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django_filters import FilterSet, CharFilter, NumberFilter
 from django.db.models import Q
+from django.http import HttpResponse
+import json
+from django.http import Http404
 
 # Create your views here.
 from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection
@@ -368,4 +371,10 @@ class shelf_inspection_DetailView(DetailView):
         return super(shelf_inspection_DetailView, self).dispatch(request,args,kwargs)
 
 
-
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            json_data = None
+            return HttpResponse(json.dumps(json_data),content_type="application/json")
+        else:
+            raise Http404
+            #return super(shelf_inspection_DetailView, self).post(request,args,kwargs)

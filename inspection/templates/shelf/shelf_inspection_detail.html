@@ -5,14 +5,34 @@
 <script>
 {% block js %}
 
-$(document).ready(function(){
-	$(".field-area>div>input").addClass("form-control");
-	$(".field-area textarea").addClass("form-control");
-	$(".field-area select").addClass("form-control");
-	$(".field-area>label").addClass("col-sm-2 control-label");
-	
-	$(".field-area image-field a").hide()
-});
+	$(document).ready(function(){
+		$(".field-area>div>input").addClass("form-control");
+		$(".field-area textarea").addClass("form-control");
+		$(".field-area select").addClass("form-control");
+		$(".field-area>label").addClass("col-sm-2 control-label");
+		
+		$(".field-area image-field a").hide()
+	});
+
+	function submit_data() {
+		$.ajax('',{
+			type: "POST",
+			dataType: "json",
+			data : {
+				m:0,
+			},					
+			beforeSend : function(){
+				alert(0);
+			},
+			success: function(s) {
+				console.log("success");
+			},
+			error: function() {
+				console.log("error");
+			},
+			timeout:10000
+		})
+	}
 
 {% endblock %}
 </script>
@@ -36,12 +56,36 @@ $(document).ready(function(){
 	$(".edit-fields").bind("click",function(){
 	    show_edit_form($(this));
 	});	
+
+	$(".close-fields").bind("click",function(){
+	    close_edit_form($(this));
+	});	
+
 	function show_edit_form(this_expand_shrink){
 	    var instance_div = this_expand_shrink.parent().parent().find(".displayonly");  
 	    var form_div = this_expand_shrink.parent().parent().find(".edit");  
+	    var check_button = this_expand_shrink.parent().children(".check-fields");
+	    var close_button = this_expand_shrink.parent().children(".close-fields");
 	    instance_div.css("display","none");
-	    form_div.css("display","block");	    
+	    form_div.css("display","block");	 
+	    check_button.css("display","block");
+	    close_button.css("display","block");
+	    this_expand_shrink.css("display","none");
 	}		
+
+	function close_edit_form(this_expand_shrink){
+	    var instance_div = this_expand_shrink.parent().parent().find(".displayonly");  
+	    var form_div = this_expand_shrink.parent().parent().find(".edit");  
+	    var check_button = this_expand_shrink.parent().children(".check-fields");
+	    var edit_button = this_expand_shrink.parent().children(".edit-fields");
+	    instance_div.css("display","block");
+	    form_div.css("display","none");	 
+	    check_button.css("display","none");
+	    edit_button.css("display","block");
+	    this_expand_shrink.css("display","none");
+	}		
+
+
 
 {% endblock %}
 </script>

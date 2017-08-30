@@ -250,6 +250,17 @@ class shelf_inspection_record(models.Model):
     def __unicode__(self): 
         return _("shelf inspection record") + "%s" % (self.shelf)
 
+    def get_field_value(self,fieldname):
+        if not hasattr(self, fieldname):
+            return None
+        if 'use_condition' == fieldname:
+            for (choice, value) in self.shelf_inspection_record_use_condition:
+                if choice == getattr(self,fieldname):
+                    return value
+            return None
+        else:
+            return getattr(self,fieldname)
+
 
 class shelf_annual_inspection(models.Model):
     date = models.DateField(_('Annual Inspection Date'), auto_now_add=False, auto_now=False)

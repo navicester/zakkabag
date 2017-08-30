@@ -8,7 +8,7 @@ tr td{
     margin-right: 1px!important;    
 }
 
-td input, td select{
+td input[type!=checkbox], td select{
     width: 100%;
     height: 34px;
     padding: 3px 3px;
@@ -34,10 +34,10 @@ td input[type=checkbox]{ /*input.check*/
 <table class="table table-hover table-striped">
 	<caption>Shelf Inspections Record</caption>
     <thead>
-	    <tr style="width:100%">
+	    <tr>
         {% for field in formset.0 %}
             {% if not field.name == 'id' %}
-            <th>{{field.label}}</th>
+            <th class="text-center">{{field.label}}</th>
             {% endif %}
         {% endfor %}
         <th></th>
@@ -45,18 +45,32 @@ td input[type=checkbox]{ /*input.check*/
     </thead>
     <tbody>
         {% for form in formset %}
+        <form method="POST" action=''>{% csrf_token %}
         <tr>
         {% for field in form %}        
             {% if field.name in form.Meta.disabled %}
-                <td>{{form.instance|get_field_value:field.name}}</td>
+                <td class="text-center">{{form.instance|get_field_value:field.name}}</td>
             {% elif field.name == 'id' %}
             {% else %}
-                <td><div class="displayonly" style="display: block">{{form.instance|get_field_value:field.name}}</div><div class="edit" style="display: none">{{field}}</div></td>
+                <td>
+                    <div class="displayonly text-center" style="display: block">{{form.instance|get_field_value:field.name}}</div>
+                    <div class="edit" style="display: none">{{field}}</div>
+                </td>
             {% endif%}            
         
         {% endfor %}
-                <td><i class="fa fa-1x fa-pencil-square-o edit-fields" aria-hidden="true" style="padding-top: 40%;padding-left: 10%"></i></td>
+                <td>
+                    <i class="fa fa-1x fa-pencil-square-o edit-fields" aria-hidden="true" style="padding-top: 40%;"></i>
+                    <input type="image" value=" " class="fa fa-check check-fields" onclick="submit_data()" style="display: none;" style="padding-right: 0; margin-right: 0; width:100%" />
+                    <i class="fa fa-times close-fields" aria-hidden="true" style="display: none"></i>
+                    {% comment %}
+                    <i type="submit" name="submit" class="fa fa-check check-fields" aria-hidden="true" value="submit" style="display: none"></i>                    
+                    <i class="fa fa-times check-fields" aria-hidden="true" style="display: none"></i>
+                    {% endcomment %}
+
+                </td>
         </tr>
+        </form>
         {% endfor %}
     </tbody>
 </table>
