@@ -14,6 +14,6 @@ urlpatterns = [
     url(r'^dailyinspection$', DailyInspectionListView.as_view(), name='dailyinspection_list'),
     url(r'^dailyinspection/create$', DailyInspectionCreateView.as_view(), name='dailyinspection_create'),
     url(r'^dailyinspection/(?P<pk>\d+)/$', DailyInspectionDetailView.as_view(), name='dailyinspection_detail'),   
-    url(r'^shelfinspection$', shelf_inspection_ListView.as_view(), name='shelf_inspection_list'),  
-    url(r'^shelf_inspectionList/(?P<pk>\d+)/$', shelf_inspection_DetailView.as_view(), name='shelf_inspection_detail'),  
+    url(r'^shelfinspectionlist$', shelf_inspection_ListView.as_view(), name='shelf_inspection_list'),  
+    url(r'^shelfinspectiondetail/(?P<pk>\d+)/$', shelf_inspection_DetailView.as_view(), name='shelf_inspection_detail'),  
 ]

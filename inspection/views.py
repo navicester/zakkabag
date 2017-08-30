@@ -368,13 +368,21 @@ class shelf_inspection_DetailView(DetailView):
             (_("Home"),reverse("home", kwargs={})),
             (_('Shelf Inspection Detail'),request.path_info),
         ])
+
         return super(shelf_inspection_DetailView, self).dispatch(request,args,kwargs)
 
 
     def post(self, request, *args, **kwargs):
+        #if request.is_ajax():
+        print request.POST
+        form = shelf_inspection_recordForm(request.POST)
+        if form.is_valid():
+            return HttpResponse(json.dumps({'message': 'valid form!','valid':True}))
+        return HttpResponse(json.dumps({'message': 'invalid form!','valid':False}))
+        '''
         if request.is_ajax():
-            json_data = None
-            return HttpResponse(json.dumps(json_data),content_type="application/json")
+            return HttpResponse(json.dumps({'valid':False}),content_type="application/json")
         else:
             raise Http404
             #return super(shelf_inspection_DetailView, self).post(request,args,kwargs)
+        '''
