@@ -373,12 +373,15 @@ class shelf_inspection_DetailView(DetailView):
 
 
     def post(self, request, *args, **kwargs):
-        #if request.is_ajax():
+        print request.is_ajax()
+        print 'request.POST >>>>>>>>>>'
         print request.POST
+        form_id = request.POST.get('form_id')
         form = shelf_inspection_recordForm(request.POST)
+        print form.errors
         if form.is_valid():
-            return HttpResponse(json.dumps({'message': 'valid form!','valid':True}))
-        return HttpResponse(json.dumps({'message': 'invalid form!','valid':False}))
+            return HttpResponse(json.dumps({'message': 'valid form!','valid':True,'form_id': form_id}))
+        return HttpResponse(json.dumps({'message': 'invalid form!','valid':False,'form_id': form_id}))
         '''
         if request.is_ajax():
             return HttpResponse(json.dumps({'valid':False}),content_type="application/json")

@@ -118,11 +118,26 @@ class shelf_inspection_recordForm(forms.ModelForm):
         super(shelf_inspection_recordForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
+            self.instance1 = instance
+            print 'self.instance in init >>>>>>>>>'
+            print self.instance
             #self.fields['shelf'].widget.attrs['readonly'] = True
             self.fields['shelf'].widget.attrs['disabled'] = True
 
-    def clean_shelf():
+    def clean(self):
+        print 'self.instance in clean >>>>>>>>>'
+        print self.instance1
+
+        self.cleaned_data['shelf'] = self.clean_shelf()        
+        #print self.cleaned_data
+        return self.cleaned_data
+
+    def clean_shelf(self):
+        print self.instance
+        
         instance = getattr(self, 'instance', None)
+        print instance
+        
         if instance and instance.id:
             return instance.shelf
         else:
@@ -140,6 +155,10 @@ class shelf_inspection_recordForm(forms.ModelForm):
         # workaround, not sure whether this function is already exist
         disabled = [
             'shelf'
+        ]
+
+        selected = [
+            'use_condition'
         ]
 
 

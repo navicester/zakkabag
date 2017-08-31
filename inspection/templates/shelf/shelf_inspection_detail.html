@@ -65,28 +65,28 @@
 	    close_edit_form($(this));
 	});	
 
-	function show_edit_form(this_expand_shrink){
-	    var instance_div = this_expand_shrink.parent().parent().find(".displayonly");  
-	    var form_div = this_expand_shrink.parent().parent().find(".edit");  
-	    var check_button = this_expand_shrink.parent().children(".check-fields");
-	    var close_button = this_expand_shrink.parent().children(".close-fields");
+	function show_edit_form(this_edit_button){
+	    var instance_div = this_edit_button.parent().parent().find(".displayonly");  
+	    var form_div = this_edit_button.parent().parent().find(".edit");  
+	    var check_button = this_edit_button.parent().children(".check-fields");
+	    var close_button = this_edit_button.parent().children(".close-fields");
 	    instance_div.css("display","none");
 	    form_div.css("display","block");	 
 	    check_button.css("display","block");
 	    close_button.css("display","block");
-	    this_expand_shrink.css("display","none");
+	    this_edit_button.css("display","none");
 	}		
 
-	function close_edit_form(this_expand_shrink){
-	    var instance_div = this_expand_shrink.parent().parent().find(".displayonly");  
-	    var form_div = this_expand_shrink.parent().parent().find(".edit");  
-	    var check_button = this_expand_shrink.parent().children(".check-fields");
-	    var edit_button = this_expand_shrink.parent().children(".edit-fields");
+	function close_edit_form(this_close_button){
+	    var instance_div = this_close_button.parent().parent().find(".displayonly");  
+	    var form_div = this_close_button.parent().parent().find(".edit");  
+	    var check_button = this_close_button.parent().children(".check-fields");
+	    var edit_button = this_close_button.parent().children(".edit-fields");
 	    instance_div.css("display","block");
 	    form_div.css("display","none");	 
 	    check_button.css("display","none");
 	    edit_button.css("display","block");
-	    this_expand_shrink.css("display","none");
+	    this_close_button.css("display","none");
 	}		
 
 	function showRequest(formData, jqForm, options) {
@@ -99,8 +99,10 @@
 	function showResponse(responseText, statusText, xhr, $form)  {
 	    if(statusText === "success"){
 	        console.log(responseText.message);
-	        console.log($(this));
 	    } 
+	    var edit_field = "form#" + responseText.form_id
+	    console.log( edit_field);
+	    close_edit_form($(edit_field).parent().find('.close-fields'));
 	}
 
 	function showError(response){
@@ -118,7 +120,7 @@
 	    clearForm: true ,
 	    resetForm: true ,
 	    data:{
-	    	ajax: true,
+	    	//ajax: true,
 	    },
 
 	    // $.ajax options can be used here too, for example:
@@ -126,7 +128,7 @@
 	};
 
 	$('.ajaxform').submit(function(){		
-		options.data['form'] = $(this);
+		options.data['form_id'] = $(this).attr('id');
 		console.log(options.data);
 		$(this).ajaxSubmit(options);
 		return false;

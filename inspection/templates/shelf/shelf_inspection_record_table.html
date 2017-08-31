@@ -45,33 +45,27 @@ td input[type=checkbox]{ /*input.check*/
     </thead>
     <tbody>
         {% for form in formset %}
-        <form method="POST" class="ajaxform" action=''>{% csrf_token %}
-        <tr>
-        {% for field in form %}        
-            {% if field.name in form.Meta.disabled %}
-                <td class="text-center">{{form.instance|get_field_value:field.name}}</td>
-            {% elif field.name == 'id' %}
-            {% else %}
-                <td>
-                    <div class="displayonly text-center" style="display: block">{{form.instance|get_field_value:field.name}}</div>
-                    <div class="edit" style="display: none">{{field}}</div>
-                </td>
-            {% endif%}            
-        
-        {% endfor %}
+        <form method="POST" class="ajaxform" id="id-form-{{forloop.counter}}" action=''>{% csrf_token %}
+            <tr>
+            {% for field in form %}        
+                {% if field.name in form.Meta.disabled %}
+                    <td class="text-center">{{form.instance|get_field_value:field.name}}</td>
+                {% elif field.name == 'id' %}
+                {% else %}
+                    <td>
+                        <div class="displayonly text-center" style="display: block">{{form.instance|get_field_value:field.name}}</div>
+                        <div class="edit" style="display: none">{{field}}</div>
+                    </td>
+                {% endif%}            
+            
+            {% endfor %}
                 <td>
                     <i class="fa fa-1x fa-pencil-square-o edit-fields" aria-hidden="true" style="padding-top: 40%;"></i>
                     <input type="image" value=" " class="fa fa-check check-fields"  style="display: none;" style="padding-right: 0; margin-right: 0; width:100%" />
                     <i class="fa fa-times close-fields" aria-hidden="true" style="display: none"></i>
                     <div id='blank'></div>
-                    {% comment %}
-                    onclick="submit_data"
-                    <i type="submit" name="submit" class="fa fa-check check-fields" aria-hidden="true" value="submit" style="display: none"></i>                    
-                    <i class="fa fa-times check-fields" aria-hidden="true" style="display: none"></i>
-                    {% endcomment %}
-
                 </td>
-        </tr>
+            </tr>
         </form>
         {% endfor %}
     </tbody>
