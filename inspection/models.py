@@ -251,6 +251,8 @@ class shelf_inspection_record(models.Model):
         return _("shelf inspection record") + "%s" % (self.shelf)
 
     def get_field_value(self,fieldname):
+        if fieldname == 'id':
+            return self.id
         if not hasattr(self, fieldname):
             return None
         if 'use_condition' == fieldname:

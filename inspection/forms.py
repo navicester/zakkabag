@@ -125,23 +125,29 @@ class shelf_inspection_recordForm(forms.ModelForm):
             self.fields['shelf'].widget.attrs['disabled'] = True
 
     def clean(self):
-        print 'self.instance in clean >>>>>>>>>'
-        print self.instance1
 
         self.cleaned_data['shelf'] = self.clean_shelf()        
         #print self.cleaned_data
         return self.cleaned_data
 
     def clean_shelf(self):
-        print self.instance
-        
         instance = getattr(self, 'instance', None)
-        print instance
         
         if instance and instance.id:
             return instance.shelf
-        else:
+        elif self.cleaned_data.get('shelf', None):
             return self.cleaned_data['shelf']
+        else:
+            id = self.cleaned_data.get('id', None)
+            if id:
+                try:
+                    shelf_inspection_record_instance = shelf_inspection_record.objects.get(pk=id)
+                    return shelf_inspection_record_instance.shelf
+                except:
+                    return None
+            else:
+                return None
+
 
     class Meta:
         model = shelf_inspection_record
@@ -157,8 +163,8 @@ class shelf_inspection_recordForm(forms.ModelForm):
             'shelf'
         ]
 
-        selected = [
-            'use_condition'
+        hidden = [
+            'id'
         ]
 
 

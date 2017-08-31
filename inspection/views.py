@@ -377,7 +377,8 @@ class shelf_inspection_DetailView(DetailView):
         print 'request.POST >>>>>>>>>>'
         print request.POST
         form_id = request.POST.get('form_id')
-        form = shelf_inspection_recordForm(request.POST)
+        prefix = form_id.replace('/{0}/'.format('id-'), '')
+        form = shelf_inspection_recordForm(request.POST, prefix=prefix)
         print form.errors
         if form.is_valid():
             return HttpResponse(json.dumps({'message': 'valid form!','valid':True,'form_id': form_id}))
