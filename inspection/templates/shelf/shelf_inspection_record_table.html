@@ -44,7 +44,7 @@ td input[type=checkbox]{ /*input.check*/
     </thead>
     <tbody>
         {% for form in formset %}
-        <form method="POST" class="ajaxform" id="id-form-{{forloop.counter}}" action=''>{% csrf_token %}
+        <form method="POST" class="ajaxform" id="id-form-{{forloop.counter0}}" action=''>{% csrf_token %}
             <tr>
             {% for field in form %}        
                 {% if field.name in form.Meta.disabled %}

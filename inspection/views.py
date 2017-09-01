@@ -377,7 +377,7 @@ class shelf_inspection_DetailView(DetailView):
         print 'request.POST >>>>>>>>>>'
         print request.POST
         form_id = request.POST.get('form_id')
-        prefix = form_id.replace('/{0}/'.format('id-'), '')
+        prefix = form_id.replace('id-', '')
         form = shelf_inspection_recordForm(request.POST, prefix=prefix)
         print form.errors
         if form.is_valid():
