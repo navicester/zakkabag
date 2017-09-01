@@ -41,41 +41,8 @@ $(document).ready(function(){
         
 		<div class="text-center">
 		{% paginate %}
-	</div>            
-</div>
-
-
-
-	{% comment %}
-	<form method="POST" action=""> {% csrf_token %}
-	    <div id="formset_shelf_inspection">
-			{{ formset.management_form }}
-			{{ formset.non_form_errors }}
-			{% for form in formset %}
-				<p ><i class="fa fa-arrow-circle-down expand-shrink" aria-hidden="true""></i> Shelf : {{ form.instance.shelf }} <a href='{{ form.instance.get_absolute_url_detailview }}'><i class="fa fa-plus expand-shrink" aria-hidden="true""></i></a></p>
-
-				<div class='form-inline' style="display:block;">
-					<div class="row error" style="color:red">
-						{% if form.errors %}
-						<ul class="messages">
-						    {% for message in form.non_field_errors %}
-						    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-						    {% endfor %}
-						</ul>
-						{% endif %}	
-					</div>					
-					{% for field in form %}					
-					<div class="form-group field-area">
-						{% if field.errors %}{{field.errors}}{% endif %}			
-						{{ field.label_tag }}{{ field }}
-					</div>	
-			        {% endfor %}
-		        </div>
-			{% endfor %}
 		</div>
-		<input type="submit" value='Save' class='btn' /><br>
-	</form>	
-	{% endcomment %}
+	</div>
 </div>
 
 

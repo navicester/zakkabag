@@ -27,10 +27,17 @@ td input[type=checkbox]{ /*input.check*/
     width: 50%!important;;
 }
 
+.table-container
+{
+    width: 100%;
+    overflow-y: auto;
+    _overflow: auto;
+    margin: 0 0 1em;
+}
 
 </style>
 
-<table class="table table-hover table-striped">
+<table class="table table-hover table-striped table-container">
 	<caption>Shelf Inspections Record</caption>
     <thead>
 	    <tr>
@@ -39,18 +46,20 @@ td input[type=checkbox]{ /*input.check*/
             <th class="text-center">{{field.label}}</th>
             {% endif %}
         {% endfor %}
-        <th></th>
+            <th></th>
 	    </tr>
     </thead>
     <tbody>
-        {% for form in formset %}
-        <form method="POST" class="ajaxform" id="id-form-{{forloop.counter0}}" action=''>{% csrf_token %}
-            <tr>
-            {% for field in form %}        
-                {% if field.name in form.Meta.disabled %}
+        {% for form in formset %}<tr>
+        <form method="POST" class="ajaxform" id="id_form-{{forloop.counter0}}" action=''>{% csrf_token %}            
+            {% for field in form %}
+                {% if field.name in form.Meta.hidden_form %}
+                    <td style="display:none" type='hidden'>{{field}}</td>                    
+                    {% if not field.name in form.Meta.hidden %}
                     <td class="text-center">{{form.instance|get_field_value:field.name}}</td>
-                {% elif field.name in form.Meta.hidden %}
-                    <div type='hidden'>{{field}}</div>
+                    {% endif %}
+                {% elif field.name in form.Meta.disabled %}
+                    <td class="text-center">{{form.instance|get_field_value:field.name}}</td>
                 {% else %}
                     <td>
                         <div class="displayonly text-center" style="display: block">{{form.instance|get_field_value:field.name}}</div>
@@ -65,8 +74,8 @@ td input[type=checkbox]{ /*input.check*/
                     <i class="fa fa-times close-fields" aria-hidden="true" style="display: none"></i>
                     <div id='blank'></div>
                 </td>
-            </tr>
-        </form>
+            
+        </form></tr>
         {% endfor %}
     </tbody>
 </table>

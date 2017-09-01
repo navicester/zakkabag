@@ -13,30 +13,7 @@
 		$(".field-area>label").addClass("col-sm-2 control-label");
 		
 		$(".field-area image-field a").hide()
-
-
 	});
-
-
-	function submit_data() {
-		$.ajax('',{
-			type: "POST",
-			dataType: "json",
-			data : {
-				m:0,
-			},					
-			beforeSend : function(){
-				alert(10);
-			},
-			success: function(s) {
-				console.log("success");
-			},
-			error: function() {
-				console.log("error");
-			},
-			timeout:10000
-		})
-	}
 
 {% endblock %}
 </script>
@@ -100,9 +77,22 @@
 	    if(statusText === "success"){
 	        console.log(responseText.message);
 	    } 
-	    var edit_field = "form#" + responseText.form_id
-	    console.log( edit_field);
-	    close_edit_form($(edit_field).parent().find('.close-fields'));
+	    var form_id = "form#" + responseText.form_id
+	    //console.log( form_id);
+	    var use_condition = responseText.form_id + '-' + 'use_condition'
+	    var elem_user_condition = $("#" + use_condition);
+	    elem_user_condition.parent().prev().text(responseText.use_condition);
+	    var gradient = responseText.form_id + '-' + 'gradient'	    
+	    var elem_gradient = $("#" + gradient);	    
+	    elem_gradient.parent().prev().text(responseText.gradient);
+	    var is_locked = responseText.form_id + '-' + 'is_locked'	    
+	    var elem_is_locked = $("#" + is_locked);	    
+	    elem_is_locked.parent().prev().text(responseText.is_locked);
+	    var forecast_complete_time = responseText.form_id + '-' + 'forecast_complete_time'	    
+	    var elem_forecast_complete_time = $("#" + forecast_complete_time);	    
+	    elem_forecast_complete_time.parent().prev().text(responseText.forecast_complete_time);
+	    //console.log( use_condition);
+	    close_edit_form($(form_id).parent().find('.close-fields'));
 	}
 
 	function showError(response){
@@ -117,8 +107,8 @@
 	    //url:       "/fileupload/uploadfile",
 	    type:      "post",
 	    dataType:  "json",
-	    clearForm: true ,
-	    resetForm: true ,
+	    //clearForm: true ,
+	    //resetForm: true ,
 	    data:{
 	    	//ajax: true,
 	    },

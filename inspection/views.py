@@ -373,20 +373,49 @@ class shelf_inspection_DetailView(DetailView):
 
 
     def post(self, request, *args, **kwargs):
-        print request.is_ajax()
-        print 'request.POST >>>>>>>>>>'
-        print request.POST
-        form_id = request.POST.get('form_id')
-        prefix = form_id.replace('id-', '')
-        form = shelf_inspection_recordForm(request.POST, prefix=prefix)
-        print form.errors
-        if form.is_valid():
-            return HttpResponse(json.dumps({'message': 'valid form!','valid':True,'form_id': form_id}))
-        return HttpResponse(json.dumps({'message': 'invalid form!','valid':False,'form_id': form_id}))
-        '''
+        #print request.is_ajax()
+        #print 'request.POST >>>>>>>>>>'
+        #print request.POST
         if request.is_ajax():
-            return HttpResponse(json.dumps({'valid':False}),content_type="application/json")
+            form_id = request.POST.get('form_id')
+            prefix = form_id.replace('id_', '')
+            form = shelf_inspection_recordForm(request.POST, prefix=prefix)
+            print form.data
+            #print form.errors
+            if form.is_valid():
+                instance_id = form.clean_id()
+                print form.cleaned_data
+                print instance_id
+                try:
+                    instance = shelf_inspection_record.objects.get(pk=instance_id)
+                    form.save(commit=False)
+                    #form.save()
+                    instance.gradient = form.cleaned_data.get('gradient')
+                    instance.use_condition = form.cleaned_data.get('use_condition')
+                    instance.is_locked = form.cleaned_data.get('is_locked')
+                    instance.forecast_complete_time = form.cleaned_data.get('forecast_complete_time')
+                    instance.save()
+                    json_data = {
+                        'message': 'valid form!',
+                        'valid':True,
+                        'form_id': form_id,
+                        'use_condition': "%s" % instance._get_FIELD_display(shelf_inspection_record._meta.get_field('use_condition')),
+                        'is_locked': instance.get_field_value('is_locked'),
+                        'gradient': "%s" % (instance.gradient),
+                        'forecast_complete_time': "%s" % instance._get_FIELD_display(shelf_inspection_record._meta.get_field('forecast_complete_time')),
+                    }
+                    context = {
+                        'form' : form,
+                        'form_id' : form_id
+                    }
+                    return render(request,"shelf/response_form.html",context)
+                    return HttpResponse(json.dumps(json_data))
+                except:
+                    raise Http404
+            return HttpResponse(json.dumps({'message': 'invalid form!','valid':False,'form_id': form_id}))
         else:
             raise Http404
-            #return super(shelf_inspection_DetailView, self).post(request,args,kwargs)
-        '''
+
+# https://www.douban.com/note/350934079/
+# http://blog.csdn.net/xyp84/article/details/7945094
+# http://caibaojian.com/simple-responsive-table.html

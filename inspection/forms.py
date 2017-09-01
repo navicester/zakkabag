@@ -73,11 +73,6 @@ class DailyInspectionForm(forms.ModelForm):
 
     # ModelChoiceField
 
-    '''
-    def clean_plug(self):
-        return self.data.get('plug')
-    '''
-
 class InspectionFilterForm(forms.Form):
     q = forms.CharField(label='Search', required=False)
     '''
@@ -119,16 +114,25 @@ class shelf_inspection_recordForm(forms.ModelForm):
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
             self.instance1 = instance
-            print 'self.instance in init >>>>>>>>>'
-            print self.instance
             #self.fields['shelf'].widget.attrs['readonly'] = True
-            self.fields['shelf'].widget.attrs['disabled'] = True
+            #self.fields['shelf'].widget.attrs['disabled'] = True
 
     def clean(self):
-
-        self.cleaned_data['shelf'] = self.clean_shelf()        
+        #self.cleaned_data['shelf'] = self.clean_shelf()        
+        self.cleaned_data['id'] = self.clean_id()
         #print self.cleaned_data
         return self.cleaned_data
+
+    def clean_id(self):
+        instance = getattr(self, 'instance', None)
+        
+        if instance and instance.id:
+            return instance.id
+        elif self.cleaned_data.get('id', None):
+            return self.cleaned_data['id']
+        else:
+            id = self.data.get(self.prefix + '-id', None)
+            return id
 
     def clean_shelf(self):
         instance = getattr(self, 'instance', None)
@@ -160,13 +164,17 @@ class shelf_inspection_recordForm(forms.ModelForm):
 
         # workaround, not sure whether this function is already exist
         disabled = [
-            'shelf'
+            #'shelf'
         ]
 
         hidden = [
-            'id'
+            'id',
         ]
 
+        hidden_form = [
+            'shelf',
+            'id',
+        ]
 
 class shelf_inspection_recordModelFormSet(BaseModelFormSet):
     def is_valid(self):

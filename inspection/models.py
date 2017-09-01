@@ -251,18 +251,29 @@ class shelf_inspection_record(models.Model):
         return _("shelf inspection record") + "%s" % (self.shelf)
 
     def get_field_value(self,fieldname):
-        if fieldname == 'id':
-            return self.id
+
         if not hasattr(self, fieldname):
             return None
-        if 'use_condition' == fieldname:
+        
+        if 'is_locked' == fieldname:
+            if True == getattr(self,fieldname):
+                return "Y"
+            else:
+                return "N"
+        else:
+            field = shelf_inspection_record._meta.get_field(fieldname)
+            return self._get_FIELD_display(field)
+
+        '''
+        elif fieldname == 'id':
+            return self.id        
+        elif 'use_condition' == fieldname:
             for (choice, value) in self.shelf_inspection_record_use_condition:
                 if choice == getattr(self,fieldname):
+                    print value
                     return value
             return None
-        else:
-            return getattr(self,fieldname)
-
+        '''
 
 class shelf_annual_inspection(models.Model):
     date = models.DateField(_('Annual Inspection Date'), auto_now_add=False, auto_now=False)
