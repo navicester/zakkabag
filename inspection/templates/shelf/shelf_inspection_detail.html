@@ -195,7 +195,15 @@
 
 <div class='row object_lists'>
 
-    <div class="col-xs-12 ">		
+    <div class="col-sm-3 ">
+    	<form method="GET" action="">	
+			{{ shelfFilterForm|crispy }}
+			<input type='submit' value='Apply Filter' class='btn btn-default'>
+		</form>
+		<br>
+	    <hr>
+    </div>
+    <div class="col-sm-9 ">	
         
 		{% if object_list.count == 0 %}
 			Nothing found

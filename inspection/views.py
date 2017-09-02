@@ -7,15 +7,15 @@ from django.views.generic.edit import FormMixin, ModelFormMixin
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.utils.translation import ugettext as _
-from django_filters import FilterSet, CharFilter, NumberFilter
+from django_filters import FilterSet, CharFilter, NumberFilter, BooleanFilter, MethodFilter
 from django.db.models import Q
 from django.http import HttpResponse
 import json
 from django.http import Http404
 
 # Create your views here.
-from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection
-from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm, shelf_inspection_recordForm
+from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection, shelf
+from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm, shelf_inspection_recordForm, shelfFilterForm
 from .forms import shelf_inspection_record_Formset
 
 # Create your views here.
@@ -342,24 +342,59 @@ class shelf_inspection_ListView(ListView):
         ])
         return super(shelf_inspection_ListView, self).dispatch(request,args,kwargs)       
 
+class shelf_inspection_recordFilter(FilterSet):
+    #is_gradient_measurement_mandatory = BooleanFilter(name='shelf__is_gradient_measurement_mandatory', method='gradient_custom_filter', distinct=True) # this is for latest version
+    is_gradient_measurement_mandatory = MethodFilter(name='shelf__is_gradient_measurement_mandatory', action='gradient_custom_filter', distinct=True)
+    type = CharFilter(name='shelf__type', lookup_expr='iexact', distinct=True)  #shelf is elem name of shelf_inspection_record
+    warehouse = CharFilter(name='shelf__warehouse', lookup_type='exact', distinct=True)
+    compartment = CharFilter(name='shelf__compartment', lookup_type='exact', distinct=True)
+    warehouse_channel = CharFilter(name='shelf__warehouse_channel', lookup_type='exact', distinct=True)
+
+    class Meta:
+        model = shelf_inspection_record
+        fields = [
+            'is_gradient_measurement_mandatory',
+            'type',
+            'warehouse',
+            'compartment',
+            'warehouse_channel'
+        ]
+
+    #def gradient_custom_filter(self, queryset, name, value): # this is for latest version
+    def gradient_custom_filter(self, queryset, value):
+        print 'gradient_custom_filter'
+        if 'on' == value:
+            return queryset.filter(**{
+                'shelf__is_gradient_measurement_mandatory': True,
+            })
+        else:
+            return queryset
+
+
 class shelf_inspection_DetailView(DetailView): 
     model = shelf_inspection
     template_name = "shelf/shelf_inspection_detail.html"
+    filter_class = shelf_inspection_recordFilter
 
     def get_record_queryset(self, *args, **kwargs):
         pk = self.kwargs.get('pk', None)
         if pk:
             shelf_inspection_instance = get_object_or_404(shelf_inspection, pk=pk)
             queryset =  shelf_inspection_record.objects.filter(shelf_inspection__id = pk).order_by('shelf__id')
+            filter_class = self.filter_class
+            if filter_class and kwargs.get('filter'):
+                queryset = filter_class(self.request.GET, queryset=queryset)
             return queryset
         return None
 
     def get_context_data(self, *args, **kwargs):
         context = super(shelf_inspection_DetailView, self).get_context_data(*args, **kwargs)
-        context["object_list"] = self.get_record_queryset()
-        context["formset"] = shelf_inspection_record_Formset(queryset=self.get_record_queryset(),
-            initial=[{'use_condition': _('Normal'),}])        
-  
+        context["object_list"] = self.get_record_queryset(filter=True)
+        context["shelfFilterForm"] = shelfFilterForm(data=self.request.GET or None) 
+        formset = shelf_inspection_record_Formset(queryset=self.get_record_queryset(filter=True).qs,
+            initial=[{'use_condition': _('Normal'),}])    
+        context["formset"] = formset
+
         return context       
 
 

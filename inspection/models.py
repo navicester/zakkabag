@@ -209,6 +209,17 @@ class forklift_annual_inspection_image(models.Model):
     forklift = models.ForeignKey(forklift_annual_inspection)
     image = models.ImageField(_('image'), upload_to='inspection/forklift_annual_inspection', blank=True, null=True)
 
+'''
+class warehouse(models.Model):
+    warehouse = models.CharField(_('Warehouse Number'), max_length=30, blank=True)
+
+class compartment(models.Model):
+    compartment = models.CharField(_('Compartment Number'), max_length=30, blank=True)
+
+class warehouse_channel(models.Model):
+    warehouse_channel = models.CharField(_('Warehouse Channel Number'), max_length=30, blank=True)
+'''
+
 class shelf(models.Model):
     type = models.CharField(_('Shelf Type'), max_length=30, blank=True)    
     warehouse = models.CharField(_('Warehouse Number'), max_length=30, blank=True)

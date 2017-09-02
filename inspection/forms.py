@@ -1,5 +1,5 @@
 from django import forms
-from .models import OfficeInspection, DailyInspection, shelf_inspection_record
+from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf
 from django.utils.translation import ugettext_lazy as _
 from django.forms import BaseFormSet,BaseModelFormSet, formset_factory
 from django.forms.models import modelformset_factory
@@ -116,6 +116,7 @@ class shelf_inspection_recordForm(forms.ModelForm):
             self.instance1 = instance
             #self.fields['shelf'].widget.attrs['readonly'] = True
             #self.fields['shelf'].widget.attrs['disabled'] = True
+            #self.fields['use_condition'].empty_label = None
 
     def clean(self):
         #self.cleaned_data['shelf'] = self.clean_shelf()        
@@ -185,3 +186,64 @@ shelf_inspection_record_Formset = modelformset_factory(shelf_inspection_record,
                                             form=shelf_inspection_recordForm, 
                                             formset=shelf_inspection_recordModelFormSet, 
                                             extra=0)
+
+class shelfFilterForm(forms.Form):
+
+    is_gradient_measurement_mandatory = forms.BooleanField(
+            label=_('Gradient Check Only'),
+            required=False
+            )
+
+    type = forms.ChoiceField(
+            label=_('Shelf Type'),
+            choices = set((ins.type, ins.type) for ins in shelf.objects.all()),
+            widget=forms.RadioSelect(),
+            required=False
+            )   
+
+    CHOICE_LIST = []
+    for ins in shelf.objects.all().order_by('warehouse'):
+        if not (ins.warehouse, ins.warehouse) in CHOICE_LIST:
+            CHOICE_LIST.append((ins.warehouse, ins.warehouse))
+    CHOICE_LIST.sort()
+    CHOICE_LIST.insert(0, ('', '----'))
+
+
+    warehouse = forms.ChoiceField(
+            label=_('Warehouse'),
+            #choices = [(ins.warehouse, ins.warehouse) for ins in shelf.objects.all()].insert(0, ('', '----')) ,
+            choices = CHOICE_LIST,
+            widget=forms.Select(),
+            initial = None,
+            required=False
+            )    
+
+    CHOICE_LIST = []
+    for ins in shelf.objects.all().order_by('compartment'):
+        if not (ins.compartment, ins.compartment) in CHOICE_LIST:
+            CHOICE_LIST.append((ins.compartment, ins.compartment))
+    CHOICE_LIST.sort()
+    CHOICE_LIST.insert(0, ('', '----'))
+
+    compartment = forms.ChoiceField(
+            label=_('Compartment'),
+            choices = CHOICE_LIST,
+            widget=forms.Select(),
+            initial = None,
+            required=False
+            )  
+
+    CHOICE_LIST = []
+    for ins in shelf.objects.all().order_by('warehouse_channel'):
+        if not (ins.warehouse_channel, ins.warehouse_channel) in CHOICE_LIST:
+            CHOICE_LIST.append((ins.warehouse_channel, ins.warehouse_channel))
+    CHOICE_LIST.sort()
+    CHOICE_LIST.insert(0, ('', '----'))
+    
+    warehouse_channel = forms.ChoiceField(
+            label=_('Warehouse Channel'),
+            choices = CHOICE_LIST,
+            widget=forms.Select(),
+            initial = None,
+            required=False
+            ) 
