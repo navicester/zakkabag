@@ -1,5 +1,6 @@
 {% load myform %}
 
+
 <style type="text/css">
 tr td{
     padding-left: 1px!important;
@@ -41,6 +42,7 @@ td .edit-fields{
 
 </style>
 
+
 <table class="table table-hover table-striped table-container">
 	<caption>Shelf Inspections Record</caption>
     <thead>
@@ -55,6 +57,7 @@ td .edit-fields{
     </thead>
     <tbody>
         {% for form in formset %}<tr id='id_tr-{{forloop.counter0}}'>
+        
         <form method="POST" class="ajaxform" id="id_form-{{forloop.counter0}}" action=''>{% csrf_token %}            
             {% for field in form %}
                 {% if field.name in form.Meta.hidden_form %}
@@ -74,13 +77,14 @@ td .edit-fields{
             {% endfor %}
                 <td>
                     <i class="fa fa-1x fa-pencil-square-o edit-fields" aria-hidden="true" ></i>
-                    <input type="image" value=" " class="fa fa-1x fa-check check-fields"  style="display: none;" style="padding-right: 0; margin-right: 0; width:100%" />
-                    <i class="fa fa-1x fa-times close-fields" aria-hidden="true" style="display: none"></i>
+                    <input type="image" value=" " class="fa fa-2x fa-check check-fields"  style="display: none; padding-right: 0; margin-right: 0; clear:both;float:left;" />
+                    <i class="fa fa-2x fa-times close-fields" aria-hidden="true" style="display: none"></i>
                     <div id='blank'></div>
                 </td>
             
         </form>
         </tr>
+        
         {% endfor %}
     </tbody>
 </table>

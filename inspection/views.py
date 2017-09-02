@@ -380,42 +380,34 @@ class shelf_inspection_DetailView(DetailView):
             form_id = request.POST.get('form_id')
             prefix = form_id.replace('id_', '')
             form = shelf_inspection_recordForm(request.POST, prefix=prefix)
-            print form.data
             #print form.errors
             if form.is_valid():
                 instance_id = form.clean_id()
-                print form.cleaned_data
-                print instance_id
                 try:
                     instance = shelf_inspection_record.objects.get(pk=instance_id)
                     form.save(commit=False)
                     #form.save()
-                    if form.cleaned_data.get('gradient', None):
-                        instance.gradient = form.cleaned_data.get('gradient')
-                    if form.cleaned_data.get('use_condition', None):
-                        instance.use_condition = form.cleaned_data.get('use_condition')
-                    if form.cleaned_data.get('is_locked', None):
-                        instance.is_locked = form.cleaned_data.get('is_locked')
-                    if form.cleaned_data.get('forecast_complete_time', None):
-                        instance.forecast_complete_time = form.cleaned_data.get('forecast_complete_time')
-                    instance.save()
-                    form.instance = instance
                     json_data = {
                         'message': 'valid form!',
                         'valid':True,
                         'form_id': form_id,
-                        'use_condition': "%s" % instance._get_FIELD_display(shelf_inspection_record._meta.get_field('use_condition')),
-                        'is_locked': instance.get_field_value('is_locked'),
-                        'gradient': "%s" % (instance.gradient),
-                        'forecast_complete_time': "%s" % instance._get_FIELD_display(shelf_inspection_record._meta.get_field('forecast_complete_time')),
-                    }
+                    }                    
+                    for fieldname in shelf_inspection_record._meta.get_all_field_names():
+                        if not ( fieldname in shelf_inspection_recordForm.Meta.exclude or fieldname in shelf_inspection_recordForm.Meta.hidden_form):
+                            if form.cleaned_data.get(fieldname, None) is not None: # be careful for False
+                                setattr(instance, fieldname, form.cleaned_data.get(fieldname))
+                                json_data.update({fieldname: instance.get_field_value(fieldname)})
+                    instance.save()
+                    return HttpResponse(json.dumps(json_data))
+                    '''
+                    return render(request,"shelf/shelf_inspection_detail.html",self.get_context_data(*args, **kwargs))
+                    return render(request,"shelf/response_form.html",context)                
+                    form.instance = instance
                     context = {
                         'form' : form,
                         'form_id' : form_id
-                    }
-                    #return render(request,"shelf/shelf_inspection_detail.html",self.get_context_data(*args, **kwargs))
-                    #return render(request,"shelf/response_form.html",context)
-                    return HttpResponse(json.dumps(json_data))
+                    }  
+                    '''              
                 except:
                     raise Http404
             return HttpResponse(json.dumps({'message': 'invalid form!','valid':False,'form_id': form_id}))
