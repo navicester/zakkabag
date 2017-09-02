@@ -390,10 +390,14 @@ class shelf_inspection_DetailView(DetailView):
                     instance = shelf_inspection_record.objects.get(pk=instance_id)
                     form.save(commit=False)
                     #form.save()
-                    instance.gradient = form.cleaned_data.get('gradient')
-                    instance.use_condition = form.cleaned_data.get('use_condition')
-                    instance.is_locked = form.cleaned_data.get('is_locked')
-                    instance.forecast_complete_time = form.cleaned_data.get('forecast_complete_time')
+                    if form.cleaned_data.get('gradient', None):
+                        instance.gradient = form.cleaned_data.get('gradient')
+                    if form.cleaned_data.get('use_condition', None):
+                        instance.use_condition = form.cleaned_data.get('use_condition')
+                    if form.cleaned_data.get('is_locked', None):
+                        instance.is_locked = form.cleaned_data.get('is_locked')
+                    if form.cleaned_data.get('forecast_complete_time', None):
+                        instance.forecast_complete_time = form.cleaned_data.get('forecast_complete_time')
                     instance.save()
                     form.instance = instance
                     json_data = {
@@ -409,8 +413,9 @@ class shelf_inspection_DetailView(DetailView):
                         'form' : form,
                         'form_id' : form_id
                     }
-                    return render(request,"shelf/response_form.html",context)
-                    #return HttpResponse(json.dumps(json_data))
+                    #return render(request,"shelf/shelf_inspection_detail.html",self.get_context_data(*args, **kwargs))
+                    #return render(request,"shelf/response_form.html",context)
+                    return HttpResponse(json.dumps(json_data))
                 except:
                     raise Http404
             return HttpResponse(json.dumps({'message': 'invalid form!','valid':False,'form_id': form_id}))

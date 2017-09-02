@@ -24,11 +24,10 @@
                         <div class="edit" style="display: none">{{field}}</div>
                     </td>
                 {% endif%}            
-            
             {% endfor %}
                 <td>
                     <i class="fa fa-1x fa-pencil-square-o edit-fields" aria-hidden="true" style="padding-top: 40%;"></i>
-                    <input type="image" value=" " class="fa fa-check check-fields"  style="display: none;" style="padding-right: 0; margin-right: 0; width:100%" />
+                    <input type="image" value=" " class="fa fa-check check-fields" onclick="this.form.submit();" style="display: none;" style="padding-right: 0; margin-right: 0; width:100%" />
                     <i class="fa fa-times close-fields" aria-hidden="true" style="display: none"></i>
                     <div id='blank'></div>
                 </td>            
@@ -37,3 +36,7 @@
     </tbody>
 </table>
 {% endblock %}
+
+<!-- issue for replace method, 
+for form inline in table, the structure changed, form doesn't embrace its element, so submit don't work after replace the html
+-->
