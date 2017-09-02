@@ -73,7 +73,7 @@ td .edit-fields{
                     <td class="text-center">{{form.instance|get_field_value:field.name}}</td>
                 {% else %}
                     <td>
-                        <div class="displayonly text-center" style="display: block">{{form.instance|get_field_value:field.name}}</div>
+                        <div class="displayonly text-center" style="display: block; {% if field.name == 'gradient' and form.instance.gradient > 1.4 %} background-color:red; {% endif %}">{{form.instance|get_field_value:field.name}}</div>
                         <div class="edit" style="display: none">{{field}}</div>
                     </td>
                 {% endif%}            

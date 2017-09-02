@@ -151,6 +151,11 @@
 	    var gradient = responseText.form_id + '-' + 'gradient'	    
 	    var elem_gradient = $("#" + gradient);	    
 	    elem_gradient.parent().prev().text(responseText.gradient);
+	    if(responseText.gradient>1.4){
+	    	elem_gradient.parent().prev().css('background-color','red');
+	    }else{
+	    	elem_gradient.parent().prev().css('background-color','');
+	    }
 	    var is_locked = responseText.form_id + '-' + 'is_locked'	    
 	    var elem_is_locked = $("#" + is_locked);	    
 	    elem_is_locked.parent().prev().text(responseText.is_locked);
