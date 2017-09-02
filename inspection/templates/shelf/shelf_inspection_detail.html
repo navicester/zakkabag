@@ -154,10 +154,10 @@
 	    var is_locked = responseText.form_id + '-' + 'is_locked'	    
 	    var elem_is_locked = $("#" + is_locked);	    
 	    elem_is_locked.parent().prev().text(responseText.is_locked);
-	    var forecast_complete_time = responseText.form_id + '-' + 'forecast_complete_time'	    
-	    var elem_forecast_complete_time = $("#" + forecast_complete_time);	    
-	    elem_forecast_complete_time.parent().prev().text(responseText.forecast_complete_time);
-	    //console.log( use_condition);
+	    //var forecast_complete_time = responseText.form_id + '-' + 'forecast_complete_time'	    
+	    //var elem_forecast_complete_time = $("#" + forecast_complete_time);	    
+	    //elem_forecast_complete_time.parent().prev().text(responseText.forecast_complete_time);
+	    
 	    close_edit_form($(form_id).parent().find('.close-fields'));
 	    
 	}
