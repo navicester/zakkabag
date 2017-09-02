@@ -449,6 +449,10 @@ class shelf_inspection_DetailView(DetailView):
         else:
             raise Http404
 
+class shelf_DetailView(DetailView):
+    model = shelf
+    template_name = "shelf/shelf_detail.html"
+        
 # https://www.douban.com/note/350934079/
 # http://blog.csdn.net/xyp84/article/details/7945094
 # http://caibaojian.com/simple-responsive-table.html

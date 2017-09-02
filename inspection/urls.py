@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from .views import ( OfficeInspectionListView, OfficeInspectionDetailView, OfficeInspectionCreateView,
 	DailyInspectionListView, DailyInspectionDetailView, DailyInspectionCreateView, shelf_inspection_ListView,
-	shelf_inspection_DetailView)
+	shelf_inspection_DetailView, shelf_DetailView)
 
 urlpatterns = [
     url(r'^officeinspection$', OfficeInspectionListView.as_view(), name='OfficeInspection_list'),
@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^dailyinspection/(?P<pk>\d+)/$', DailyInspectionDetailView.as_view(), name='dailyinspection_detail'),   
     url(r'^shelfinspectionlist$', shelf_inspection_ListView.as_view(), name='shelf_inspection_list'),  
     url(r'^shelfinspectiondetail/(?P<pk>\d+)/$', shelf_inspection_DetailView.as_view(), name='shelf_inspection_detail'),  
+    url(r'^shelf/(?P<pk>\d+)/$', shelf_DetailView.as_view(), name='shelf_detail'),  
 ]

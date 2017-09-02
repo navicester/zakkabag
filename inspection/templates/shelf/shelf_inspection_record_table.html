@@ -63,7 +63,11 @@ td .edit-fields{
                 {% if field.name in form.Meta.hidden_form %}
                     <td style="display:none" type='hidden'>{{field}}</td>                    
                     {% if not field.name in form.Meta.hidden %}
-                    <td class="text-center">{{form.instance|get_field_value:field.name}}</td>
+                    <td class="text-center">
+                        {% if 'shelf' == field.name %}<a href="{% url 'shelf_detail' form.instance.shelf.id %}" >{% endif %}
+                        {{form.instance.shelf}}
+                        {% if 'shelf' == field.name %}</a>{% endif %}
+                    </td>
                     {% endif %}
                 {% elif field.name in form.Meta.disabled %}
                     <td class="text-center">{{form.instance|get_field_value:field.name}}</td>

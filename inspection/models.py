@@ -230,7 +230,7 @@ class shelf(models.Model):
     is_gradient_measurement_mandatory = models.BooleanField(_('Gradient Measurement Mandatory'), blank=True)
 
     def __unicode__(self): 
-        return _("shelf") + "%s %s %s %s %s" % (self.warehouse,self.compartment, self.warehouse_channel,self.group,self.number)
+        return _("") + "%s %s %s %s %s" % (self.warehouse,self.compartment, self.warehouse_channel,self.group,self.number)
 
 
 class shelf_inspection(models.Model):

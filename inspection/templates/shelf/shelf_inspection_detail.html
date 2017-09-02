@@ -198,9 +198,9 @@
     <div class="col-sm-3 ">
     	<form method="GET" action="">	
 			{{ shelfFilterForm|crispy }}
-			<input type='submit' value='Apply Filter' class='btn btn-default'>
+			<input type='submit' value='Apply Filter' class='btn btn-default'> <a class="btn btn-default" href="{{object.get_absolute_url}}"  >Clear Filters</a>
 		</form>
-		<br>
+		  		
 	    <hr>
     </div>
     <div class="col-sm-9 ">	
