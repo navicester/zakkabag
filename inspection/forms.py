@@ -158,8 +158,8 @@ class shelf_inspection_recordForm(forms.ModelForm):
 
         exclude = [
             'shelf_inspection',
-            'comments',
-            'check_person'
+            #'comments',
+            #'check_person'
         ]
 
         # workaround, not sure whether this function is already exist

@@ -66,6 +66,28 @@
 	    this_close_button.css("display","none");
 	}		
 
+	(function($){
+		$.fn.bindPostCommentHandler = function() {
+			this.each(function() {
+				$(this).submit(function() {
+					options.data['form_id'] = $(this).attr('id');
+					console.log(options.data);
+					$(this).ajaxSubmit(options);
+					return false;
+				});
+			});
+		}
+	})(jQuery);
+
+	function SubmitFunc(){		
+		options.data['form_id'] = $(this).attr('id');
+		console.log(options.data);
+		$(this).ajaxSubmit(options);
+		return false;
+	}
+
+	$('.ajaxform').submit(SubmitFunc);
+
 	function showRequest(formData, jqForm, options) {
 	    var queryString = $.param(formData);
 	    console.log('showRequest');
@@ -75,8 +97,32 @@
 
 	function showResponse(responseText, statusText, xhr, $form)  {
 	    if(statusText === "success"){
-	        console.log(responseText.message);
+	        //console.log(responseText.message);
 	    } 
+
+	    form_template = $(responseText).find('#form-extract');
+	    form_template_html = form_template.html();
+	    //console.log($form.parent().html());
+	    var form_id = $form.attr('id');
+	    var tr_id = form_id.slice('id_form-'.length, form_id.length);
+	    $('#id_tr-'+tr_id).replaceWith('<tr' + ' id=id_tr-' + tr_id + '>' + form_template_html + '</tr>');
+
+	    //$('.ajaxform').submit(SubmitFunc);
+	    //$('.ajaxform').on("submit", SubmitFunc);
+	    //$('.ajaxform').onsubmit = SubmitFunc;
+	    //$('form#' + form_id).bindPostCommentHandler();
+	    $('form#' + form_id).submit(SubmitFunc);
+
+		$(".edit-fields").bind("click",function(){
+		    show_edit_form($(this));
+		});	
+
+		$(".close-fields").bind("click",function(){
+		    close_edit_form($(this));
+		});
+
+
+	    /*
 	    var form_id = "form#" + responseText.form_id
 	    //console.log( form_id);
 	    var use_condition = responseText.form_id + '-' + 'use_condition'
@@ -93,6 +139,7 @@
 	    elem_forecast_complete_time.parent().prev().text(responseText.forecast_complete_time);
 	    //console.log( use_condition);
 	    close_edit_form($(form_id).parent().find('.close-fields'));
+	    */
 	}
 
 	function showError(response){
@@ -106,7 +153,7 @@
 	    error:         showError,
 	    //url:       "/fileupload/uploadfile",
 	    type:      "post",
-	    dataType:  "json",
+	    dataType:  "html",
 	    //clearForm: true ,
 	    //resetForm: true ,
 	    data:{
@@ -117,17 +164,14 @@
 	    //timeout:   3000
 	};
 
-	$('.ajaxform').submit(function(){		
-		options.data['form_id'] = $(this).attr('id');
-		console.log(options.data);
-		$(this).ajaxSubmit(options);
-		return false;
-	});		
-
 {% endblock %}
 </script>
 
 {% block content %}
+	{% include "shelf/shelf_inspection_record_table.html" with object_list=object_list %}    
+{% endblock %}
+
+{% block content1 %}
 
 <div class='row object_lists'>
 

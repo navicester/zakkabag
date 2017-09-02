@@ -395,6 +395,7 @@ class shelf_inspection_DetailView(DetailView):
                     instance.is_locked = form.cleaned_data.get('is_locked')
                     instance.forecast_complete_time = form.cleaned_data.get('forecast_complete_time')
                     instance.save()
+                    form.instance = instance
                     json_data = {
                         'message': 'valid form!',
                         'valid':True,
@@ -409,7 +410,7 @@ class shelf_inspection_DetailView(DetailView):
                         'form_id' : form_id
                     }
                     return render(request,"shelf/response_form.html",context)
-                    return HttpResponse(json.dumps(json_data))
+                    #return HttpResponse(json.dumps(json_data))
                 except:
                     raise Http404
             return HttpResponse(json.dumps({'message': 'invalid form!','valid':False,'form_id': form_id}))

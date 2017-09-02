@@ -91,6 +91,7 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, "authwrapper","templates"),
                 os.path.join(BASE_DIR, "wechat","templates"),
                 os.path.join(BASE_DIR, "fileuploadwrapper","templates"),
+                os.path.join(BASE_DIR, "inspection","templates"),
                 os.path.join(BASE_DIR, "crowdfundings")],
         'APP_DIRS': True,
         'OPTIONS': {
