@@ -6,6 +6,20 @@
 <style type="text/css">
 {% block style %}
 
+.header{
+	padding: 10px 0 10px; 
+	background-color: #a5d2e8; 
+	border: 1px solid #337ab7;
+}
+
+.row1, .row2{
+	padding: 5px 0 5px; 
+}
+
+.row2{
+	background-color: #d9edf7; 
+}
+
 {% endblock%}
 </style>
 
@@ -26,30 +40,37 @@ $(document).ready(function(){
 </script>
 
 {% block content %}
-
-<div class='row object_lists'>
-
-    <div class="col-md-6 col-md-offset-3">
-		{% autopaginate records 6 %}
-        
-		{% if records.count == 0 %}
-			Nothing found
-		{% else %}			
-			{% for record in records %}
-			<a href='{{ record.get_absolute_url }}'>{{record.check_date}}</a>
-			{% endfor %}
-		{% endif %}
-        
-		<div class="text-center">
-		{% paginate %}
-		</div>
-	</div>
+{% if records.count == 0 %}
+	Nothing found
+{% else %}	
+<div class="row header">
+	<div class="col-xs-3">{% trans 'Create Date' %}</div>
+	<div class="col-xs-3">{% trans 'Use Condition' %}</div>
+	<div class="col-xs-3">{% trans 'Locked' %}</div>
+	<div class="col-xs-3">{% trans 'Gradient' %} > 1.4</div>
 </div>
+{% autopaginate records 10 %}
+{% for record in records %}
+<div class="row {% cycle 'row1' 'row2' %}">
+	<div class="col-xs-3"><a href='{{ record.0.get_absolute_url }}'>{{record.0.check_date}}</a></div>
+	<div class="col-xs-3">{{record.1}}</div>
+	<div class="col-xs-3">{{record.2}}</div>
+	<div class="col-xs-3">{{record.3}}</div>
+</div>
+{% endfor %}
+<div class="text-center">
+{% paginate %}
+</div>
+{% endif %}
 
+<hr>
 <div class="row">
 	<div class="col-sm-12">
-		<h4><a href='{% url "shelf_list" %}'>{% trans "Shelf List" %}</a></h4>	
-	</div>	
+		<h4>
+		<a href='{% url "shelf_list" %}'>{% trans "Shelf List" %}</a>
+		<a href='{% url "shelf_inspection_create" %}'>{% trans "Create Shelf Inspection" %}</a>
+		</h4>
+	</div>
 </div>
 
 

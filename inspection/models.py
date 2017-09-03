@@ -293,6 +293,9 @@ class shelf_inspection_record(models.Model):
     def __unicode__(self): 
         return _("shelf inspection record ") + "%s" % (self.shelf)
 
+    def get_absolute_url(self):
+        return reverse("shelf_inspection_record_detail", kwargs={"pk": self.id })
+
     def get_field_value(self,fieldname):
 
         if not hasattr(self, fieldname):

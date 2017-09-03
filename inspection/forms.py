@@ -1,5 +1,5 @@
 from django import forms
-from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf
+from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf, shelf_inspection
 from django.utils.translation import ugettext_lazy as _
 from django.forms import BaseFormSet,BaseModelFormSet, formset_factory
 from django.forms.models import modelformset_factory
@@ -107,6 +107,13 @@ class InspectionFilterForm(forms.Form):
             initial = None,
             required=False
             )    
+
+class shelf_inspection_Form(forms.ModelForm):
+    class Meta:
+        model = shelf_inspection
+
+        exclude = [
+        ]
 
 class shelf_inspection_recordForm(forms.ModelForm):
     

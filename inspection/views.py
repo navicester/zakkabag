@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.views.generic.base import View, TemplateResponseMixin, ContextMixin, TemplateView
 from django.views.generic.edit import FormView, CreateView
@@ -14,9 +14,10 @@ from django.http import HttpResponse
 import json
 from django.http import Http404
 
+
 # Create your views here.
 from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection, shelf
-from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm, shelf_inspection_recordForm, shelfFilterForm
+from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm, shelf_inspection_recordForm, shelfFilterForm, shelf_inspection_Form
 from .forms import shelf_inspection_record_Formset
 
 # Create your views here.
@@ -388,8 +389,10 @@ class shelf_inspection_ListView(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(shelf_inspection_ListView, self).get_context_data(*args, **kwargs)
         context["object_list"] = shelf_inspection.objects.all()
-        #context["records"] = [(object.pk, object.check_date) for object in shelf_inspection.objects.all()]
-        context["records"] = shelf_inspection.objects.all()        
+        context["records"] = [(object, \
+            object.shelf_inspection_record_set.filter(use_condition=1).count(), \
+            object.shelf_inspection_record_set.filter(is_locked=False).count(), \
+            object.shelf_inspection_record_set.filter(gradient__gt=1.4).count()) for object in shelf_inspection.objects.all()]
         return context       
 
 
@@ -513,6 +516,46 @@ class shelf_inspection_DetailView(DetailView):
         else:
             raise Http404
 
+class shelf_inspection_CreateView(CreateView):
+    #model = shelf
+    template_name = "shelf/shelf_inspection_create.html"
+    form_class = shelf_inspection_Form
+    success_url = "inspection/shelfinspectionlist" #reverse("shelf_inspection_list")
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(shelf_inspection_CreateView, self).get_context_data(*args, **kwargs)
+        context["form"] = shelf_inspection_Form()
+        return context
+
+    def get_form(self, *args, **kwargs):
+        form = super(shelf_inspection_CreateView, self).get_form(*args, **kwargs)
+
+        #form.fields['categories'].queryset  = Category.objects.all()
+        #form.fields['default'].queryset  = Category.objects.all()
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+        postresult = super(shelf_inspection_CreateView, self).post(request, *args, **kwargs)
+
+        form = shelf_inspection_Form(request.POST, request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            for shelf_instance in shelf.objects.all():
+                shelf_inspection_record_instance = shelf_inspection_record()
+                shelf_inspection_record_instance.shelf = shelf_instance
+                shelf_inspection_record_instance.shelf_inspection = obj
+                shelf_inspection_record_instance.is_locked = False
+                import time
+                shelf_inspection_record_instance.forecast_complete_time = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+                shelf_inspection_record_instance.save()            
+
+            return redirect(reverse("shelf_inspection_detail", kwargs={'pk': obj.id}))
+
+        return postresult
+
+
 class shelf_DetailView(DetailView):
     model = shelf
     template_name = "shelf/shelf_detail.html"
@@ -527,7 +570,9 @@ class shelf_ListView(ListView):
     model = shelf
     template_name = "shelf/shelf_list.html"
 
- 
+class shelf_inspection_record_DetailView(DetailView):
+    model = shelf_inspection_record
+    template_name = "shelf/shelf_inspection_record_detail.html"    
 
 # https://www.douban.com/note/350934079/
 # http://blog.csdn.net/xyp84/article/details/7945094

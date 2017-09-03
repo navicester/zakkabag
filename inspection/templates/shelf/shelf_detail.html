@@ -16,11 +16,11 @@
 
 <div class="row">
 	<div class="col-sm-12">
-	<h4>Related Inspections</h4>
-		{% for object in related_inspection %}
+	<h4>{% trans 'Related Inspections' %}</h4>
+		{% for object_inspection in related_inspection %}
 		<div class="row">
 			<div class="col-sm-3">
-				<a href="{{object.get_absolute_url}}">{{object.shelf_inspection.check_date}}</a>
+				<a href="{{object_inspection.get_absolute_url}}">{{object_inspection.shelf_inspection.check_date}}</a>
 			</div>
 		</div>
 		{% endfor %}
