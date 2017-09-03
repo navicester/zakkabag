@@ -119,6 +119,17 @@ class DailyInspection(models.Model):
     def get_rectification_status(self):
         return _('Completed') if self.rectification_status == 'completed' else _('Uncompleted')
 
+    def get_created_date(self):
+        return self.created.strftime("%Y-%m-%d")
+
+    def get_field_value(self,fieldname):
+
+        if not hasattr(self, fieldname):
+            return None
+        
+        field = DailyInspection._meta.get_field(fieldname)
+        return "%s" % self._get_FIELD_display(field)        
+
 post_delete.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")
 post_save.connect(file_cleanup2, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup2")
 pre_save.connect(save_raw_instance, sender=DailyInspection)
@@ -226,11 +237,32 @@ class shelf(models.Model):
     compartment = models.CharField(_('Compartment Number'), max_length=30, blank=True)
     warehouse_channel = models.CharField(_('Warehouse Channel Number'), max_length=30, blank=True)
     group = models.CharField(_('Shelf Group'), max_length=30, blank=True)
-    number = models.CharField(_('Warehouse Number'), max_length=30, blank=True)    
+    number = models.CharField(_('Shelf Number'), max_length=30, blank=True)    
     is_gradient_measurement_mandatory = models.BooleanField(_('Gradient Measurement Mandatory'), blank=True)
 
     def __unicode__(self): 
-        return _("") + "%s %s %s %s %s" % (self.warehouse,self.compartment, self.warehouse_channel,self.group,self.number)
+        return "%s %s %s %s %s" % (self.warehouse,self.compartment, self.warehouse_channel,self.group,self.number)
+
+    def get_shelf_name(self):
+        return _('Shelf')
+
+    def get_absolute_url(self):
+        return reverse("shelf_detail", kwargs={"pk": self.id })
+
+    def get_field_name(self):
+        return shelf._meta.get_all_field_names()
+
+    def get_fields(self):
+        return shelf._meta.get_fields()
+
+    def get_field_value(self,fieldname):
+
+        if not hasattr(self, fieldname):
+            return None
+        
+        field = shelf._meta.get_field(fieldname)
+        return "%s" % self._get_FIELD_display(field)
+            
 
 
 class shelf_inspection(models.Model):
@@ -259,7 +291,7 @@ class shelf_inspection_record(models.Model):
     comments = models.TextField(_('Comments'), max_length=30, blank=True,null=True)
 
     def __unicode__(self): 
-        return _("shelf inspection record") + "%s" % (self.shelf)
+        return _("shelf inspection record ") + "%s" % (self.shelf)
 
     def get_field_value(self,fieldname):
 

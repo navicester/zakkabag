@@ -1,6 +1,7 @@
 {% extends "inspection/base_inspection.html" %}
 {% load crispy_forms_tags %}
 {# load myform_tags #}
+{% load i18n %}
 
 {% block content2 %}
 <div class='row'>
@@ -18,8 +19,8 @@
 	<div class='col-sm-6 col-sm-offset-3'>
         
         <div class="text-center">
-            <lead><h2>{{object.item}}</h2></lead>
-            <span><b>Create</b></span> : {{object.created}}	    <span><b>Last Update</b></span> : {{object.updated}}	
+            <lead><h2>{{object.inspection_content}}</h2></lead>
+            <span><b>{% trans 'Create' %}</b></span> : {{object.created}} &nbsp &nbsp &nbsp <span><b>{% trans 'Last Update' %}</b></span> : {{object.updated}}	
             <hr>
         </div>         
 		
@@ -47,7 +48,7 @@
 
 			    <hr>                 
 	            		            
-			    <input style="width:30%" type="submit" name="submit" class="btn btn-default pull-right" value="submit" />
+			    <input style="width:30%" type="submit" name="submit" class="btn btn-default pull-right" value='{% trans "submit" %}' />
 
 			</form>   
             

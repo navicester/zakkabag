@@ -68,6 +68,12 @@
 	    	
 	    </div>
 	    <div class="col-sm-2">
+	    	<br><b>MAP</b><hr>
+	    	{% include "map.html" %} 
+	    	
+	    </div>
+	    {% comment %}
+	    <div class="col-sm-2">
 	    	<br><b>FEEDBACK</b><hr>
 	    	<form method='POST' action=''>{% csrf_token %}
 				<div id="div_id_full_name" class="form-group"> 
@@ -91,6 +97,7 @@
 				<input class = 'btn btn-primary' type='submit' value='Submit' />
 			</form>
 	    </div>
+	    {% endcomment %}
 	</div>
 	<div class="row  text-center footer-certifiate">
 		Copyright © 

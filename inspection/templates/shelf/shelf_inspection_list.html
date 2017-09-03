@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% load pagination_tags %}
+{% load i18n %}
 
 <style type="text/css">
 {% block style %}
@@ -43,6 +44,12 @@ $(document).ready(function(){
 		{% paginate %}
 		</div>
 	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-12">
+		<h4><a href='{% url "shelf_list" %}'>{% trans "Shelf List" %}</a></h4>	
+	</div>	
 </div>
 
 

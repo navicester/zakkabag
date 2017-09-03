@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.views.generic.base import View, TemplateResponseMixin, ContextMixin, TemplateView
 from django.views.generic.edit import FormView, CreateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -90,8 +91,8 @@ class OfficeInspectionDetailView(ModelFormMixin, DetailView):
     def dispatch(self, request, *args, **kwargs):
         instance = self.get_object()
         request.breadcrumbs([
-            ("Home",reverse("home", kwargs={})),
-            ("Inspection",reverse("OfficeInspection_list", kwargs={})),
+            (_("Home"),reverse("home", kwargs={})),
+            (_("Inspection"),reverse("OfficeInspection_list", kwargs={})),
             (instance,request.path_info),
         ])
         return super(OfficeInspectionDetailView, self).dispatch(request,args,kwargs)   
@@ -123,8 +124,8 @@ class OfficeInspectionListView(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         request.breadcrumbs([
-            ("Home",reverse("home", kwargs={})),
-            ('Inspection',request.path_info),
+            (_("Home"),reverse("home", kwargs={})),
+            (_('Inspection'),request.path_info),
         ])
         return super(OfficeInspectionListView, self).dispatch(request,args,kwargs)   
 
@@ -323,6 +324,63 @@ class DailyInspectionListView(FilterMixin, ListView):
         ])
         return super(DailyInspectionListView, self).dispatch(request,args,kwargs)   
 
+class StatMixin(object):
+
+    # ['category']['date']['count']
+    # {'people',{'2017-08-01':'0','2017-08-02':'1'}}
+
+    def get_dates(self):
+        #dates = list([ ins.created.strftime("%Y-%m-%d") for ins in DailyInspection.objects.order_by('-updated')])        
+        dates = list([ ins.get_created_date() for ins in DailyInspection.objects.order_by('-updated')])
+        dates = list(set(dates))
+        dates.sort()
+        return dates
+
+    def get_catetory(self):
+        categories = list([ ins[1] for ins in DailyInspection.daily_insepction_category])
+        return categories
+
+    def get_counters_sorted(self):
+        llcounterperdaypercategory = {}
+        for category in self.get_catetory():
+            #llcounterperdaypercategory.update({category:{}})
+            llcounterperdaypercategory[category] = {}
+            for date in self.get_dates():
+                llcounterperdaypercategory[category].update({date:0})
+
+        return self.get_counters(llcounterperdaypercategory)
+
+    def get_counters(self, llcounterperdaypercategory):
+        #llcounterperdaypercategory = {}
+        for inspect in DailyInspection.objects.all():
+            created = inspect.get_created_date()
+            category = inspect.get_field_value('category')
+            if llcounterperdaypercategory.get(category, None) is None:
+                llcounterperdaypercategory.update({category: {created : 1}})
+            else:                
+                if llcounterperdaypercategory[category].get(created, None):
+                    llcounterperdaypercategory[category][created] = llcounterperdaypercategory[category].get(created, None) + 1
+                else:
+                    llcounterperdaypercategory[category].update({created:1})
+
+        return llcounterperdaypercategory
+
+#class shelf_inspection_StatView(TemplateView):
+class shelf_inspection_StatView(StatMixin, TemplateResponseMixin, ContextMixin, View):
+    template_name = "dailyinspection/dailyinspection_stat.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(shelf_inspection_StatView, self).get_context_data(*args, **kwargs)
+        context["objects_list"] = DailyInspection.objects.order_by('-updated')
+        context["dates"] = self.get_dates()
+        context["categories"] = self.get_catetory()
+        context["counters"] = self.get_counters_sorted()
+        return context   
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
 class shelf_inspection_ListView(ListView): 
     model = shelf_inspection
     template_name = "shelf/shelf_inspection_list.html"
@@ -362,13 +420,19 @@ class shelf_inspection_recordFilter(FilterSet):
 
     #def gradient_custom_filter(self, queryset, name, value): # this is for latest version
     def gradient_custom_filter(self, queryset, value):
-        print 'gradient_custom_filter'
         if 'on' == value:
-            return queryset.filter(**{
+            qs1 = queryset.filter(**{
                 'shelf__is_gradient_measurement_mandatory': True,
             })
-        else:
-            return queryset
+            qs = qs1
+
+            for ins in qs1:
+                qs2 = queryset.filter(**{
+                'shelf__warehouse_channel': ins.shelf.warehouse_channel,})
+                qs = (qs | qs2)
+            return qs.distinct()
+        
+        return queryset
 
 
 class shelf_inspection_DetailView(DetailView): 
@@ -452,7 +516,19 @@ class shelf_inspection_DetailView(DetailView):
 class shelf_DetailView(DetailView):
     model = shelf
     template_name = "shelf/shelf_detail.html"
-        
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(shelf_DetailView, self).get_context_data(*args, **kwargs)
+        context["related_inspection"] = shelf_inspection_record.objects.filter(shelf=self.get_object())
+
+        return context    
+
+class shelf_ListView(ListView):
+    model = shelf
+    template_name = "shelf/shelf_list.html"
+
+ 
+
 # https://www.douban.com/note/350934079/
 # http://blog.csdn.net/xyp84/article/details/7945094
 # http://caibaojian.com/simple-responsive-table.html

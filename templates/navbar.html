@@ -16,9 +16,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="{% url 'home' %}">Home</a></li>    
-            <li><a href="{% url 'contact' %}">Contact</a></li>        
-            <li><a href="{% url 'about' %}">About</a></li>       
+            <li class="active"><a href="{% url 'home' %}">{% trans 'Home' %}</a></li>    
+            <li><a href="{% url 'contact' %}">{% trans 'Contact' %}</a></li>        
+            <li><a href="{% url 'about' %}">{% trans 'About' %}</a></li>       
             {% comment %}                              
             <li><a href="{% url 'set_language' %}?language='zh-cn'&next={{request.path}}">chinese</a></li>
             <li><a href="{% url 'set_language' %}?language='en'&next={{request.path}}">english</a></li>               
@@ -36,37 +36,37 @@
           <ul class="nav navbar-nav navbar-right">
             <li><a href='{% url "cart" %}'><i class="fa fa-shopping-cart fa-navbar-cart"></i> <span id="cart-count-badge" class='badge'>{{ request.session.cart_item_count }}</span></a></li>            
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Projects <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'Projects' %} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 
-                <li><a href="{% url 'products' %}">Products</a></li>
+                <li><a href="{% url 'products' %}">{% trans 'Products' %}</a></li>
                 {% if request.user.is_authenticated %}
-                <li><a href="{% url 'orders' %}">Orders</a></li> 
+                <li><a href="{% url 'orders' %}">{% trans 'Orders' %}</a></li> 
                 {% endif %}
-                <li><a href="{% url 'CrowdfundingListView' %}">Crowndfunding</a></li> 
-                <li><a href="{% url 'dailyinspection_list' %}">Inspection</a></li>
-                <li><a href="{% url 'shelf_inspection_list' %}">Shelf</a></li>
+                <li><a href="{% url 'CrowdfundingListView' %}">{% trans 'Crowndfunding' %}</a></li> 
+                <li><a href="{% url 'dailyinspection_list' %}">{% trans 'Inspection' %}</a></li>
+                <li><a href="{% url 'shelf_inspection_list' %}">{% trans 'Shelf' %}</a></li>
               </ul>
             </li>                
             {% if request.user.is_authenticated %}              
               {% if request.user.is_wechatuser %}
               <li><a href='{{request.user.get_absolute_url}}'}>{{request.user.get_wechatprofile}}</a></li> 
-              <li><a href="{% url 'logout' %}">Logout</a></li>              
+              <li><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></li>              
               {% else %}
               <li><a href="{{request.user.get_absolute_url}}">{{request.user}}</a></li> 
-              <li><a href="{% url 'logout' %}">Logout</a></li>
+              <li><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></li>
               {% endif %}
 <!--- below shuold be useless -->              
             {% elif request.wechat %}            
               <li><a href="{{request.wechat.get_absolute_url}}">{{request.wechat}}</a></li> 
-              <li><a href="{% url 'logout' %}">Logout</a></li>          
+              <li><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></li>          
             {% else %}
-              <li><a href="{% url 'register_phone' %}">Register</a></li>
-              {# <li><a href="{% url 'registration_register' %}">Register</a></li> #}
+              <li><a href="{% url 'register_phone' %}">{% trans 'Register' %}</a></li>
+              {# <li><a href="{% url 'registration_register' %}">{% trans 'Register' %}</a></li> #}
               <li><a href='{% url "wechatlogin" %}'><i class="fa fa-weixin" aria-hidden="true"></i></a></li>
               {% if not request.user.is_authenticated and not "/accounts/login" in request.get_full_path %}
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'Login' %} <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                   <!-- <form class='navbar-form' method='POST' action='{% url "auth_login" %}'>{% csrf_token %} -->
                   <form class='navbar-form' method='POST' action='{% url "login" %}'>{% csrf_token %}
@@ -80,9 +80,9 @@
                     <input type="hidden" name="next" value="{% url 'home' %}" /> <!-- add for redirection -->
                   </form>
                   {% if 'phone' == request.register_type %}
-                    <p class='text-center'><a href='{% url "password_forget" %}'>Forgot Password</a>?</p>
+                    <p class='text-center'><a href='{% url "password_forget" %}'>{% trans 'Forgot Password' %}</a>?</p>
                   {% else %}
-                    <p class='text-center'><a href='{% url "auth_password_reset" %}'>Forgot Password</a>?</p>
+                    <p class='text-center'><a href='{% url "auth_password_reset" %}'>{% trans 'Forgot Password' %}</a>?</p>
                   {% endif %}
                 </ul>
               </li>

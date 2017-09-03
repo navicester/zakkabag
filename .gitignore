@@ -10,6 +10,7 @@ trial.py
 #static_in_pro/our_static/img/
 static_in_env2/
 ~$*
+*.tmp
 
 pip-selfcheck.json
 #*.sqlite3

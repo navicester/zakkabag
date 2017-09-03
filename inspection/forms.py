@@ -40,6 +40,7 @@ class DailyInspectionForm(forms.ModelForm):
     
     
     impact = forms.MultipleChoiceField(
+            label=_('Impact'),
             choices = lambda: (item for item in DailyInspection.daily_insepction_impact),
             widget = forms.SelectMultiple(),
             #widget=forms.CheckboxSelectMultiple(),
@@ -239,7 +240,7 @@ class shelfFilterForm(forms.Form):
             CHOICE_LIST.append((ins.warehouse_channel, ins.warehouse_channel))
     CHOICE_LIST.sort()
     CHOICE_LIST.insert(0, ('', '----'))
-    
+
     warehouse_channel = forms.ChoiceField(
             label=_('Warehouse Channel'),
             choices = CHOICE_LIST,
