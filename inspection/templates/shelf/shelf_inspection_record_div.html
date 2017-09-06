@@ -3,12 +3,6 @@
 {% load pagination_tags %}
 
 <style type="text/css">
-tr td{
-    padding-left: 1px!important;
-    padding-right: 1px!important;
-    margin-left: 1px!important;
-    margin-right: 1px!important;    
-}
 
 .header{
     padding: 10px 0 10px; 
@@ -33,6 +27,28 @@ a:hover {text-decoration: none;}
 .row2{
     background-color: #d9edf7; 
 }
+
+.col1, .col2, .col3{
+    width:25%;
+    float: left;
+}
+
+.col4{
+    float: left;
+    width:10%;
+}
+
+.col5{
+    width: 15%;
+}
+
+
+@screen-xs-max : 767px;
+
+@media (max-width: @screen-xs-max) { .row2{background-color: red;  }}
+@media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) { .row2{background-color: green;  }}
+@media (min-width: @screen-md-min) and (max-width: @screen-md-max) { background-color: black;  }
+@media (min-width: @screen-lg-min) { background-color: red; }
 
 
 input[type=''], input[type='number'], div.body input[type='checkbox'], input[type='text'], textarea, select{
@@ -60,10 +76,10 @@ input[type=''], input[type='number'], div.body input[type='checkbox'], input[typ
     <div class="row header">
         {% for field in formset.0 %}
             {% if not field.name in formset.0.Meta.hidden %}
-            <div class="{% cycle 'col-xs-2' 'col-xs-3' 'col-xs-3' 'col-xs-2' %}">{{field.label}}</div>
+            <div class="{% cycle 'col-xs-2' 'col-xs-2' 'col-xs-2' 'col-xs-2' %}">{{field.label}}</div>
             {% endif %}
         {% endfor %}
-            <div class="col-xs-2"></div>
+            <div class="col5"></div>
     </div>
     <div class="body">
         {% autopaginate formset 10 %}
@@ -72,9 +88,9 @@ input[type=''], input[type='number'], div.body input[type='checkbox'], input[typ
             <div id='id_tr-{{forloop.counter0}}' class="row {% cycle 'row1' 'row2' %} body">
                 {% for field in form %}
                     {% if field.name in form.Meta.hidden %}
-                        <p style="display:none" type='hidden' >{{field}}</p>
+                        <div style="display:none; float: left;clear: both" type='hidden' >{{field}}</div>
                     {% else %}
-                    <div class="{% cycle 'col-xs-2' 'col-xs-3' 'col-xs-3' 'col-xs-2' %}">
+                    <div class="{% cycle 'col-xs-2' 'col-xs-2' 'col-xs-2' 'col-xs-2' %}">
                         {% if field.name in form.Meta.hidden_form %}
                             <p style="display:none" type='hidden'>{{field}}</p>
                             {% if 'shelf' == field.name %}<a href="{% url 'shelf_detail' form.instance.shelf.id %}" >{% endif %}
@@ -91,7 +107,7 @@ input[type=''], input[type='number'], div.body input[type='checkbox'], input[typ
 
                 {% endfor %}
 
-                <div class="col-xs-2 text-left">
+                <div class="col5 text-left">
                     <i class="fa fa-1x fa-pencil-square-o edit-fields" aria-hidden="true" ></i>
                     <input type="image" value=" " class="fa fa-2x fa-check check-fields"  style="display: none; padding-right: 0; margin-right: 0; clear:both;float:left;" />
                     <i class="fa fa-2x fa-times close-fields" aria-hidden="true" style="display: none"></i>
