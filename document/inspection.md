@@ -427,6 +427,11 @@ LANGUAGE_CODE = 'en-us'
 ```
 
 ## 代码中标记
+- In views, mark translatable strings using the ugettext function (usually imported as \_)
+- In templates, mark translatable strings using the trans template tag for strings that do not contain variables, and blocktrans for strings that do
+- In forms and models, mark translatable strings using the ugettext_lazy function (usually imported as \_)
+
+
 model的定义
 ``` python
 class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
@@ -434,7 +439,14 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
 ```
 
 view的定义
+先导入translation库，并简化命名为_
 ``` python
+from django.utils.translation import ugettext as _
+```
+在每个需i18n的字符串前加入_
+``` python
+from django.utils.translation import ugettext as _
+
 class DailyInspectionListView(ListView): 
     def dispatch(self, request, *args, **kwargs):
         request.breadcrumbs([
