@@ -26,7 +26,7 @@ def file_cleanup(sender, **kwargs):
             and not m.filter(**{'%s__exact' % fieldname: getattr(inst, fieldname)})\
             .exclude(pk=inst._get_pk_val()):
                 try:
-                    if 'SERVER_SOFTWARE' in os.environ: 
+                    if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ: 
                         from sae import storage
                         from saewrapper.storage.bucket import SAEBucket
                         raise RuntimeError('env setup' % f.path)
@@ -44,7 +44,7 @@ def file_cleanup2(sender, **kwargs):
     except:
         return
 
-    if 'SERVER_SOFTWARE' in os.environ: 
+    if settings.USE_SAE_BUCKET: # 'SERVER_SOFTWARE' in os.environ: 
         from sae import storage
         from saewrapper.storage.bucket import SAEBucket
         pass
@@ -61,7 +61,7 @@ def file_cleanup2(sender, **kwargs):
                 path = None
                 
                 # check file exist
-                if 'SERVER_SOFTWARE' in os.environ:                     
+                if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ:                     
                     path = SAEBucket().url(f.name)
                     if not path:
                         continue
@@ -77,7 +77,7 @@ def file_cleanup2(sender, **kwargs):
                 if not m.filter(**{'%s__exact' % fieldname: getattr(inst_raw, fieldname)})\
                 .exclude(pk=inst_raw._get_pk_val()):
                     try:
-                        if 'SERVER_SOFTWARE' in os.environ:                            
+                        if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ:                            
                             SAEBucket().delete(f.name)
                         else:
                             default_storage.delete(f.path)

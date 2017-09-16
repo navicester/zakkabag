@@ -83,7 +83,7 @@ urlpatterns += patterns('',
 
 import os
 if settings.DEBUG:
-    if 'SERVER_SOFTWARE' in os.environ:
+    if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ:
         pass
     else:
     	urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

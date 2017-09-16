@@ -10,7 +10,7 @@ import os
 from PIL import Image
 
 def get_upload_path():
-    if 'SERVER_SOFTWARE' in os.environ: 
+    if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ: 
         return 'upload'
     else:
         photopath = os.path.join(settings.MEDIA_ROOT, 'upload')
@@ -31,7 +31,7 @@ def upload_file(request):
             in_mem_image_file=request.FILES['image']
             filepath = os.path.join(get_upload_path(), in_mem_image_file.name)
             if in_mem_image_file:
-                if 'SERVER_SOFTWARE' in os.environ: 
+                if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ: 
                     from saewrapper.storage.bucket import SAEBucket
                     SAEBucket().put_object(filepath,in_mem_image_file.file.getvalue())
                 else:

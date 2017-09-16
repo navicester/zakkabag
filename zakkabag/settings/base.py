@@ -176,7 +176,9 @@ STATICFILES_DIRS = (
     #'/var/www/static/',
 )
 
-if 'SERVER_SOFTWARE' in os.environ:    
+USE_SAE_BUCKET = False #True if 'SERVER_SOFTWARE' in os.environ else False
+
+if USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ:    
     FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10M
     DEFAULT_FILE_STORAGE = 'sae.ext.django.storage.backend.Storage'
     #DEFAULT_FILE_STORAGE = 'saewrapper.storage.SAEStorage'
@@ -278,3 +280,4 @@ PHONE_LOGIN_ATTEMPTS = 100
 USE_EXPLICIT_LANG_URL = True
 
 SAE_LOCAL_VPN = False
+

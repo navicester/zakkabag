@@ -225,7 +225,7 @@ def upload_to(filename, title, id):
         basename, file_extension = filename.name.split(".")
         new_filename = "%s-%s.%s" %(slug, id, file_extension)        
         photoname = os.path.join("products", slug, new_filename)
-        if 'SERVER_SOFTWARE' in os.environ: 
+        if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ: 
             pass
         else:
             photopath = os.path.join(settings.MEDIA_ROOT, "products", slug)
@@ -261,7 +261,7 @@ class ProductCreateView(CreateView):
             if in_mem_image_file:
                 photoname = upload_to(in_mem_image_file, self.object.title, self.object.id)
 
-                if 'SERVER_SOFTWARE' in os.environ: 
+                if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ: 
                     from sae import storage
                     #from sae.storage import Bucket
                     #bucket = Bucket('media')

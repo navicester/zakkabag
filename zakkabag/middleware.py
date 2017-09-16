@@ -16,7 +16,7 @@ class openidmiddleware():
 		request.register_type = settings.ACCOUNT_REGISTER_TYPE
 
 		import os
-		if 'SERVER_SOFTWARE' in os.environ:  
+		if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ:  
 			from saewrapper.storage.bucket import SAEBucket
 			request.media = SAEBucket().url('')
 		else:

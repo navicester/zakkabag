@@ -199,7 +199,7 @@ class ProfileDetailView(FormMixin, DetailView):
             usermodel.nickname = form.cleaned_data['nickname']
             usermodel.birthday = form.cleaned_data['birthday']
 
-            if 'SERVER_SOFTWARE' in os.environ: 
+            if settings.USE_SAE_BUCKET: #'SERVER_SOFTWARE' in os.environ: 
                 from sae import storage
                 c = storage.Connection()
                 bucket = c.get_bucket('media')
