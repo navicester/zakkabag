@@ -39,15 +39,18 @@ class OfficeInspectionForm(forms.ModelForm):
 class DailyInspectionForm(forms.ModelForm):
     
     
-    impact = forms.MultipleChoiceField(
-            label=_('Impact'),
-            choices = lambda: (item for item in DailyInspection.daily_insepction_impact),
-            widget = forms.SelectMultiple(),
-            #widget=forms.CheckboxSelectMultiple(),
-            initial = ['environment'],
-            #initial= lambda: [item for item in DailyInspection.daily_insepction_impact if item],
-            required=True
-            )
+    try: # may report error in fresh migrations from scratch
+        impact = forms.MultipleChoiceField(
+                label=_('Impact'),
+                choices = lambda: (item for item in DailyInspection.daily_insepction_impact),
+                widget = forms.SelectMultiple(),
+                #widget=forms.CheckboxSelectMultiple(),
+                initial = ['environment'],
+                #initial= lambda: [item for item in DailyInspection.daily_insepction_impact if item],
+                required=True
+                )
+    except:
+        pass
 
     def __init__(self, *args, **kwargs):
         super(DailyInspectionForm, self).__init__(*args, **kwargs)
@@ -100,13 +103,16 @@ class InspectionFilterForm(forms.Form):
             required=False
             )   
     #owner = forms.CharField(label='Owner',required=False)
-    owner = forms.ChoiceField(
-            label=_('Owner'),
-            choices = set((dailyinspection.owner,dailyinspection.owner) for dailyinspection in DailyInspection.objects.all()),
-            widget=forms.RadioSelect(),
-            initial = None,
-            required=False
-            )    
+    try:
+        owner = forms.ChoiceField(
+                label=_('Owner'),
+                choices = set((dailyinspection.owner,dailyinspection.owner) for dailyinspection in DailyInspection.objects.all()),
+                widget=forms.RadioSelect(),
+                initial = None,
+                required=False
+                )    
+    except:
+        pass
 
 class shelf_inspection_Form(forms.ModelForm):
     class Meta:
@@ -202,56 +208,59 @@ class shelfFilterForm(forms.Form):
             required=False
             )
 
-    type = forms.ChoiceField(
-            label=_('Shelf Type'),
-            choices = set((ins.type, ins.type) for ins in shelf.objects.all()),
-            widget=forms.RadioSelect(),
-            required=False
-            )   
+    try:
+        type = forms.ChoiceField(
+                label=_('Shelf Type'),
+                choices = set((ins.type, ins.type) for ins in shelf.objects.all()),
+                widget=forms.RadioSelect(),
+                required=False
+                )   
 
-    CHOICE_LIST = []
-    for ins in shelf.objects.all().order_by('warehouse'):
-        if not (ins.warehouse, ins.warehouse) in CHOICE_LIST:
-            CHOICE_LIST.append((ins.warehouse, ins.warehouse))
-    CHOICE_LIST.sort()
-    CHOICE_LIST.insert(0, ('', '----'))
+        CHOICE_LIST = []
+        for ins in shelf.objects.all().order_by('warehouse'):
+            if not (ins.warehouse, ins.warehouse) in CHOICE_LIST:
+                CHOICE_LIST.append((ins.warehouse, ins.warehouse))
+        CHOICE_LIST.sort()
+        CHOICE_LIST.insert(0, ('', '----'))
 
 
-    warehouse = forms.ChoiceField(
-            label=_('Warehouse'),
-            #choices = [(ins.warehouse, ins.warehouse) for ins in shelf.objects.all()].insert(0, ('', '----')) ,
-            choices = CHOICE_LIST,
-            widget=forms.Select(),
-            initial = None,
-            required=False
-            )    
+        warehouse = forms.ChoiceField(
+                label=_('Warehouse'),
+                #choices = [(ins.warehouse, ins.warehouse) for ins in shelf.objects.all()].insert(0, ('', '----')) ,
+                choices = CHOICE_LIST,
+                widget=forms.Select(),
+                initial = None,
+                required=False
+                )    
 
-    CHOICE_LIST = []
-    for ins in shelf.objects.all().order_by('compartment'):
-        if not (ins.compartment, ins.compartment) in CHOICE_LIST:
-            CHOICE_LIST.append((ins.compartment, ins.compartment))
-    CHOICE_LIST.sort()
-    CHOICE_LIST.insert(0, ('', '----'))
+        CHOICE_LIST = []
+        for ins in shelf.objects.all().order_by('compartment'):
+            if not (ins.compartment, ins.compartment) in CHOICE_LIST:
+                CHOICE_LIST.append((ins.compartment, ins.compartment))
+        CHOICE_LIST.sort()
+        CHOICE_LIST.insert(0, ('', '----'))
 
-    compartment = forms.ChoiceField(
-            label=_('Compartment'),
-            choices = CHOICE_LIST,
-            widget=forms.Select(),
-            initial = None,
-            required=False
-            )  
+        compartment = forms.ChoiceField(
+                label=_('Compartment'),
+                choices = CHOICE_LIST,
+                widget=forms.Select(),
+                initial = None,
+                required=False
+                )  
 
-    CHOICE_LIST = []
-    for ins in shelf.objects.all().order_by('warehouse_channel'):
-        if not (ins.warehouse_channel, ins.warehouse_channel) in CHOICE_LIST:
-            CHOICE_LIST.append((ins.warehouse_channel, ins.warehouse_channel))
-    CHOICE_LIST.sort()
-    CHOICE_LIST.insert(0, ('', '----'))
+        CHOICE_LIST = []
+        for ins in shelf.objects.all().order_by('warehouse_channel'):
+            if not (ins.warehouse_channel, ins.warehouse_channel) in CHOICE_LIST:
+                CHOICE_LIST.append((ins.warehouse_channel, ins.warehouse_channel))
+        CHOICE_LIST.sort()
+        CHOICE_LIST.insert(0, ('', '----'))
 
-    warehouse_channel = forms.ChoiceField(
-            label=_('Warehouse Channel'),
-            choices = CHOICE_LIST,
-            widget=forms.Select(),
-            initial = None,
-            required=False
-            ) 
+        warehouse_channel = forms.ChoiceField(
+                label=_('Warehouse Channel'),
+                choices = CHOICE_LIST,
+                widget=forms.Select(),
+                initial = None,
+                required=False
+                ) 
+    except:
+        pass

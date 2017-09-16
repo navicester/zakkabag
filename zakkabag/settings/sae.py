@@ -24,8 +24,8 @@ if USE_SHARE_DB:
 else:
     MYSQL_HOST = 'prqricrbrexa.mysql.sae.sina.com.cn'
     MYSQL_PORT = '10180'
-    MYSQL_USER = settings_security.MYSQL_USER
-    MYSQL_PASS = settings_security.MYSQL_PASS
+    MYSQL_USER = 'bhe001' #settings_security.MYSQL_USER
+    MYSQL_PASS = 'steer101214' #settings_security.MYSQL_PASS
     MYSQL_DB   = 'szakkabag'
 
 '''
@@ -35,6 +35,7 @@ if not 'SERVER_SOFTWARE' in os.environ:
 	monkey.patch()
 '''
 
+'''
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
@@ -45,3 +46,10 @@ DATABASES = {
         'PORT':     MYSQL_PORT,
     }
 }
+'''
+
+import dj_database_url
+# Parse database configuration from $DATABASE_URL
+DATABASES['default'] =  dj_database_url.config(default="mysql://root:root123@prqricrbrexa.mysql.sae.sina.com.cn:10180/zakkabag")
+
+# MUST use root ?
