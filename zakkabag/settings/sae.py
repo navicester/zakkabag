@@ -22,8 +22,8 @@ if USE_SHARE_DB:
     MYSQL_PASS = 'jx3531ximhkk5z5h3l4myx41w330x3lyz0zz1x3m' #SECRETKEY
     MYSQL_DB   = 'app_zakkabag'
 else:
-    MYSQL_HOST = 'qsehwjqnqqgw.mysql.sae.sina.com.cn'
-    MYSQL_PORT = '10099'
+    MYSQL_HOST = 'prqricrbrexa.mysql.sae.sina.com.cn'
+    MYSQL_PORT = '10180'
     MYSQL_USER = settings_security.MYSQL_USER
     MYSQL_PASS = settings_security.MYSQL_PASS
     MYSQL_DB   = 'szakkabag'
