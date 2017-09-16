@@ -2,6 +2,7 @@ import os
 from django.core.files.storage import default_storage
 from django.db.models import FileField
 from django.core.cache import cache
+from django.conf import settings
 
 def file_cleanup(sender, **kwargs):
     """
