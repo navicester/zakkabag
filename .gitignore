@@ -1,32 +1,37 @@
+# backup files
+_backup/
+
+# Security iles
+security_setting.py
+#settings_security.py
+
+#static/static_root
+#static_in_env/media_root
+trial.py
+
+# temporaty files
+~$*
+*.tmp
+
+# project file
+.pydevproject
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# tools and environment
 bin/
 include/
 lib/
 
-trial.py
-
-#static/static_root
-#static_in_env/media_root
-#static_in_env/static_root/
-#static_in_pro/our_static/img/
-static_in_env2/
-~$*
-*.tmp
-
+dev_server.py
 pip-selfcheck.json
+
 #*.sqlite3
 .DS_STORE
 
 
-.pydevproject
-.project
-.settings/
-
-security_setting.py
-#settings_security.py
-dev_server.py
-
-*.sublime-project
-*.sublime-workspace
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
