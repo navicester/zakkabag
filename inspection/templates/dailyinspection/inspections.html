@@ -1,4 +1,4 @@
-
+<div class='row'>
 	{% for inspection in object_list %}
 		<div class='col-xs-12 col-sm-3 {{col_class_set}}' style="margin-top: 5px;">
 			{% include "dailyinspection/inspection_thumbnail.html" with inspection=inspection %}
@@ -7,7 +7,7 @@
 		{% cycle '' '' '' '</div><div class="row">'%} <!-- if not set additional class, then it will float dynamically every 4 -->
 		{% endif %}	
 	{% endfor %}
-
+</div>
 
 <!--
 .col-xs- 超小屏幕 手机 (<768px)

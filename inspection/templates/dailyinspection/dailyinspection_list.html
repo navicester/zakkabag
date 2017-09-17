@@ -55,8 +55,7 @@ $(document).ready(function(){
 			<!-- <input type='hidden' name='q' value='{{ request.GET.q }}' /> -->
 			<input type='submit' value="{% trans 'Apply Filter' %}" class='btn btn-default'>
 		</form>
-		<br>
-		<a class="btn btn-default" href="{% url 'dailyinspection_list' %}"  >{% trans 'Clear Filters' %}</a>  
+		<a class="btn btn-default" style="margin-top: 10px;" href="{% url 'dailyinspection_list' %}"  >{% trans 'Clear Filters' %}</a>  
 	    <hr>
 	</div>		
 	<div class='col-xs-8 col-sm-9 col-md-10 container'>	
@@ -75,14 +74,12 @@ $(document).ready(function(){
 			{% endfor %}
 		</div>
 		<br>
-
-
 		
-	    <div class="row object_lists"> <!-- 2 row together -->
+	    <div class="object_lists"> <!-- 2 row together -->
 			{% autopaginate object_list 8 %}
             
 			{% if object_list.count == 0 %}
-				Nothing found
+				{% trans "Nothing found" %}
 			{% else %}
 				{% include "dailyinspection/inspections.html" with object_list=object_list %}            	
 			{% endif %}
