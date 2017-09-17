@@ -71,7 +71,7 @@ class CrowdfundingCreateView(CreateView):
     #     return reverse("CrowdfundingListView")
 
     def post(self, request, *args, **kwargs):
-        postresult = super(CrowdfundingCreateView,self).post(request, args, kwargs)
+        # postresult = super(CrowdfundingCreateView,self).post(request, args, kwargs)
         if request.is_ajax():
             id = request.POST['id']
             f = request.FILES['picture']

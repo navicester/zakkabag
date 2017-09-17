@@ -24,9 +24,10 @@ trial.py
 bin/
 include/
 lib/
+pip-selfcheck.json
+
 
 dev_server.py
-pip-selfcheck.json
 
 #*.sqlite3
 .DS_STORE
