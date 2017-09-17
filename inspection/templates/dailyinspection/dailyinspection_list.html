@@ -76,7 +76,7 @@ $(document).ready(function(){
 		</div>
 		<br>
 
-		{% comment %}
+
 		
 	    <div class="row object_lists"> <!-- 2 row together -->
 			{% autopaginate object_list 8 %}
@@ -91,6 +91,8 @@ $(document).ready(function(){
 			{% paginate %}
 			</div>            
 		</div>
+
+		{% comment %}
         
 		<div class="object_create">
 	    	<h4><a href='{% url "dailyinspection_create" %}'>{% trans "Create New Item" %}</a></h4>
