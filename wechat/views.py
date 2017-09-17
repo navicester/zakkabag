@@ -21,7 +21,7 @@ YOUDAO_KEY_FROM = "zakkabag"
 YOUDAO_DOC_TYPE = "xml"
 
 @csrf_exempt
-def handleRequest(request):
+def handleCheckSignature(request):
 	if request.method == 'GET':
 		#response = HttpResponse(request.GET['echostr'],content_type="text/plain")
 		response = HttpResponse(checkSignature(request),content_type="text/plain")

@@ -24,8 +24,7 @@ def i18n_javascript(request):
 
 urlpatterns = url_patterns('',
     # Examples:
-    url(r'^$', 'wechat.views.handleRequest'),
-
+    url(r'^$', 'newsletter.views.home', name='home'),
     url(r'^home$', 'newsletter.views.home', name='home'),
     url(r'^contact/$', 'newsletter.views.contact', name='contact'),   
     url(r'^about/$', 'zakkabag.views.about', name='about'),    
