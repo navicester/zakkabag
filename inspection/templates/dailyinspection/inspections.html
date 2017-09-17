@@ -1,6 +1,6 @@
 <div class='row'>
 	{% for inspection in object_list %}
-		<div class='col-xs-12 col-sm-3 {{col_class_set}}'>
+		<div class='col-xs-12 col-sm-3 {{col_class_set}}' style="margin-top: 5px;">
 			{% include "dailyinspection/inspection_thumbnail.html" with inspection=inspection %}
 		</div>
 		{% if not col_class_set %}
