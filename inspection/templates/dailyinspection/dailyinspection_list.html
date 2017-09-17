@@ -45,7 +45,7 @@ $(document).ready(function(){
 {% endblock %}
 </script>
 
-{% block content1 %}
+{% block content %}
 
 <div class='row'>
 	<div class='col-xs-4 col-sm-3 col-md-2 '>
@@ -97,18 +97,7 @@ $(document).ready(function(){
 	</div>
 </div>
 
-<hr>
-<div>
-	<h3>{% trans "Latest Update" %}</h3>
-	<hr>
-	<ul style="list-style:none; padding-left:2px; margin-left:2px;">
-		{% for object in objects_sort %}
-		<li style="padding-bottom: 5px;">
-			<a href='{{ object.get_absolute_url }}'>{{object}}</a>
-		</li>
-		{% endfor %}
-	</ul>
-</div>
+
 
 {% endblock %}
 
