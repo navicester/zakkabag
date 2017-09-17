@@ -5,7 +5,6 @@ if settings.USE_EXPLICIT_LANG_URL:
 else:    
     from django.conf.urls import patterns as url_patterns
 from django.conf.urls import patterns, include, url
-from wechat.views import handleRequest
 
 from django.contrib import admin
 
