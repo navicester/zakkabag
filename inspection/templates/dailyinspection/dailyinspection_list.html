@@ -60,7 +60,7 @@ $(document).ready(function(){
 	    <hr>
 	</div>		
 	<div class='col-xs-8 col-sm-9 col-md-10 container'>	
-		{% comment %}
+		
         
 		<div class="row category-content">
 			<div class='col-xs-4 col-md-2 categorylist active text-center'>
@@ -75,6 +75,8 @@ $(document).ready(function(){
 			{% endfor %}
 		</div>
 		<br>
+
+		{% comment %}
 		
 	    <div class="row object_lists"> <!-- 2 row together -->
 			{% autopaginate object_list 8 %}
