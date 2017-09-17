@@ -50,7 +50,7 @@ $(document).ready(function(){
 
 {% block content %}
 {% if records.count == 0 %}
-	Nothing found
+	{% trans "Nothing found" %}
 {% else %}	
 <div class="row header">
 	<div class="col-xs-3">{% trans 'Create Date' %}</div>
