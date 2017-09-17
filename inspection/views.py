@@ -191,7 +191,7 @@ class DailyInspectionDetailView(ModelFormMixin, DetailView):
         instance = self.get_object()
         request.breadcrumbs([
             (_("Home"),reverse("home", kwargs={})),
-            ("Daily Inspection",reverse("dailyinspection_list", kwargs={})),
+            (_("Daily Inspection"),reverse("dailyinspection_list", kwargs={})),
             (instance,request.path_info),
         ])
         return super(DailyInspectionDetailView, self).dispatch(request,args,kwargs)   
