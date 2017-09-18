@@ -1,0 +1,1 @@
+web: gunicorn zakkabag.wsgi --log-file -
