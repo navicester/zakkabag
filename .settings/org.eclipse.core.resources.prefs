@@ -3,6 +3,7 @@ encoding//products/views.py=utf-8
 encoding//site-packages/django/db/models/fields/__init__.py=utf-8
 encoding//site-packages/django/utils/encoding.py=utf-8
 encoding//site-packages/requests/api.py=utf-8
+encoding//site-packages/sae/storage.py=utf8
 encoding//site-packages/weixin/oauth2.py=utf-8
 encoding//zakkabag/settings/base.py=utf-8
 encoding//zakkabag/templatetags/langs.py=utf-8
