@@ -2,7 +2,6 @@
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 
-
 <style>
 {% block head_css_extend %}
 <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}" />
@@ -11,8 +10,6 @@
 {% endblock %}
 </style>
 
-<script src="{% static 'admin/js/jquery.js' %}"></script>
-<script src="{% static 'admin/js/jquery.init.both.js' %}"></script>  
 
 {% block jquery %}
 <script src="{% static 'admin/js/jquery.init.js' %}"></script>
@@ -22,6 +19,7 @@
 <script src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script> 
 <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";</script>    
 {% endblock %}
+
 
 
 {% block content %}
