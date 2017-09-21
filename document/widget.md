@@ -30,10 +30,7 @@ js 资源
 <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";</script>
 ```
 
-``` javascript
-
-```
-
+参考文档里提到的下面这个文件没找到
 ``` javascript
 <script src="{% static 'admin/js/jquery.init.both.js' %}"></script>
 ```
