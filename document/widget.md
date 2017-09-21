@@ -79,11 +79,18 @@ django.jQuery = jQuery.noConflict(true);
 如果在form中定义，首先引入widget，并覆盖原来的日期表单
 ``` python
 from django.contrib.admin import widgets
-class PostForm(forms.Form):
-   date = forms.DateTimeField(widget=widgets.AdminDateWidget(), label=u'时间')
+
+class DailyInspectionForm(forms.ModelForm):
+
+    date = forms.DateTimeField(widget=widgets.AdminDateWidget(), label=u'时间')
+    
+    def __init__(self, *args, **kwargs):
+        super(DailyInspectionForm, self).__init__(*args, **kwargs)
+        self.fields['due_date'].widget = widgets.AdminDateWidget()
 ```
 
 参考
 - [在 Django admin site 之外使用其日历控件](http://blog.xavierskip.com/2016-10-22-django-admit-calendar-widget/)
 - [将django 管理端的时间控件用于前端](https://www.douban.com/note/350934079/)
 - https://stackoverflow.com/questions/38601/using-django-time-date-widgets-in-custom-form
+
