@@ -25,4 +25,4 @@ django.jQuery = jQuery.noConflict(true);
 参考
 - [在 Django admin site 之外使用其日历控件](http://blog.xavierskip.com/2016-10-22-django-admit-calendar-widget/)
 - [将django 管理端的时间控件用于前端](https://www.douban.com/note/350934079/)
-https://stackoverflow.com/questions/38601/using-django-time-date-widgets-in-custom-form
+- https://stackoverflow.com/questions/38601/using-django-time-date-widgets-in-custom-form
