@@ -182,9 +182,23 @@ usermodel.image = photoname
 ```
 
 效果图如下：
+
 ![](img/img_update_personalcenter.png)
 
+# 上传进度条
+具体参考：https://github.com/Tonetete/Simple-Django-progressbar-upload-file-form-with-ajax
+该文章有相对详细的讲解，但是内容不全
+[Upload to Django with progress bar using Ajax and jQuery](http://www.laurentluce.com/posts/upload-to-django-with-progress-bar-using-ajax-and-jquery/)
 
+用到的技术
+- [jQuery Form plugin](http://jquery.malsup.com/form/#download)
+- ajaxsubmit
+- http://malsup.github.io/jquery.form.js
+- [jQuery progress bar plugin](http://t.wits.sg/jquery-progress-bar/) 这个当前实现没有，后面可以用这个来代替进度条状态更新的函数
+- progressbar
+- https://code.jquery.com/ui/1.12.1/jquery-ui.js
+- https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css
+- 文件上传参考函数 https://docs.djangoproject.com/en/1.8/topics/http/file-uploads/
 
 
 
