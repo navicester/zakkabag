@@ -187,17 +187,18 @@ usermodel.image = photoname
 
 # 上传进度条
 具体参考：https://github.com/Tonetete/Simple-Django-progressbar-upload-file-form-with-ajax
-该文章有相对详细的讲解，但是内容不全
-[Upload to Django with progress bar using Ajax and jQuery](http://www.laurentluce.com/posts/upload-to-django-with-progress-bar-using-ajax-and-jquery/)
+
+该文章有相对详细的讲解，但是内容不全 [Upload to Django with progress bar using Ajax and jQuery](http://www.laurentluce.com/posts/upload-to-django-with-progress-bar-using-ajax-and-jquery/)
 
 用到的技术
-- [jQuery Form plugin](http://jquery.malsup.com/form/#download)
-- ajaxsubmit
-- http://malsup.github.io/jquery.form.js
-- [jQuery progress bar plugin](http://t.wits.sg/jquery-progress-bar/) 这个当前实现没有，后面可以用这个来代替进度条状态更新的函数
+- [jQuery Form plugin](http://jquery.malsup.com/form/#download) [github](https://github.com/jquery-form/form)
+    - ajaxsubmit
+    - [jquery.form.js](http://malsup.github.io/jquery.form.js) 
+    - [jquery.form.min.js](http://malsup.github.com/min/jquery.form.min.js)
 - progressbar
-- https://code.jquery.com/ui/1.12.1/jquery-ui.js
-- https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css
+    - [jQuery progress bar plugin](https://jqueryui.com/progressbar//) 这个当前实现没有，后面可以用这个来代替进度条状态更新的函数
+    - [jquery-ui.js](https://code.jquery.com/ui/1.12.1/jquery-ui.js)
+    - [jquery-ui.css](https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css)
 - 文件上传参考函数 https://docs.djangoproject.com/en/1.8/topics/http/file-uploads/
 
 ## Form
@@ -392,7 +393,7 @@ def upload_file(request):
 
 从$('#form_upload').submit(function()，可以看到，form_upload submit提交时会首先处理upload_status，结束之后才会执行执行upload_file
 
-> upload_status
+> upload_status  
 > [03/Jun/2017 15:00:29] "GET /personalcenter/upload_status?key=6pxOb4jkfnKLUEU28cmIYL6NDVdkYNhm HTTP/1.1" 200 34 
 > upload_status  
 > [03/Jun/2017 15:00:29] "GET /personalcenter/upload_status?key=6pxOb4jkfnKLUEU28cmIYL6NDVdkYNhm HTTP/1.1" 200 37  
@@ -411,8 +412,8 @@ def upload_status(request):
     if request.method == 'GET':
         if request.GET['key']: 
             if cache.get(request.GET['key']):
-                value = cache.get(request.GET['key']) #
-                return HttpResponse(json.dumps(value), content_type="application/json")# 
+                value = cache.get(request.GET['key']) 
+                return HttpResponse(json.dumps(value), content_type="application/json")
             else:
                 return HttpResponse(json.dumps({'error':"No csrf value in cache"}), content_type="application/json")
         else:
