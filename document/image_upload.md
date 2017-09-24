@@ -539,5 +539,5 @@ class ProfileDetailView(FormMixin, DetailView):
 
 效果图如下:
 
-![](img\img_update_to_personalcenter_progress.png)
+![](img/img_update_to_personalcenter_progress.png)
 
