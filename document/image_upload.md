@@ -181,6 +181,8 @@ img.save(os.path.join(settings.MEDIA_ROOT, photoname))
 usermodel.image = photoname
 ```
 
+效果图如下：
+![](img/img_update_personalcenter.png)
 
 
 
