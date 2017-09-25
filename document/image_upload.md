@@ -679,10 +679,10 @@ class PhotoAdmin(admin.ModelAdmin):
 admin.site.register(Photo, PhotoAdmin)
 ```
 > 
->>> from base.models import Photo  
->>> ps = Photo.objects.all()  
->>> ps  
-[<Photo: /media/photos/2016/12/27/02e374320dae43888fc75c4d3041f93b.150x150.jpg>]  
+> from base.models import Photo  
+> ps = Photo.objects.all()  
+> ps  
+> [<Photo: /media/photos/2016/12/27/02e374320dae43888fc75c4d3041f93b.150x150.jpg>]  
 
 通过控制台由此可得上传图片缩略图的访问地址为：
 > http://127.0.0.1:8000/media/photos/2016/12/27/02e374320dae43888fc75c4d3041f93b.150x150.jpg
