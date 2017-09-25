@@ -542,3 +542,163 @@ class ProfileDetailView(FormMixin, DetailView):
 
 ![](img/img_update_to_personalcenter_progress.png)
 
+# 缩略图
+
+首先安装PIL
+
+## 使用PIL裁切图片
+使用PIL需要引用Image，使用Image的open(file)方法可以返回打开的图片，使用crop((x0,y0,x1,y1))方法可以对图片做裁切。
+
+如下代码示例：
+``` python
+import Image
+
+img = Image.open(r'E:\photo\20120402\abc.jpg')
+region = (100,200,400,500)
+
+#裁切图片
+cropImg = img.crop(region)
+
+#保存裁切后的图片
+cropImg.save(r'E:\photo\crop.jpg')
+```
+
+## 使用PIL制作缩略图
+
+PIL的Image中提供了thumbnail(img,filter)方法,使用这个方法可以很方便的制作缩略图。
+
+```python
+img = Image.open(i.avatar.file)
+if img.size[0] > 1024 or img.size[1] > 1000:
+    newWidth = 1024
+    newHeight = float(1024) / img.size[0] * img.size[1]
+    img.thumbnail((newWidth,newHeight),Image.ANTIALIAS)
+
+saveToPath = path.join(getUserUploadDirRoot(loginUser.id) , 'original.jpg')
+img.save(saveToPath,"JPEG")
+```
+
+这一步是在为裁切头像做准备，如果用户上传的图片宽度大于1024时会做一下缩放。
+
+## 使用 Django-thumbs 生成缩略图
+Django-thumbs is the easiest way to create thumbnails for your ImageFields with Django.You can integrate it easily in your code and it works with any StorageBackend.
+
+### 特征
+- Easy to integrate in your code (no database changes, works as an ImageField)
+- Works perfectly with any StorageBackend
+- Generates thumbnails after image is uploaded into memory
+- Deletes thumbnails when the image file is deleted
+- Provides easy access to the thumbnails' URLs (similar method as with ImageField)
+
+### 安装
+> $ pip install django-thumbs
+
+### 要点
+- Import it in your models.py and replace ```ImageField``` with ```ImageWithThumbsField``` in your model
+- Add a sizes attribute with a list of sizes you want to use for the thumbnails
+- Make sure your have defined ```MEDIA_URL``` in your ```settings.py```
+
+### 范例
+``` python
+from django.db import models
+from django_thumbs.db.models import ImageWithThumbsField
+
+class Person(models.Model):
+    photo = ImageWithThumbsField(upload_to='images', sizes=((125, 125), (200, 200)))
+    second_photo = ImageWithThumbsField(upload_to='images')
+```
+
+In this example we have a Person model with 2 image fields.
+
+You can see the field second_photo doesn't have a sizes attribute. This field works exactly the same way as a normal ImageField.
+
+The field photo has a sizes attribute specifying desired sizes for the thumbnails. This field works the same way as ImageField but it also creates the desired thumbnails when uploading a new file and deletes the thumbnails when deleting the file.
+
+With ImageField you retrieve the URL for the image with：someone.photo.url With ImageWithThumbsField you retrieve it the same way. You also retrieve the URL for every thumbnail specifying its size：In this example we use someone.photo.url_125x125 and someone.photo.url_200x200 to get the URL of both thumbnails.
+
+### 卸载
+
+At any time you can go back and use ImageField again without altering the database or anything else. Just replace ImageWithThumbsField with ImageField again and make sure you delete the sizes attribute. Everything will work the same way it worked before using django-thumbs. Just remember to delete generated thumbnails in the case you don't want to have them anymore.
+
+### 我的项目
+
+新建 App
+
+> startapp base
+
+settings.py
+``` python
+INSTALLED_APPS = (
+    ...
+    'base'
+)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+```
+
+models.py
+``` python
+# coding:utf-8
+from django.db import models
+from django_thumbs.db.models import ImageWithThumbsField
+import os, datetime, uuid
+
+
+def generate_filename(instance, filename):
+    """
+    安全考虑，生成随机文件名
+    """
+    directory_name = datetime.datetime.now().strftime('photos/%Y/%m/%d')
+    filename = uuid.uuid4().hex + os.path.splitext(filename)[-1]
+    return os.path.join(directory_name, filename)
+
+
+class Photo(models.Model):
+    name = models.CharField('名称', max_length=10)
+    photo = ImageWithThumbsField('照片', upload_to=generate_filename, sizes=((150, 150),))
+
+    def __unicode__(self):
+        return self.photo.url_150x150
+
+    class Meta:
+        verbose_name_plural = verbose_name = '照片'
+```
+
+admin.py
+``` python
+# coding: utf-8
+from django.contrib import admin
+from .models import Photo
+
+
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ('name', 'photo',)
+
+
+admin.site.register(Photo, PhotoAdmin)
+```
+> 
+>>> from base.models import Photo  
+>>> ps = Photo.objects.all()  
+>>> ps  
+[<Photo: /media/photos/2016/12/27/02e374320dae43888fc75c4d3041f93b.150x150.jpg>]  
+
+通过控制台由此可得上传图片缩略图的访问地址为：
+> http://127.0.0.1:8000/media/photos/2016/12/27/02e374320dae43888fc75c4d3041f93b.150x150.jpg
+
+注意 ：
+
+要想成功访问图片，需要在 urls.py 里面添加以下内容：
+``` python
+from django.conf.urls import url
+from django.conf import settings
+
+urlpatterns = [
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT})
+]
+```
+
+
+
+
