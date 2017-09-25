@@ -580,6 +580,9 @@ img.save(saveToPath,"JPEG")
 
 这一步是在为裁切头像做准备，如果用户上传的图片宽度大于1024时会做一下缩放。
 
+## 自定义 ThumbnailImageField
+
+
 ## 使用 Django-thumbs 生成缩略图
 Django-thumbs is the easiest way to create thumbnails for your ImageFields with Django.You can integrate it easily in your code and it works with any StorageBackend.
 
