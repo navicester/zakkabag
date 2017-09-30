@@ -46,7 +46,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
 <img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
 ```
 
-
 在表单中加入```enctype="multipart/form-data；```如果不加则得不到图片信息，只有路径  
 FILES是个字典，它包含每个FileField的键 (或者ImageField，FileField的子类)。这样的话就可以用request.FILES['File']来存放表单中的这些数据了。 
 
@@ -425,6 +424,7 @@ def upload_status(request):
 1. ```request.GET['key']``` , 根据```url = "/personalcenter/upload_status?key=" + $("input[name=csrfmiddlewaretoken]")```在GET里面包含字典{‘key’: csrfmiddlewaretoken }
 2. ```cache.get[cache_key]```, 这个cache的key是csrfmiddlewaretoken值。 根据 ```UploadProgressCachedHandler.handle_raw_input```，它会里面会从```self.request.META['CSRF_COOKIE']```获取到当前的csrfmiddlewaretoken，并将cache_key键值设置为这个token，内容为totalsize和uploaded，该函数能根据这个token从UploadProgressCachedHandler的cache里面拿到返回值
 
+### uploadfilehander
 具体进度的数据更新在uploadfilehander里面完成
 uploadfilehandler
 添加配置
@@ -866,6 +866,58 @@ class FileSystemStorage(Storage):
             os.chmod(full_path, self.file_permissions_mode)
 
         return name
+```
+
+## UploadFile
+
+django\core\files\uploadedfile.py
+
+字典request.FILES中的每一个条目都是一个UploadedFile对象。
+
+UploadedFile对象有如下方法：
+
+1. UploadFile.read():
+  从文件中读取全部上传数据。当上传文件过大时，可能会耗尽内存，慎用。
+  
+2. UploadFile.multiple_chunks():
+  如上传文件足够大，要分成多个部分读入时，返回True.默认情况,当上传文件大于2.5M时，返回True。但这一个值可以配置。
+  
+3. UploadFile.chunks():
+  返回一个上传文件的分块生成器。如multiple_chunks()返回True,必须在循环中使用chrunks()来代替read()。一般情况下直接使用chunks()就行。
+  
+4. UploadFile.name():上传文件的文件名
+
+5. UplaodFile.size():上传文件的文件大小（字节）
+
+由上面的说明可以写出handle_uploaded_file函数
+``` python
+def handle_uploaded_file(f):
+  destination = open('some/file/name.txt', 'wb+')
+  for chunk in f.chunks():
+    destination.write(chunk)
+  destination.close()
+```  
+**上传文件保存的位置**
+
+保存上传文件前，数据需要存放在某个位置。默认时，当上传文件小于2.5M时，django会将上传文件的全部内容读进内存。意味着保存文件只有一次从内存读取，一次写磁盘。
+
+但当上传文件很大时，django会把上传文件写到临时文件中，然后存放到系统临时文件夹中。
+
+### 改变upload handler的行为
+三个设置控制django文件上传的行为：
+> FILE_UPLOAD_MAX_MEMORY_SIZE:直接读入内存的最大上传文件大小（字节数）。当大于此值时，文件存放到磁盘。默认2.5M字节  
+FILE_UPLOAD_TEMP_DIR  
+FILE_UPLOAD_PERMISSIONS:权限  
+
+FILE_UPLOAD_HANDLERS
+上传文件真正的处理器。修改此项设置可以完成自定义django上传文件的过程。
+默认是：
+``` python
+# List of upload handler classes to be applied in order.
+FILE_UPLOAD_HANDLERS = (
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+)
 ```
 
 # 参考文档
