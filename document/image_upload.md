@@ -920,6 +920,13 @@ FILE_UPLOAD_HANDLERS = (
 )
 ```
 
+# 插件
+## jQuery File Upload
+
+- http://www.jq22.com/jquery-info230
+- https://www.oschina.net/p/uploadify
+
+
 # 参考文档
 - [django上传文件](http://www.cnblogs.com/yijun-boxing/archive/2011/04/18/2020155.html)
 
