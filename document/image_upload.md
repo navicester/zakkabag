@@ -701,7 +701,176 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT})
 ]
 ```
+# 源码解析
+
+- FileField::pre_save 
+    - Field::pre_save 
+    - FieldFile::save 
+        - Storage::save
+	    - FileSystemStorage::save
 
 
+
+``` python
+class FileField(Field):
+    def pre_save(self, model_instance, add):
+        "Returns field's value just before saving."
+        file = super(FileField, self).pre_save(model_instance, add)
+        if file and not file._committed:
+            # Commit the file to storage prior to saving the model
+            file.save(file.name, file, save=False)
+        return file
+
+class Field(RegisterLookupMixin):
+    def pre_save(self, model_instance, add):
+        """
+        Returns field's value just before saving.
+        """
+        return getattr(model_instance, self.attname)
+	
+class FieldFile(File):
+    def save(self, name, content, save=True):
+        name = self.field.generate_filename(self.instance, name)
+
+        args, varargs, varkw, defaults = getargspec(self.storage.save)
+        if 'max_length' in args:
+            self.name = self.storage.save(name, content, max_length=self.field.max_length)
+        else:
+            warnings.warn(
+                'Backwards compatibility for storage backends without '
+                'support for the `max_length` argument in '
+                'Storage.save() will be removed in Django 1.10.',
+                RemovedInDjango110Warning, stacklevel=2
+            )
+            self.name = self.storage.save(name, content)
+
+        setattr(self.instance, self.field.name, self.name)
+
+        # Update the filesize cache
+        self._size = content.size
+        self._committed = True
+
+        # Save the object because it has changed, unless save is False
+        if save:
+            self.instance.save()
+    save.alters_data = True
+```
+
+``` python
+class Storage(object):
+    def save(self, name, content, max_length=None):
+        """
+        Saves new content to the file specified by name. The content should be
+        a proper File object or any python file-like object, ready to be read
+        from the beginning.
+        """
+        # Get the proper name for the file, as it will actually be saved.
+        if name is None:
+            name = content.name
+
+        if not hasattr(content, 'chunks'):
+            content = File(content)
+
+        args, varargs, varkw, defaults = getargspec(self.get_available_name)
+        if 'max_length' in args:
+            name = self.get_available_name(name, max_length=max_length)
+        else:
+            warnings.warn(
+                'Backwards compatibility for storage backends without '
+                'support for the `max_length` argument in '
+                'Storage.get_available_name() will be removed in Django 1.10.',
+                RemovedInDjango110Warning, stacklevel=2
+            )
+            name = self.get_available_name(name)
+
+        name = self._save(name, content)
+
+        # Store filenames with forward slashes, even on Windows
+        return force_text(name.replace('\\', '/'))
+```
+
+``` python
+class FileSystemStorage(Storage):
+   def _save(self, name, content):
+        full_path = self.path(name)
+
+        # Create any intermediate directories that do not exist.
+        # Note that there is a race between os.path.exists and os.makedirs:
+        # if os.makedirs fails with EEXIST, the directory was created
+        # concurrently, and we can continue normally. Refs #16082.
+        directory = os.path.dirname(full_path)
+        if not os.path.exists(directory):
+            try:
+                if self.directory_permissions_mode is not None:
+                    # os.makedirs applies the global umask, so we reset it,
+                    # for consistency with file_permissions_mode behavior.
+                    old_umask = os.umask(0)
+                    try:
+                        os.makedirs(directory, self.directory_permissions_mode)
+                    finally:
+                        os.umask(old_umask)
+                else:
+                    os.makedirs(directory)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
+        if not os.path.isdir(directory):
+            raise IOError("%s exists and is not a directory." % directory)
+
+        # There's a potential race condition between get_available_name and
+        # saving the file; it's possible that two threads might return the
+        # same name, at which point all sorts of fun happens. So we need to
+        # try to create the file, but if it already exists we have to go back
+        # to get_available_name() and try again.
+
+        while True:
+            try:
+                # This file has a file path that we can move.
+                if hasattr(content, 'temporary_file_path'):
+                    file_move_safe(content.temporary_file_path(), full_path)
+
+                # This is a normal uploadedfile that we can stream.
+                else:
+                    # This fun binary flag incantation makes os.open throw an
+                    # OSError if the file already exists before we open it.
+                    flags = (os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                             getattr(os, 'O_BINARY', 0))
+                    # The current umask value is masked out by os.open!
+                    fd = os.open(full_path, flags, 0o666)
+                    _file = None
+                    try:
+                        locks.lock(fd, locks.LOCK_EX)
+                        for chunk in content.chunks():
+                            if _file is None:
+                                mode = 'wb' if isinstance(chunk, bytes) else 'wt'
+                                _file = os.fdopen(fd, mode)
+                            _file.write(chunk)
+                    finally:
+                        locks.unlock(fd)
+                        if _file is not None:
+                            _file.close()
+                        else:
+                            os.close(fd)
+            except OSError as e:
+                if e.errno == errno.EEXIST:
+                    # Ooops, the file exists. We need a new file name.
+                    name = self.get_available_name(name)
+                    full_path = self.path(name)
+                else:
+                    raise
+            else:
+                # OK, the file save worked. Break out of the loop.
+                break
+
+        if self.file_permissions_mode is not None:
+            os.chmod(full_path, self.file_permissions_mode)
+
+        return name
+```
+
+# 参考文档
+- [django上传文件](http://www.cnblogs.com/yijun-boxing/archive/2011/04/18/2020155.html)
+
+目前所有的都是在上传之后进行处理，这样的话，依然为完成大文件的处理，前台有没有技术对上传的文件进行压缩
 
 
