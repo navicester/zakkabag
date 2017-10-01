@@ -46,7 +46,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "static_in_env", "media_root")
 <img  id='img' class= 'img-responsive' src="{{object.get_image_url}}"/>
 ```
 
-
 在表单中加入```enctype="multipart/form-data；```如果不加则得不到图片信息，只有路径  
 FILES是个字典，它包含每个FileField的键 (或者ImageField，FileField的子类)。这样的话就可以用request.FILES['File']来存放表单中的这些数据了。 
 
@@ -425,6 +424,7 @@ def upload_status(request):
 1. ```request.GET['key']``` , 根据```url = "/personalcenter/upload_status?key=" + $("input[name=csrfmiddlewaretoken]")```在GET里面包含字典{‘key’: csrfmiddlewaretoken }
 2. ```cache.get[cache_key]```, 这个cache的key是csrfmiddlewaretoken值。 根据 ```UploadProgressCachedHandler.handle_raw_input```，它会里面会从```self.request.META['CSRF_COOKIE']```获取到当前的csrfmiddlewaretoken，并将cache_key键值设置为这个token，内容为totalsize和uploaded，该函数能根据这个token从UploadProgressCachedHandler的cache里面拿到返回值
 
+### uploadfilehander
 具体进度的数据更新在uploadfilehander里面完成
 uploadfilehandler
 添加配置
@@ -541,4 +541,395 @@ class ProfileDetailView(FormMixin, DetailView):
 效果图如下:
 
 ![](img/img_update_to_personalcenter_progress.png)
+
+# 缩略图
+
+首先安装PIL
+
+## 使用PIL裁切图片
+使用PIL需要引用Image，使用Image的open(file)方法可以返回打开的图片，使用crop((x0,y0,x1,y1))方法可以对图片做裁切。
+
+如下代码示例：
+``` python
+import Image
+
+img = Image.open(r'E:\photo\20120402\abc.jpg')
+region = (100,200,400,500)
+
+#裁切图片
+cropImg = img.crop(region)
+
+#保存裁切后的图片
+cropImg.save(r'E:\photo\crop.jpg')
+```
+
+## 使用PIL制作缩略图
+
+PIL的Image中提供了thumbnail(img,filter)方法,使用这个方法可以很方便的制作缩略图。
+
+```python
+img = Image.open(i.avatar.file)
+if img.size[0] > 1024 or img.size[1] > 1000:
+    newWidth = 1024
+    newHeight = float(1024) / img.size[0] * img.size[1]
+    img.thumbnail((newWidth,newHeight),Image.ANTIALIAS)
+
+saveToPath = path.join(getUserUploadDirRoot(loginUser.id) , 'original.jpg')
+img.save(saveToPath,"JPEG")
+```
+
+这一步是在为裁切头像做准备，如果用户上传的图片宽度大于1024时会做一下缩放。
+
+## 自定义 ThumbnailImageField
+
+
+## 使用 Django-thumbs 生成缩略图
+Django-thumbs is the easiest way to create thumbnails for your ImageFields with Django.You can integrate it easily in your code and it works with any StorageBackend.
+
+### 特征
+- Easy to integrate in your code (no database changes, works as an ImageField)
+- Works perfectly with any StorageBackend
+- Generates thumbnails after image is uploaded into memory
+- Deletes thumbnails when the image file is deleted
+- Provides easy access to the thumbnails' URLs (similar method as with ImageField)
+
+### 安装
+> $ pip install django-thumbs
+
+### 要点
+- Import it in your models.py and replace ```ImageField``` with ```ImageWithThumbsField``` in your model
+- Add a sizes attribute with a list of sizes you want to use for the thumbnails
+- Make sure your have defined ```MEDIA_URL``` in your ```settings.py```
+
+### 范例
+``` python
+from django.db import models
+from django_thumbs.db.models import ImageWithThumbsField
+
+class Person(models.Model):
+    photo = ImageWithThumbsField(upload_to='images', sizes=((125, 125), (200, 200)))
+    second_photo = ImageWithThumbsField(upload_to='images')
+```
+
+In this example we have a Person model with 2 image fields.
+
+You can see the field second_photo doesn't have a sizes attribute. This field works exactly the same way as a normal ImageField.
+
+The field photo has a sizes attribute specifying desired sizes for the thumbnails. This field works the same way as ImageField but it also creates the desired thumbnails when uploading a new file and deletes the thumbnails when deleting the file.
+
+With ImageField you retrieve the URL for the image with：someone.photo.url With ImageWithThumbsField you retrieve it the same way. You also retrieve the URL for every thumbnail specifying its size：In this example we use someone.photo.url_125x125 and someone.photo.url_200x200 to get the URL of both thumbnails.
+
+### 卸载
+
+At any time you can go back and use ImageField again without altering the database or anything else. Just replace ImageWithThumbsField with ImageField again and make sure you delete the sizes attribute. Everything will work the same way it worked before using django-thumbs. Just remember to delete generated thumbnails in the case you don't want to have them anymore.
+
+### 我的项目
+
+新建 App
+
+> startapp base
+
+settings.py
+``` python
+INSTALLED_APPS = (
+    ...
+    'base'
+)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+```
+
+models.py
+``` python
+# coding:utf-8
+from django.db import models
+from django_thumbs.db.models import ImageWithThumbsField
+import os, datetime, uuid
+
+
+def generate_filename(instance, filename):
+    """
+    安全考虑，生成随机文件名
+    """
+    directory_name = datetime.datetime.now().strftime('photos/%Y/%m/%d')
+    filename = uuid.uuid4().hex + os.path.splitext(filename)[-1]
+    return os.path.join(directory_name, filename)
+
+
+class Photo(models.Model):
+    name = models.CharField('名称', max_length=10)
+    photo = ImageWithThumbsField('照片', upload_to=generate_filename, sizes=((150, 150),))
+
+    def __unicode__(self):
+        return self.photo.url_150x150
+
+    class Meta:
+        verbose_name_plural = verbose_name = '照片'
+```
+
+admin.py
+``` python
+# coding: utf-8
+from django.contrib import admin
+from .models import Photo
+
+
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ('name', 'photo',)
+
+
+admin.site.register(Photo, PhotoAdmin)
+```
+> 
+> from base.models import Photo  
+> ps = Photo.objects.all()  
+> ps  
+> [<Photo: /media/photos/2016/12/27/02e374320dae43888fc75c4d3041f93b.150x150.jpg>]  
+
+通过控制台由此可得上传图片缩略图的访问地址为：
+> http://127.0.0.1:8000/media/photos/2016/12/27/02e374320dae43888fc75c4d3041f93b.150x150.jpg
+
+注意 ：
+
+要想成功访问图片，需要在 urls.py 里面添加以下内容：
+``` python
+from django.conf.urls import url
+from django.conf import settings
+
+urlpatterns = [
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT})
+]
+```
+# 源码解析
+
+- FileField::pre_save 
+    - Field::pre_save 
+    - FieldFile::save 
+        - Storage::save
+	    - FileSystemStorage::save
+
+
+
+``` python
+class FileField(Field):
+    def pre_save(self, model_instance, add):
+        "Returns field's value just before saving."
+        file = super(FileField, self).pre_save(model_instance, add)
+        if file and not file._committed:
+            # Commit the file to storage prior to saving the model
+            file.save(file.name, file, save=False)
+        return file
+
+class Field(RegisterLookupMixin):
+    def pre_save(self, model_instance, add):
+        """
+        Returns field's value just before saving.
+        """
+        return getattr(model_instance, self.attname)
+	
+class FieldFile(File):
+    def save(self, name, content, save=True):
+        name = self.field.generate_filename(self.instance, name)
+
+        args, varargs, varkw, defaults = getargspec(self.storage.save)
+        if 'max_length' in args:
+            self.name = self.storage.save(name, content, max_length=self.field.max_length)
+        else:
+            warnings.warn(
+                'Backwards compatibility for storage backends without '
+                'support for the `max_length` argument in '
+                'Storage.save() will be removed in Django 1.10.',
+                RemovedInDjango110Warning, stacklevel=2
+            )
+            self.name = self.storage.save(name, content)
+
+        setattr(self.instance, self.field.name, self.name)
+
+        # Update the filesize cache
+        self._size = content.size
+        self._committed = True
+
+        # Save the object because it has changed, unless save is False
+        if save:
+            self.instance.save()
+    save.alters_data = True
+```
+
+``` python
+class Storage(object):
+    def save(self, name, content, max_length=None):
+        """
+        Saves new content to the file specified by name. The content should be
+        a proper File object or any python file-like object, ready to be read
+        from the beginning.
+        """
+        # Get the proper name for the file, as it will actually be saved.
+        if name is None:
+            name = content.name
+
+        if not hasattr(content, 'chunks'):
+            content = File(content)
+
+        args, varargs, varkw, defaults = getargspec(self.get_available_name)
+        if 'max_length' in args:
+            name = self.get_available_name(name, max_length=max_length)
+        else:
+            warnings.warn(
+                'Backwards compatibility for storage backends without '
+                'support for the `max_length` argument in '
+                'Storage.get_available_name() will be removed in Django 1.10.',
+                RemovedInDjango110Warning, stacklevel=2
+            )
+            name = self.get_available_name(name)
+
+        name = self._save(name, content)
+
+        # Store filenames with forward slashes, even on Windows
+        return force_text(name.replace('\\', '/'))
+```
+
+``` python
+class FileSystemStorage(Storage):
+   def _save(self, name, content):
+        full_path = self.path(name)
+
+        # Create any intermediate directories that do not exist.
+        # Note that there is a race between os.path.exists and os.makedirs:
+        # if os.makedirs fails with EEXIST, the directory was created
+        # concurrently, and we can continue normally. Refs #16082.
+        directory = os.path.dirname(full_path)
+        if not os.path.exists(directory):
+            try:
+                if self.directory_permissions_mode is not None:
+                    # os.makedirs applies the global umask, so we reset it,
+                    # for consistency with file_permissions_mode behavior.
+                    old_umask = os.umask(0)
+                    try:
+                        os.makedirs(directory, self.directory_permissions_mode)
+                    finally:
+                        os.umask(old_umask)
+                else:
+                    os.makedirs(directory)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
+        if not os.path.isdir(directory):
+            raise IOError("%s exists and is not a directory." % directory)
+
+        # There's a potential race condition between get_available_name and
+        # saving the file; it's possible that two threads might return the
+        # same name, at which point all sorts of fun happens. So we need to
+        # try to create the file, but if it already exists we have to go back
+        # to get_available_name() and try again.
+
+        while True:
+            try:
+                # This file has a file path that we can move.
+                if hasattr(content, 'temporary_file_path'):
+                    file_move_safe(content.temporary_file_path(), full_path)
+
+                # This is a normal uploadedfile that we can stream.
+                else:
+                    # This fun binary flag incantation makes os.open throw an
+                    # OSError if the file already exists before we open it.
+                    flags = (os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                             getattr(os, 'O_BINARY', 0))
+                    # The current umask value is masked out by os.open!
+                    fd = os.open(full_path, flags, 0o666)
+                    _file = None
+                    try:
+                        locks.lock(fd, locks.LOCK_EX)
+                        for chunk in content.chunks():
+                            if _file is None:
+                                mode = 'wb' if isinstance(chunk, bytes) else 'wt'
+                                _file = os.fdopen(fd, mode)
+                            _file.write(chunk)
+                    finally:
+                        locks.unlock(fd)
+                        if _file is not None:
+                            _file.close()
+                        else:
+                            os.close(fd)
+            except OSError as e:
+                if e.errno == errno.EEXIST:
+                    # Ooops, the file exists. We need a new file name.
+                    name = self.get_available_name(name)
+                    full_path = self.path(name)
+                else:
+                    raise
+            else:
+                # OK, the file save worked. Break out of the loop.
+                break
+
+        if self.file_permissions_mode is not None:
+            os.chmod(full_path, self.file_permissions_mode)
+
+        return name
+```
+
+## UploadFile
+
+django\core\files\uploadedfile.py
+
+字典request.FILES中的每一个条目都是一个UploadedFile对象。
+
+UploadedFile对象有如下方法：
+
+1. UploadFile.read():
+  从文件中读取全部上传数据。当上传文件过大时，可能会耗尽内存，慎用。
+  
+2. UploadFile.multiple_chunks():
+  如上传文件足够大，要分成多个部分读入时，返回True.默认情况,当上传文件大于2.5M时，返回True。但这一个值可以配置。
+  
+3. UploadFile.chunks():
+  返回一个上传文件的分块生成器。如multiple_chunks()返回True,必须在循环中使用chrunks()来代替read()。一般情况下直接使用chunks()就行。
+  
+4. UploadFile.name():上传文件的文件名
+
+5. UplaodFile.size():上传文件的文件大小（字节）
+
+由上面的说明可以写出handle_uploaded_file函数
+``` python
+def handle_uploaded_file(f):
+  destination = open('some/file/name.txt', 'wb+')
+  for chunk in f.chunks():
+    destination.write(chunk)
+  destination.close()
+```  
+**上传文件保存的位置**
+
+保存上传文件前，数据需要存放在某个位置。默认时，当上传文件小于2.5M时，django会将上传文件的全部内容读进内存。意味着保存文件只有一次从内存读取，一次写磁盘。
+
+但当上传文件很大时，django会把上传文件写到临时文件中，然后存放到系统临时文件夹中。
+
+### 改变upload handler的行为
+三个设置控制django文件上传的行为：
+> FILE_UPLOAD_MAX_MEMORY_SIZE:直接读入内存的最大上传文件大小（字节数）。当大于此值时，文件存放到磁盘。默认2.5M字节  
+FILE_UPLOAD_TEMP_DIR  
+FILE_UPLOAD_PERMISSIONS:权限  
+
+FILE_UPLOAD_HANDLERS
+上传文件真正的处理器。修改此项设置可以完成自定义django上传文件的过程。
+默认是：
+``` python
+# List of upload handler classes to be applied in order.
+FILE_UPLOAD_HANDLERS = (
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+)
+```
+
+# 插件
+## jQuery File Upload
+
+- http://www.jq22.com/jquery-info230
+- https://www.oschina.net/p/uploadify
+
+
+# 参考文档
+- [django上传文件](http://www.cnblogs.com/yijun-boxing/archive/2011/04/18/2020155.html)
+
+目前所有的都是在上传之后进行处理，这样的话，依然为完成大文件的处理，前台有没有技术对上传的文件进行压缩
+
 
