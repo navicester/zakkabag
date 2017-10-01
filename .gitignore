@@ -19,6 +19,7 @@ trial.py
 .settings/
 *.sublime-project
 *.sublime-workspace
+.idea/
 
 # tools and environment
 bin/
