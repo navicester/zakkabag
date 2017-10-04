@@ -101,14 +101,17 @@ class DailyInspectionForm(forms.ModelForm):
 <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";</script>
 ```
 查看代码,```calendar.js```和```DateTimeShortcuts.js```已经在AdminDateWidget的media里包括了
-```
+
+``` python
 class AdminDateWidget(forms.DateInput):
     @property
     def media(self):
         js = ["calendar.js", "admin/DateTimeShortcuts.js"]
         return forms.Media(js=[static("admin/js/%s" % path) for path in js])
-```    
+```
+
 给form添加media
+
 ``` python
 class DailyInspectionForm(forms.ModelForm):
     class Media:
