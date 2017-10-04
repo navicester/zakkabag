@@ -65,7 +65,7 @@ var jQuery = django.jQuery;
 var $=jQuery;
 ```
 
-目前Jquery.init.js里是下面这个，能正常工作
+目前Jquery.init.js里是下面这个，能正常工作，但是会报错django没找到
 ``` javascript
 var django = django || {};
 django.jQuery = jQuery.noConflict(true);
@@ -89,8 +89,63 @@ class DailyInspectionForm(forms.ModelForm):
         self.fields['due_date'].widget = widgets.AdminDateWidget()
 ```
 
+## 用media简化实现
+下面js是需要再html里面引入的
+
+``` javascript
+<script src="/admin/jsi18n/"></script>
+<script src="{% static 'admin/js/core.js' %}"></script>
+<script src="{% static 'admin/js/jquery.init.js' %}"></script>
+<script src="{% static 'admin/js/calendar.js' %}"></script>
+<script src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";</script>
+```
+查看代码,```calendar.js```和```DateTimeShortcuts.js```已经在AdminDateWidget的media里包括了
+```
+class AdminDateWidget(forms.DateInput):
+    @property
+    def media(self):
+        js = ["calendar.js", "admin/DateTimeShortcuts.js"]
+        return forms.Media(js=[static("admin/js/%s" % path) for path in js])
+```    
+给form添加media
+``` python
+class DailyInspectionForm(forms.ModelForm):
+    class Media:
+        css = {
+            'form': ('css/form_horizontal_layout.css',)
+        }
+        js = ['js/form_horizontal_layout.js']
+
+
+    #inherit from BaseForm
+    @property
+    def media(self):
+        """
+        Provide a description of all media required to render the widgets on this form
+        """        
+        media = Media(js=[static('js/jquery.init.both.js'), '/admin/jsi18n/', static('admin/js/core.js')])
+        for field in self.fields.values():
+            for item in field.widget.media._js:
+                if not item.split('/')[-1] in ''.join(media._js):
+                    media = media + Media(js=[item])
+
+        media = media + Media(self.Media)
+
+        return media
+```
+
+模板引用如下
+``` html
+{{form.media.js}}
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";</script> 
+```
+
+```admin_media_prefix```这个变量在DateTimeShortcuts.js里面会用到
+
 参考
 - [在 Django admin site 之外使用其日历控件](http://blog.xavierskip.com/2016-10-22-django-admit-calendar-widget/)
 - [将django 管理端的时间控件用于前端](https://www.douban.com/note/350934079/)
 - https://stackoverflow.com/questions/38601/using-django-time-date-widgets-in-custom-form
+- https://docs.djangoproject.com/en/1.8/topics/forms/media/#assets-as-a-static-definition
 
