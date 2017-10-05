@@ -969,6 +969,11 @@ def account_link_to_wechat(request):
 # 用户注册 （邮箱）
 
 # 用户注册 （手机）
+用到的库 
+- [django-phonenumber-field](https://pypi.python.org/pypi/django-phonenumber-field)，本身它会调用[phonenumbers](https://pypi.python.org/pypi/phonenumbers)
+- [django-sendsms](https://pypi.python.org/pypi/django-sendsms)
+
+参考并部分引用了 [django-phone-login](http://pypi.python.org/pypi/django-phone-login)
 
 # 登陆后跳转
 登录成功或者密码修改成功之后，跳转回原来的网址或者指定的地址
