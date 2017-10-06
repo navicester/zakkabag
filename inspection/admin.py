@@ -12,11 +12,25 @@ class OfficeInspectionAdmin(admin.ModelAdmin):
         model = OfficeInspection
 
 class DailyInspectionAdmin(admin.ModelAdmin):
-    list_display = ["category", "rectification_status",'owner']
+    list_display = ['inspection_content', "category","rectification_status",'owner','due_date','created','updated','location']
+    list_editable = ["category","rectification_status",'owner','location']
+    list_filter = ["category", "rectification_status",'owner','location']
+    search_fields = ["category", 'inspection_content',"rectification_status",'owner','due_date','created','updated','location']
+    list_display_links = ['inspection_content']
+    ordering = ['-created']
+    list_per_page = 10
+    list_max_show_all = 80
+
     form = DailyInspectionForm
     
     class Meta:
         model = DailyInspection
+
+    class Media:
+        css = {
+            "all": ("css/model_admin.css",)
+        }
+        js = ("js/jquery.min.js","js/model_admin.js",)
         
 class forklift_imageInline(admin.TabularInline):
     model = forklift_image
@@ -81,9 +95,9 @@ class shelfAdmin(admin.ModelAdmin):
 
     class Media:
         css = {
-            "all": ("css/shelf.css",)
+            "all": ("css/model_admin.css",)
         }
-        js = ("js/jquery.min.js","js/shelf.js",)
+        js = ("js/jquery.min.js","js/model_admin.js",)
 
     def view_on_site(self, obj):
         url = reverse('shelf_detail', kwargs={'pk': obj.pk})
