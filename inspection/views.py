@@ -15,7 +15,7 @@ import json
 from django.http import Http404
 from PIL import Image
 import os
-
+from django.contrib import messages
 # Create your views here.
 from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection, shelf
 from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm, shelf_inspection_recordForm, shelfFilterForm, shelf_inspection_Form
@@ -228,7 +228,7 @@ class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
         #initial=selected
         form = kwargs.get('form',None) # called in form_invalid
         if form is None:
-            form = self.form_class(instance = self.get_object()) 
+            form = self.form_class(self.request.POST or None, instance = self.get_object())
         context["form"] = form
         #context["media"] = settings.MEDIA_URL
         return context        
@@ -249,8 +249,11 @@ class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
         self.object = self.get_object(*args, **kwargs)
 
         if form.is_valid():
+            messages.success(request, _("daily inspection updated successfully"), extra_tags='capfirst')
+            messages.info(request, _("check content please"))
             return self.form_valid(form)
-        else:            
+        else:
+            messages.success(request, _("daily inspection updated fail"))
             return self.form_invalid(form)
 
         return super(DailyInspectionUpdateView, self).post(request, *args, **kwargs) 
@@ -265,7 +268,7 @@ class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
         return super(DailyInspectionUpdateView, self).dispatch(request,args,kwargs)   
 
     def get_success_url(self):
-        return reverse("dailyinspection_list", kwargs={}) 
+        return reverse("dailyinspection_detail", kwargs={'pk':self.kwargs.get("pk")})
 
 
 

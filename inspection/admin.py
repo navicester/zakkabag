@@ -2,6 +2,8 @@ from django.contrib import admin
 from .models import (OfficeInspection, DailyInspection, forklift_maint, forklift, 
     forklift_image, forklift_repair, forklift_annual_inspection, forklift_annual_inspection_image, shelf, shelf_inspection, shelf_inspection_record)
 from .forms import DailyInspectionForm
+from django.core.urlresolvers import reverse
+from django.contrib.sites.shortcuts import get_current_site
 
 # Register your models here.
 class OfficeInspectionAdmin(admin.ModelAdmin):
@@ -64,15 +66,38 @@ class forkliftAdmin(admin.ModelAdmin):
 
 
 class shelfAdmin(admin.ModelAdmin):
-    list_display = ["type", "warehouse",'compartment','group','number','is_gradient_measurement_mandatory']
+    list_display = ['id',"type", "warehouse",'compartment','group','number','is_gradient_measurement_mandatory']
+    list_editable = ["type", "warehouse",'compartment','group','number','is_gradient_measurement_mandatory']
+    list_filter = ["type", "warehouse",'compartment','group','is_gradient_measurement_mandatory']
+    search_fields = ["type", "warehouse",'compartment','group','number']
+    list_display_links = ['id']
+    list_per_page = 10
+    list_max_show_all = 80
+    ordering = ["warehouse",'compartment','group','number']
+
     
     class Meta:
         model = shelf
+
+    class Media:
+        css = {
+            "all": ("css/shelf.css",)
+        }
+        js = ("js/jquery.min.js","js/shelf.js",)
+
+    def view_on_site(self, obj):
+        url = reverse('shelf_detail', kwargs={'pk': obj.pk})
+        return 'https://sinotran.applinzi.com' + url
 
 class shelf_inspection_recordInline(admin.TabularInline):
     model = shelf_inspection_record
     extra = 0
     #max_num = 10
+
+    def view_on_site(self, obj):
+        url = reverse('shelf_inspection_detail', kwargs={'pk': obj.pk})
+        #return get_current_site(self.request) + url
+        return 'https://sinotran.applinzi.com' + url
 
 '''
 class shelf_inspection_recordAdmin(admin.ModelAdmin):

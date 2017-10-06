@@ -19,3 +19,14 @@ class MPTTComment(MPTTModel, Comment):
 
     class Meta:
         ordering=['tree_id','lft']
+        #app_label = 'comments' 
+        '''
+        If a model is defined outside of an application in INSTALLED_APPS, it must declare which app it belongs to:
+
+		if not set, it will report below error: 
+
+        mptt\models.py:263: RemovedInDjango19Warning: Model class comments.models.MPTTComment doesn't declare an explicit app_label 
+        and ether isn't in an application in INSTALLED_APPS or else was imported before its application was loaded. This will no longer be supported in Django 1.9.
+          cls = super_new(meta, class_name, bases, class_dict)
+
+        '''

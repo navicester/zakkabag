@@ -11,3 +11,7 @@ function ajust_horizontal_form(){
 	$(".field-area image-field a").hide()
 
 }
+
+$(document).ready(function(){
+    ajust_horizontal_form();
+});

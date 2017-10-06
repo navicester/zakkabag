@@ -291,7 +291,10 @@ class shelf(models.Model):
         
         field = shelf._meta.get_field(fieldname)
         return "%s" % self._get_FIELD_display(field)
-            
+
+    class Meta:
+        verbose_name = _('Shelf')
+        verbose_name_plural =  _('Shelf')
 
 
 class shelf_inspection(models.Model):

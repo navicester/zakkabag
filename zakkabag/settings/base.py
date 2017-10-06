@@ -35,7 +35,7 @@ ADMINS = (
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,11 +43,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'django_comments',   
-    # 'django.contrib.comments',
+    # 'mptt',
+    # 'django_comments',       
+    # 'comments',
     'authwrapper',
-    'mptt',
-    'comments',
     'newsletter',
     'products',
     'carts',
@@ -58,13 +57,16 @@ INSTALLED_APPS = (
     'zakkabag',
     'crispy_forms',
     'registration',
-    'django_filters',
-    # 'threadedcomments',
+    'django_filters',    
     'pagination',
     'ckeditor',
     'phone_login',
     'rest_framework'
-)
+
+
+    # 'django.contrib.comments',
+    # 'threadedcomments',
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -172,6 +174,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_in_env", "static_root")
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static_in_pro", "our_static"),
+    os.path.join(BASE_DIR, "inspection", "static"),
     #os.path.join(BASE_DIR, "static_in_env"),
     #'/var/www/static/',
 )
@@ -260,9 +263,11 @@ COMMENTS_APP = 'comments'
 
 
 from django.conf import global_settings
-FILE_UPLOAD_HANDLERS = ('fileuploadwrapper.uploadfilehandler.UploadProgressCachedHandler', ) \
-+ global_settings.FILE_UPLOAD_HANDLERS
 
+if isinstance(global_settings.FILE_UPLOAD_HANDLERS,list):
+    FILE_UPLOAD_HANDLERS = ['fileuploadwrapper.uploadfilehandler.UploadProgressCachedHandler',] + global_settings.FILE_UPLOAD_HANDLERS #django 1.9
+elif isinstance(global_settings.FILE_UPLOAD_HANDLERS,tuple):
+    FILE_UPLOAD_HANDLERS = ('fileuploadwrapper.uploadfilehandler.UploadProgressCachedHandler',) + global_settings.FILE_UPLOAD_HANDLERS #django 1.8
 
 # Wechat
 if not 'SERVER_SOFTWARE' in os.environ:
