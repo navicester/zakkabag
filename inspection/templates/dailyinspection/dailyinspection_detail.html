@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {# load myform_tags #}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block content %}
 <div class='row'>
@@ -27,7 +28,10 @@
 
 			<hr>
 
-			<a class="btn btn-default" href="{{object.get_absolute_url_update}}"  >{% trans 'Update' %}</a>
+			<a class="btn btn-primary" style="width:100px;" href="{{object.get_absolute_url_update}}">{% trans 'Update' %}</a>
+			<a class="btn btn-info" style="width:100px;" href="{% url 'dailyinspection_list' %}">{% trans 'Back' %}</a>
+			<!-- <a href="{% url 'dailyinspection_list' %}"><button class="btn btn-secondary" style="width:100px;" >{% trans 'Back' %}</button></a> -->
+			<a class="btn btn-danger pull-right" style="width:100px;" href="{{object.get_absolute_url_delete}}"  >{% trans 'Delete' %}</a>
 		</div>
         
 	</div>

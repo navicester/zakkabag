@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.views.generic.base import View, TemplateResponseMixin, ContextMixin, TemplateView
-from django.views.generic.edit import FormView, CreateView, UpdateView
+from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin, ModelFormMixin
@@ -203,6 +203,7 @@ class DailyInspectionCreateView(ThumbnailMixin, CreateView):
     template_name = "dailyinspection/dailyinspection_create.html"
 
     def form_valid(self, form, *args, **kwargs):
+        messages.success(self.request, _("daily inspection create successfully"), extra_tags='capfirst')
         form = super(DailyInspectionCreateView, self).form_valid(form, *args, **kwargs)
         return form
 
@@ -233,20 +234,19 @@ class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
         #context["media"] = settings.MEDIA_URL
         return context        
 
-    def get_object(self, *args, **kwargs):
-        dailyinspection_pk = self.kwargs.get("pk")
-        dailyinspection = None
-        if dailyinspection_pk:
-            print dailyinspection_pk
-            dailyinspection = get_object_or_404(DailyInspection, pk=dailyinspection_pk)
-        return dailyinspection 
 
-    def get(self, request, *args, **kwargs):
-        return super(DailyInspectionUpdateView, self).get(request, *args, **kwargs) 
+    # def get_object(self, *args, **kwargs):
+    #     reuse SingleObjectMixin::get_object
+    #     dailyinspection_pk = self.kwargs.get("pk")
+    #     dailyinspection = None
+    #     if dailyinspection_pk:
+    #         dailyinspection = get_object_or_404(DailyInspection, pk=dailyinspection_pk)
+    #     return dailyinspection
+
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form() 
-        self.object = self.get_object(*args, **kwargs)
+        form = self.get_form()
+        # self.object = self.get_object(*args, **kwargs)
 
         if form.is_valid():
             messages.success(request, _("daily inspection updated successfully"), extra_tags='capfirst')
@@ -270,7 +270,12 @@ class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
     def get_success_url(self):
         return reverse("dailyinspection_detail", kwargs={'pk':self.kwargs.get("pk")})
 
+class DailyInspectionDeleteView( DeleteView):
+    model = DailyInspection
+    template_name = "dailyinspection/dailyinspection_delete.html"
 
+    def get_success_url(self):
+        return reverse("dailyinspection_list", kwargs={})
 
 '''
 operators = {

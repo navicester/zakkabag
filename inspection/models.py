@@ -102,6 +102,10 @@ class DailyInspection(models.Model):
     def get_absolute_url_update(self):
         return reverse("dailyinspection_update", kwargs={"pk": self.id })    
 
+    def get_absolute_url_delete(self):
+        return reverse("dailyinspection_delete", kwargs={"pk": self.id })    
+
+
     def get_image_url_before(self):
         img = self.image_before
         if img:
