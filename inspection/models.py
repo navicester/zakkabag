@@ -164,8 +164,8 @@ class DailyInspection(models.Model):
         return "%s" % self._get_FIELD_display(field)        
 
     class Meta:
-        verbose_name = "Daily Inspection"
-        verbose_name_plural = "Daily Inspection"
+        verbose_name = _("Daily Inspection")
+        verbose_name_plural = _("Daily Inspection")
         ordering = ['-created']
 
 post_delete.connect(file_cleanup, sender=DailyInspection, dispatch_uid="DailyInspection.file_cleanup")
@@ -197,16 +197,16 @@ class forklift(models.Model):
         return _("forklift") + self.internal_car_number
 
     class Meta:
-        verbose_name = "forklift"
-        verbose_name_plural = "forklift"
+        verbose_name = _("forklift")
+        verbose_name_plural = _("forklift")
 
 class forklift_image(models.Model):
     forklift = models.ForeignKey(forklift)
     image = models.ImageField(_('image'), upload_to='inspection/forklift', blank=True, null=True)
 
     class Meta:
-        verbose_name = "forklift image"
-        verbose_name_plural = "forklift image"
+        verbose_name = _("forklift image")
+        verbose_name_plural = _("forklift image")
 
 class forklift_maint(models.Model):
     """docstring for forklift_maint"""
@@ -249,8 +249,8 @@ class forklift_maint(models.Model):
         self.arg = arg
 
     class Meta:
-        verbose_name = "forklift maintenance"
-        verbose_name_plural = "forklift maintenance"
+        verbose_name = _("forklift maintenance")
+        verbose_name_plural = _("forklift maintenance")
 
 class forklift_repair(models.Model):
     damage_reason = models.CharField(_('Damage Reason'), max_length=30, blank=True)
@@ -262,24 +262,24 @@ class forklift_repair(models.Model):
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     class Meta:
-        verbose_name = "forklift repair"
-        verbose_name_plural = "forklift repair"
+        verbose_name = _("forklift repair")
+        verbose_name_plural = _("forklift repair")
 
 class forklift_annual_inspection(models.Model):
     date = models.DateField(_('Annual Inspection Date'), auto_now_add=False, auto_now=False)
     next_date = models.DateField(_('Next Inspection Date'), auto_now_add=False, auto_now=False)
 
     class Meta:
-        verbose_name = "forklift annual inspection"
-        verbose_name_plural = "forklift annual inspection"
+        verbose_name = _("forklift annual inspection")
+        verbose_name_plural = _("forklift annual inspection")
 
 class forklift_annual_inspection_image(models.Model):
     forklift = models.ForeignKey(forklift_annual_inspection)
     image = models.ImageField(_('image'), upload_to='inspection/forklift_annual_inspection', blank=True, null=True)
 
     class Meta:
-        verbose_name = "forklift annual inspection image"
-        verbose_name_plural = "forklift annual inspection image"
+        verbose_name = _("forklift annual inspection image")
+        verbose_name_plural = _("forklift annual inspection image")
 
 '''
 class warehouse(models.Model):
@@ -340,8 +340,8 @@ class shelf_inspection(models.Model):
         return reverse("shelf_inspection_detail", kwargs={"pk": self.id })
 
     class Meta:
-        verbose_name = "shelf inspection"
-        verbose_name_plural = "shelf inspection"
+        verbose_name = _("shelf inspection")
+        verbose_name_plural = _("shelf inspection")
 
 class shelf_inspection_record(models.Model):
     shelf_inspection_record_use_condition = (
@@ -381,29 +381,29 @@ class shelf_inspection_record(models.Model):
             return "%s" % self._get_FIELD_display(field)
 
     class Meta:
-        verbose_name = "shelf inspection record"
-        verbose_name_plural = "shelf inspection record"
+        verbose_name = _("shelf inspection record")
+        verbose_name_plural = _("shelf inspection record")
 
 class shelf_annual_inspection(models.Model):
     date = models.DateField(_('Annual Inspection Date'), auto_now_add=False, auto_now=False)
     next_date = models.DateField(_('Next Inspection Date'), auto_now_add=False, auto_now=False)
 
     class Meta:
-        verbose_name = "shelf annual inspection"
+        verbose_name = _("shelf annual inspection")
 
 class shelf_annual_inspection_image(models.Model):
     shelf_annual_inspection = models.ForeignKey(shelf_annual_inspection)
     image = models.ImageField(_('image'), upload_to='inspection/shelf_annual_inspection', blank=True, null=True)
 
     class Meta:
-        verbose_name = "shelf annual inspection image"
+        verbose_name = _("shelf annual inspection image")
 
 class extinguisher(models.Model):
     name = models.CharField(_('Name'), max_length=30, blank=True)   
     capacity = models.CharField(_('Capacity'), max_length=30, blank=True)   
 
     class Meta:
-        verbose_name = "extinguisher"
+        verbose_name = _("extinguisher")
 
 class extinguisher_inspection(models.Model):
     extinguisher = models.ForeignKey(extinguisher)
@@ -412,7 +412,7 @@ class extinguisher_inspection(models.Model):
     check_date = models.DateField(_('Check Date'),auto_now_add=False, auto_now=False)
 
     class Meta:
-        verbose_name = "extinguisher inspection"
+        verbose_name = _("extinguisher inspection")
 
 
 class hydrant(models.Model):
@@ -420,7 +420,7 @@ class hydrant(models.Model):
     accessories = models.CharField(_('Accessories'), max_length=30, blank=True)   
 
     class Meta:
-        verbose_name = "hydrant"
+        verbose_name = _("hydrant")
 
 class hydrant_inspection(models.Model):
     extinguisher = models.ForeignKey(hydrant)
@@ -429,7 +429,7 @@ class hydrant_inspection(models.Model):
     check_date = models.DateField(_('Check Date'),auto_now_add=False, auto_now=False)
 
     class Meta:
-        verbose_name = "hydrant inspection"
+        verbose_name = _("hydrant inspection")
 
 class rehearsal(models.Model):
     title = models.TextField(_('Title'), max_length=30, blank=True)   
@@ -437,4 +437,4 @@ class rehearsal(models.Model):
     attachment = models.FileField(_('Attachment'), blank=True) 
     
     class Meta:
-        verbose_name = "rehearsal"
+        verbose_name = _("rehearsal")

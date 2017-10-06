@@ -81,7 +81,7 @@ class CrowdfundingCreateView(CreateView):
                 destination.write(chunk)
             destination.close()
         else:
-            crowdfundingForm = CrowdfundingCreateForm(request.POST, request.FILES)
+            crowdfundingForm = CrowdfundingCreateForm(request.POST or None, request.FILES or None)
             if crowdfundingForm.is_valid():
                 crowdfunding = crowdfundingForm.save(commit=False)
                 crowdfunding.user = request.user

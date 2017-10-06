@@ -50,8 +50,13 @@ td, th {
     text-align: center;
 }
 
-.row1 td input, .row1 td select{
+
+#changelist .row1 td input, .row1 td select{
     background-color: #EDF3FE;
+}
+
+#changelist table tbody tr.selected td input, #changelist table tbody tr.selected td select{
+    background-color: #FFFFCC!important;
 }
 
 td input, td select{

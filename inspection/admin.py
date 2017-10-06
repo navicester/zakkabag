@@ -142,3 +142,7 @@ admin.site.register(shelf, shelfAdmin)
 #admin.site.register(shelf_inspection_record, shelf_inspection_recordAdmin)
 
 admin.site.register(shelf_inspection, shelf_inspectionAdmin)
+
+
+
+

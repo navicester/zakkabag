@@ -17,6 +17,7 @@ from PIL import Image
 import os
 from django.contrib import messages
 from django.core.paginator import Paginator,PageNotAnInteger, EmptyPage
+from .mixins import StaffRequiredMixin
 
 # Create your views here.
 from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection, shelf
@@ -200,7 +201,7 @@ class ThumbnailMixin(object):
 
         return HttpResponseRedirect(self.get_success_url())
 
-class DailyInspectionCreateView(ThumbnailMixin, CreateView):
+class DailyInspectionCreateView(StaffRequiredMixin, ThumbnailMixin, CreateView):
     form_class = DailyInspectionForm
     template_name = "dailyinspection/dailyinspection_create.html"
 
@@ -216,8 +217,8 @@ class DailyInspectionCreateView(ThumbnailMixin, CreateView):
 class DailyInspectionDetailView( DetailView):
     model = DailyInspection
     template_name = "dailyinspection/dailyinspection_detail.html"
-    
-class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
+
+class DailyInspectionUpdateView(StaffRequiredMixin, ThumbnailMixin, UpdateView): #ModelFormMixin
     
     model = DailyInspection
     template_name = "dailyinspection/dailyinspection_update.html"
@@ -231,7 +232,7 @@ class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
         #initial=selected
         form = kwargs.get('form',None) # called in form_invalid
         if form is None:
-            form = self.form_class(self.request.POST or None, instance = self.get_object())
+            form = self.form_class(self.request.POST or None, self.request.FILES or None, instance = self.get_object())
         context["form"] = form
         #context["media"] = settings.MEDIA_URL
         return context        
@@ -272,7 +273,7 @@ class DailyInspectionUpdateView(ThumbnailMixin, UpdateView): #ModelFormMixin
     def get_success_url(self):
         return reverse("dailyinspection_detail", kwargs={'pk':self.kwargs.get("pk")})
 
-class DailyInspectionDeleteView( DeleteView):
+class DailyInspectionDeleteView( StaffRequiredMixin, DeleteView):
     model = DailyInspection
     template_name = "dailyinspection/dailyinspection_delete.html"
 
