@@ -16,6 +16,8 @@ from django.http import Http404
 from PIL import Image
 import os
 from django.contrib import messages
+from django.core.paginator import Paginator,PageNotAnInteger, EmptyPage
+
 # Create your views here.
 from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection, shelf
 from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm, shelf_inspection_recordForm, shelfFilterForm, shelf_inspection_Form
@@ -436,11 +438,32 @@ class shelf_inspection_ListView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(shelf_inspection_ListView, self).get_context_data(*args, **kwargs)
-        context["object_list"] = shelf_inspection.objects.all()
-        context["records"] = [(object, \
+
+        queryset = shelf_inspection.objects.all()
+        print queryset
+        records_list = [(object, \
             object.shelf_inspection_record_set.filter(use_condition=1).count(), \
             object.shelf_inspection_record_set.filter(is_locked=False).count(), \
             object.shelf_inspection_record_set.filter(gradient__gt=1.4).count()) for object in shelf_inspection.objects.all()]
+        print records_list
+
+        paginator = Paginator(records_list, 2)
+
+        records = None
+
+        page = self.request.GET.get('page')
+        try:
+            records = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            records = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            records = paginator.page(paginator.num_pages)
+
+        context["object_list"] = queryset
+        context["records"] = records
+        print records
         return context       
 
 
