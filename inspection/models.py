@@ -8,6 +8,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 import datetime
 from django.utils import timezone
+from django.http import Http404
 
 from fields import ThumbnailImageField
 
@@ -47,7 +48,10 @@ def image_upload_to_dailyinspection(instance, filename):
     new_filename = "%s-%s.%s" %(timezone.now().strftime('%Y%m%d%H%M%S'), slugify(title), file_extension) # created was not ready for CreateView
     return "dailyinspection/%s/%s" %(instance.category, new_filename)
 
-
+class DailyInspectionManager(models.Manager):
+    def external(self, *args, **kwargs):
+        #raise Http404
+        return super(DailyInspectionManager,self).filter(rectification_status__icontains='uncompleted')
 class DailyInspection(models.Model):
 
     daily_insepction_category = (
@@ -92,6 +96,8 @@ class DailyInspection(models.Model):
     image_after = models.ImageField(_('Picture after Rectification'), upload_to=image_upload_to_dailyinspection, blank=True, null=True)
     #warehouse = models.CharField(_('Warehouse'), max_length=30, choices = daily_insepction_warehouse, blank=False, default = '3#')
     location = models.CharField(_('Location'), max_length=30, choices = daily_insepction_location, blank=False, default = '1')
+
+    objects = DailyInspectionManager()
     
     def __unicode__(self): 
         return _("Daily Inspection ") + self.inspection_content

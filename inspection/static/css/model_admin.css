@@ -50,7 +50,10 @@ td, th {
     text-align: center;
 }
 
-
+tbody th{
+    text-align: left;
+    text-indent:10px;
+}
 #changelist .row1 td input, .row1 td select{
     background-color: #EDF3FE;
 }

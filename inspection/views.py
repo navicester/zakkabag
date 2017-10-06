@@ -352,8 +352,13 @@ class DailyInspectionListView(FilterMixin, ListView):
     def get_queryset(self, *args, **kwargs):
         qs = super(DailyInspectionListView, self).get_queryset(*args, **kwargs)
         query = self.request.GET.get("q")
+
+        qs  = self.model.objects.all()
+        if not self.request.user.is_staff and not self.request.user.is_superuser:
+            qs =  self.model.objects.external()
+
         if query:
-            qs = self.model.objects.filter(
+            qs = qs.filter(
                 Q(impact__icontains=query) |
                 Q(rectification_measures__icontains=query) |
                 Q(owner__icontains=query) |
@@ -361,7 +366,7 @@ class DailyInspectionListView(FilterMixin, ListView):
                 Q(inspection_content__icontains=query)
                 )
             try:
-                qs2 = self.model.objects.filter(
+                qs2 = qs.filter(
                     Q(rectification_status=query)
                 )
                 qs = (qs | qs2).distinct()
