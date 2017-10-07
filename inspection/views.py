@@ -647,6 +647,17 @@ class shelf_ListView(ListView):
     model = shelf
     template_name = "shelf/shelf_list.html"
 
+    def get_queryset(self,*args,**kwargs):
+        query = self.request.GET.get('q')
+        qs = self.model.objects.all()
+
+        if query:
+            qs = qs.filter(
+                Q(type__icontains=query) |
+                Q(number__icontains = query)
+            ).distinct()
+        return qs
+
 class shelf_inspection_record_DetailView(DetailView):
     model = shelf_inspection_record
     template_name = "shelf/shelf_inspection_record_detail.html"    
