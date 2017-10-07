@@ -55,7 +55,7 @@ tbody th{
     text-indent:10px;
 }
 #changelist .row1 td input, .row1 td select{
-    background-color: #EDF3FE;
+    /*background-color: #EDF3FE;*/
 }
 
 #changelist table tbody tr.selected td input, #changelist table tbody tr.selected td select{

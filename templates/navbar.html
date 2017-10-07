@@ -46,7 +46,6 @@
                 {% if request.user.is_authenticated %}
                 <li><a href="{% url 'orders' %}">{% trans 'Orders' %}</a></li> 
                 {% endif %}
-                <li><a href="{% url 'CrowdfundingListView' %}">{% trans 'Crowndfunding' %}</a></li> 
                 <li><a href="{% url 'dailyinspection_list' %}">{% trans 'Inspection' %}</a></li>
                 <li><a href="{% url 'shelf_inspection_list' %}">{% trans 'Shelf' %}</a></li>
               </ul>
