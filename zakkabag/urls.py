@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.conf.urls.static import static
+from inspection.admin import my_admin_site
 if settings.USE_EXPLICIT_LANG_URL:
     from django.conf.urls.i18n import i18n_patterns as url_patterns
-else:    
+else:
     from django.conf.urls import patterns as url_patterns
 from django.conf.urls import patterns, include, url
 
@@ -33,9 +34,9 @@ urlpatterns = [
     url(r'^about/sitemap$', sitemap, name='sitemap'),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    url(r'^admin/jsi18n', i18n_javascript),
-
+    url(r'^admin/jsi18n', i18n_javascript),  # added for AdminDateTimeWidget
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^sino/', my_admin_site.urls),
 
     url(r'^products/', include('products.urls')),
     url(r'^categories/', include('products.urls_categories')),

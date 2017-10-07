@@ -86,55 +86,33 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'zakkabag.urls'
 
+context_processors_option = ['django.template.context_processors.i18n']  # since django 1.9
 if '1.8' in django.get_version():
-    TEMPLATES = [
-        {
-            'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [os.path.join(BASE_DIR, "templates"), 
-                    #os.path.join(BASE_DIR, "comments","templates"),
-                    os.path.join(BASE_DIR, "authwrapper","templates"),
-                    os.path.join(BASE_DIR, "wechat","templates"),
-                    os.path.join(BASE_DIR, "fileuploadwrapper","templates"),
-                    os.path.join(BASE_DIR, "inspection","templates"),
-                    ],
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'context_processors': [
-                    'django.template.context_processors.debug',
-                    'django.template.context_processors.request',
-                    'django.contrib.auth.context_processors.auth',
-                    'django.contrib.messages.context_processors.messages',
-                    "django.core.context_processors.i18n",
-                    "zakkabag.templatecontext.lang_context_processor",
-                ],
-            },
-        },
-    ]
+    context_processors_option = ["django.core.context_processors.i18n"]
 else:
-    TEMPLATES = [
-        {
-            'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [os.path.join(BASE_DIR, "templates"), 
-                    #os.path.join(BASE_DIR, "comments","templates"),
-                    os.path.join(BASE_DIR, "authwrapper","templates"),
-                    os.path.join(BASE_DIR, "wechat","templates"),
-                    os.path.join(BASE_DIR, "fileuploadwrapper","templates"),
-                    os.path.join(BASE_DIR, "inspection","templates"),
-                    ],
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'context_processors': [
-                    'django.template.context_processors.debug',
-                    'django.template.context_processors.request',
-                    'django.contrib.auth.context_processors.auth',
-                    'django.contrib.messages.context_processors.messages',
-                    'django.template.context_processors.i18n',
-                    "zakkabag.templatecontext.lang_context_processor",
-                ],
-            },
-        },
-    ]
+    pass
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, "templates"), 
+                #os.path.join(BASE_DIR, "comments","templates"),
+                os.path.join(BASE_DIR, "authwrapper","templates"),
+                os.path.join(BASE_DIR, "wechat","templates"),
+                os.path.join(BASE_DIR, "fileuploadwrapper","templates"),
+                os.path.join(BASE_DIR, "inspection","templates"),
+                ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',           
+            ] + context_processors_option + ["zakkabag.templatecontext.lang_context_processor",],
+        },
+    },
+]
 
 WSGI_APPLICATION = 'zakkabag.wsgi.application'
 

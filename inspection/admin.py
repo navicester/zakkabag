@@ -5,6 +5,14 @@ from .forms import DailyInspectionForm
 from django.core.urlresolvers import reverse
 from django.contrib.sites.shortcuts import get_current_site
 
+
+from django.contrib.admin import AdminSite
+
+class MyAdminSite(AdminSite):
+    site_header = 'SINOTRANS'
+
+my_admin_site = MyAdminSite(name='SINOTRANS')
+
 # Register your models here.
 class OfficeInspectionAdmin(admin.ModelAdmin):
     list_display = ["location", "plug",'timestamp']
@@ -132,16 +140,16 @@ class shelf_inspectionAdmin(admin.ModelAdmin):
     ]            
 
 admin.site.register(DailyInspection, DailyInspectionAdmin)
-
 admin.site.register(OfficeInspection, OfficeInspectionAdmin)
-
 admin.site.register(forklift, forkliftAdmin)
-
 admin.site.register(shelf, shelfAdmin)
-
-#admin.site.register(shelf_inspection_record, shelf_inspection_recordAdmin)
-
 admin.site.register(shelf_inspection, shelf_inspectionAdmin)
+
+my_admin_site.register(DailyInspection, DailyInspectionAdmin)
+my_admin_site.register(OfficeInspection, OfficeInspectionAdmin)
+my_admin_site.register(forklift, forkliftAdmin)
+my_admin_site.register(shelf, shelfAdmin)
+my_admin_site.register(shelf_inspection, shelf_inspectionAdmin)
 
 
 
