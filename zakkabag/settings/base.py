@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'registration',
     'django_filters',    
-    'pagination',
+    'pagination', # not supported since django1.9 due to error 'WSGIRequest' object has no attribute 'REQUEST', in django 1.9, Replace `request.REQUEST` with `POST` and `GET`
     'ckeditor',
     'phone_login',
     'rest_framework'

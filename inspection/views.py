@@ -21,8 +21,10 @@ from .mixins import StaffRequiredMixin
 
 # Create your views here.
 from .models import OfficeInspection, DailyInspection, shelf_inspection_record, shelf_inspection, shelf
+from .models import  ElectricalEquipmentInspection
 from .forms import OfficeInspectionForm, DailyInspectionForm, InspectionFilterForm, shelf_inspection_recordForm, shelfFilterForm, shelf_inspection_Form
 from .forms import shelf_inspection_record_Formset
+from .forms import ElectricalEquipmentInspectionForm, electrical_equipment_inspection_model_formset
 
 from .models import image_upload_to_dailyinspection
 
@@ -342,7 +344,7 @@ class DailyInspectionListView(FilterMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(DailyInspectionListView, self).get_context_data(*args, **kwargs)
-        #context["objects_list"] = DailyInspection.objects.order_by('-updated')
+        # context["objects_list"] = DailyInspection.objects.order_by('-updated')
         context["objects_sort"] = DailyInspection.objects.order_by('-updated')
         context["query"] = self.request.GET.get("q")
         context["InspectionFilterForm"] = InspectionFilterForm(data=self.request.GET or None)        
@@ -665,3 +667,50 @@ class shelf_inspection_record_DetailView(DetailView):
 # https://www.douban.com/note/350934079/
 # http://blog.csdn.net/xyp84/article/details/7945094
 # http://caibaojian.com/simple-responsive-table.html
+
+
+class ElectricalEquipmentInspectionListView(ListView):
+    model = ElectricalEquipmentInspection
+    queryset = ElectricalEquipmentInspection.objects.get_this_day()
+    #object_list = queryset
+    template_name = "equipment/electronical_equipment_inspection_list.html"
+
+    # def get_queryset(self, *args, **kwargs):
+    #     return self.queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ElectricalEquipmentInspectionListView, self).get_context_data(*args, **kwargs)
+
+        formset = electrical_equipment_inspection_model_formset(queryset=self.model.objects.get_this_day(),
+            initial=[{'use_condition': _('Normal'),}])
+        context["formset"] = formset
+        # context["objects_list"] = self.model.objects.get_this_day()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        #postresult = super(ElectricalEquipmentInspectionListView, self).post(request, *args, **kwargs)
+
+        formset = electrical_equipment_inspection_model_formset(request.POST or None, request.FILES or None)
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.save()
+            messages.success(request, "Your list has been updated.")
+            return redirect(reverse("electronialequipmentinsepction_list",  kwargs={}))
+
+        self.object_list = self.get_queryset() # copy from BaseListView::get
+        context = self.get_context_data()
+        context['formset'] = formset
+        return self.render_to_response(context)
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse("electronialequipmentinsepction_list", kwargs={})
+
+class ElectricalEquipmentInspectionDetailView(DetailView):
+    model = ElectricalEquipmentInspection
+    template_name = "equipment/electronical_equipment_inspection_detail.html"
+
+class ElectricalEquipmentInspectionCreateView(CreateView):
+    model = ElectricalEquipmentInspection
+    form_class = ElectricalEquipmentInspectionForm
+    template_name = "equipment/electronical_equipment_inspection_create.html"

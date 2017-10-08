@@ -1,7 +1,14 @@
 from django.contrib import admin
-from .models import (OfficeInspection, DailyInspection, forklift_maint, forklift, 
-    forklift_image, forklift_repair, forklift_annual_inspection, forklift_annual_inspection_image, shelf, shelf_inspection, shelf_inspection_record)
-from .forms import DailyInspectionForm
+from .models import (
+    OfficeInspection,
+    DailyInspection,
+    forklift_maint, forklift,forklift_image, forklift_repair, forklift_annual_inspection, forklift_annual_inspection_image,
+    shelf, shelf_inspection, shelf_inspection_record,
+    equipment, ElectricalEquipmentInspection)
+from .forms import (
+    DailyInspectionForm,
+    ElectricalEquipmentInspectionForm,
+)
 from django.core.urlresolvers import reverse
 from django.contrib.sites.shortcuts import get_current_site
 
@@ -137,20 +144,44 @@ class shelf_inspectionAdmin(admin.ModelAdmin):
 
     inlines = [
         shelf_inspection_recordInline,
-    ]            
+    ]
+
+
+class equipmentAdmin(admin.ModelAdmin):
+    list_display = ["name","type"]
+    list_editable = ["name", "type"]
+
+    class Meta:
+        model = equipment
+
+class ElectricalEquipmentInspectionAdmin(admin.ModelAdmin):
+    list_display = ["equipment","use_condition","inspector","date_of_inspection","updated"]
+    list_editable = ["use_condition","inspector"]
+    form = ElectricalEquipmentInspectionForm
+
+    class Meta:
+        model = ElectricalEquipmentInspection
+
+    class Media:
+        css = {
+            "all": ("css/model_admin.css","css/equipment.css")
+        }
+        js = ("js/jquery.min.js","js/model_admin.js",)
 
 admin.site.register(DailyInspection, DailyInspectionAdmin)
 admin.site.register(OfficeInspection, OfficeInspectionAdmin)
 admin.site.register(forklift, forkliftAdmin)
 admin.site.register(shelf, shelfAdmin)
 admin.site.register(shelf_inspection, shelf_inspectionAdmin)
+admin.site.register(equipment, equipmentAdmin)
+admin.site.register(ElectricalEquipmentInspection, ElectricalEquipmentInspectionAdmin)
 
 my_admin_site.register(DailyInspection, DailyInspectionAdmin)
 my_admin_site.register(OfficeInspection, OfficeInspectionAdmin)
 my_admin_site.register(forklift, forkliftAdmin)
 my_admin_site.register(shelf, shelfAdmin)
 my_admin_site.register(shelf_inspection, shelf_inspectionAdmin)
-
-
+my_admin_site.register(equipment, equipmentAdmin)
+my_admin_site.register(ElectricalEquipmentInspection, ElectricalEquipmentInspectionAdmin)
 
 

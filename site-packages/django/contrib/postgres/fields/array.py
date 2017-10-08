@@ -5,13 +5,15 @@ from django.contrib.postgres.forms import SimpleArrayField
 from django.contrib.postgres.validators import ArrayMaxLengthValidator
 from django.core import checks, exceptions
 from django.db.models import Field, IntegerField, Transform
-from django.db.models.lookups import Exact
 from django.utils import six
 from django.utils.translation import string_concat, ugettext_lazy as _
 
-from .utils import AttributeSetter
-
 __all__ = ['ArrayField']
+
+
+class AttributeSetter(object):
+    def __init__(self, name, value):
+        setattr(self, name, value)
 
 
 class ArrayField(Field):
@@ -29,13 +31,9 @@ class ArrayField(Field):
             self.default_validators.append(ArrayMaxLengthValidator(self.size))
         super(ArrayField, self).__init__(**kwargs)
 
-    def contribute_to_class(self, cls, name, **kwargs):
-        super(ArrayField, self).contribute_to_class(cls, name, **kwargs)
-        self.base_field.model = cls
-
     def check(self, **kwargs):
         errors = super(ArrayField, self).check(**kwargs)
-        if self.base_field.remote_field:
+        if self.base_field.rel:
             errors.append(
                 checks.Error(
                     'Base field for array cannot be a related field.',
@@ -95,7 +93,7 @@ class ArrayField(Field):
 
     def value_to_string(self, obj):
         values = []
-        vals = self.value_from_object(obj)
+        vals = self._get_val_from_obj(obj)
         base_field = self.base_field
 
         for val in vals:
@@ -167,7 +165,7 @@ class ArrayField(Field):
 class ArrayContains(lookups.DataContains):
     def as_sql(self, qn, connection):
         sql, params = super(ArrayContains, self).as_sql(qn, connection)
-        sql = '%s::%s' % (sql, self.lhs.output_field.db_type(connection))
+        sql += '::%s' % self.lhs.output_field.db_type(connection)
         return sql, params
 
 
@@ -175,15 +173,7 @@ class ArrayContains(lookups.DataContains):
 class ArrayContainedBy(lookups.ContainedBy):
     def as_sql(self, qn, connection):
         sql, params = super(ArrayContainedBy, self).as_sql(qn, connection)
-        sql = '%s::%s' % (sql, self.lhs.output_field.db_type(connection))
-        return sql, params
-
-
-@ArrayField.register_lookup
-class ArrayExact(Exact):
-    def as_sql(self, qn, connection):
-        sql, params = super(ArrayExact, self).as_sql(qn, connection)
-        sql = '%s::%s' % (sql, self.lhs.output_field.db_type(connection))
+        sql += '::%s' % self.lhs.output_field.db_type(connection)
         return sql, params
 
 
@@ -191,7 +181,7 @@ class ArrayExact(Exact):
 class ArrayOverlap(lookups.Overlap):
     def as_sql(self, qn, connection):
         sql, params = super(ArrayOverlap, self).as_sql(qn, connection)
-        sql = '%s::%s' % (sql, self.lhs.output_field.db_type(connection))
+        sql += '::%s' % self.lhs.output_field.db_type(connection)
         return sql, params
 
 
@@ -202,11 +192,7 @@ class ArrayLenTransform(Transform):
 
     def as_sql(self, compiler, connection):
         lhs, params = compiler.compile(self.lhs)
-        # Distinguish NULL and empty arrays
-        return (
-            'CASE WHEN %(lhs)s IS NULL THEN NULL ELSE '
-            'coalesce(array_length(%(lhs)s, 1), 0) END'
-        ) % {'lhs': lhs}, params
+        return 'array_length(%s, 1)' % lhs, params
 
 
 class IndexTransform(Transform):

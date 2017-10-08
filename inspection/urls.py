@@ -18,7 +18,11 @@ from .views import (
     shelf_inspection_CreateView,
     shelf_DetailView,
     shelf_ListView,
-    shelf_inspection_record_DetailView)
+    shelf_inspection_record_DetailView,
+    ElectricalEquipmentInspectionListView,
+    ElectricalEquipmentInspectionDetailView,
+    ElectricalEquipmentInspectionCreateView,
+)
 
 urlpatterns = [
     url(r'^officeinspection$', OfficeInspectionListView.as_view(), name='OfficeInspection_list'),
@@ -39,5 +43,9 @@ urlpatterns = [
     url(r'^shelfinspectionrecorddetail/(?P<pk>\d+)/$', shelf_inspection_record_DetailView.as_view(), name='shelf_inspection_record_detail'),  
 
     url(r'^shelfdetail/(?P<pk>\d+)/$', shelf_DetailView.as_view(), name='shelf_detail'),  
-    url(r'^shelflist$', shelf_ListView.as_view(), name='shelf_list'),  
+    url(r'^shelflist$', shelf_ListView.as_view(), name='shelf_list'),
+
+    url(r'^electronicalequipmentinspection/list/$', ElectricalEquipmentInspectionListView.as_view(), name='electronialequipmentinsepction_list'),
+    url(r'^electronicalequipmentinspection/detail/(?P<pk>\d+)/$', ElectricalEquipmentInspectionDetailView.as_view(), name='electronialequipmentinsepction_detail'),
+    url(r'^electronicalequipmentinspection/create/$', ElectricalEquipmentInspectionCreateView.as_view(), name='electronialequipmentinsepction_create'),
 ]

@@ -6,10 +6,10 @@ from django.db.models.signals import post_delete, post_save, pre_save
 from .utils import file_cleanup, file_cleanup2, save_raw_instance
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-import datetime
 from django.utils import timezone
 from django.http import Http404
-
+from django.utils import timezone
+from datetime import datetime, timedelta
 from fields import ThumbnailImageField
 
 # Create your models here.
@@ -127,7 +127,7 @@ class DailyInspection(models.Model):
     def get_html_due_date(self):
         if self.due_date is not None and self.rectification_status == 'uncompleted':
             overdue = ''
-            if self.due_date <= datetime.datetime.now().date() - datetime.timedelta(days=1): # should be 0
+            if self.due_date <= datetime.now().date() - timedelta(days=1): # should be 0
                 overdue = 'overdue'
             html_text = "<span class='due_date %s'>%s</span>" %(overdue, self.due_date)
         else:
@@ -444,3 +444,63 @@ class rehearsal(models.Model):
     
     class Meta:
         verbose_name = _("rehearsal")
+
+class equipment(models.Model):
+    equipment_type = (
+        ('electrical equipment', _('electrical equipment')),
+        ('emergency exit door', _('emergency exit door')),
+        ('emergency lamp', _('emergency lamp')),
+        ('entrance door', _('entrance door')),
+        ('downpipe', _('downpipe')),
+        ('fireproof door', _('fireproof door')),
+    )
+
+    name = models.CharField(_('Name'), max_length=30, blank=False, null=False) # name can include location
+    type = models.CharField(_('Type'), choices = equipment_type, max_length=30, blank=False, null=False)
+
+    class Meta:
+        verbose_name = _('equipment')
+
+    def __unicode__(self):
+        return "%s" % (self.name)
+
+class equipment_inspection(models.Model):
+    equipment_use_condition = (
+        ('normal', _('Normal')),
+        ('breakdown', _('Breakdown')),
+    )
+
+    equipment = models.ForeignKey(equipment)
+    use_condition = models.CharField(_('Use Condition'), choices=equipment_use_condition, max_length=30, blank=False,null=False,default='normal')
+    inspector = models.CharField(_('Inspector'), max_length=30, blank=False,null=False)
+    date_of_inspection = models.DateField(_('Date of Inspection'), auto_now_add=False, auto_now=False)
+    updated = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    class Meta:
+        verbose_name = _('equipment inspection')
+        abstract = True
+        unique_together = (('equipment','inspector','date_of_inspection'),)
+
+    def get_absolute_url(self):
+        return reverse("electronialequipmentinsepction_detail", kwargs={"pk": self.id})
+
+class ElectricalEquipmentInspectionManager(models.Manager):
+    def get_query_set(self):
+        return models.query.QuerySet(self.model, using=self._db)
+
+    def get_this_day(self):
+        start = timezone.now().date()
+        end = start + timedelta(days=1)
+
+        return self.get_query_set().filter(date_of_inspection__range=(start, end))
+
+
+class ElectricalEquipmentInspection(equipment_inspection):
+    objects = ElectricalEquipmentInspectionManager()
+
+    class Meta:
+        abstract = False
+        unique_together = (('equipment','inspector','date_of_inspection'),)
+
+    def __unicode__(self):
+        return "%s" % (self.equipment.name)

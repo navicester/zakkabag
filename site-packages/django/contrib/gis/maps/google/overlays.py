@@ -1,12 +1,11 @@
 from __future__ import unicode_literals
 
-from functools import total_ordering
-
 from django.contrib.gis.geos import (
     LinearRing, LineString, Point, Polygon, fromstr,
 )
 from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.functional import total_ordering
 from django.utils.html import html_safe
 
 
@@ -20,7 +19,7 @@ class GEvent(object):
     add_event() call.
 
     For more information please see the Google Maps API Reference:
-     https://developers.google.com/maps/documentation/javascript/reference#event
+     http://code.google.com/apis/maps/documentation/reference.html#GEvent
 
     Example:
 
@@ -84,7 +83,7 @@ class GPolygon(GOverlayBase):
     """
     A Python wrapper for the Google GPolygon object.  For more information
     please see the Google Maps API Reference:
-     https://developers.google.com/maps/documentation/javascript/reference#Polygon
+     http://code.google.com/apis/maps/documentation/reference.html#GPolygon
     """
     def __init__(self, poly,
                  stroke_color='#0000ff', stroke_weight=2, stroke_opacity=1,
@@ -144,7 +143,7 @@ class GPolyline(GOverlayBase):
     """
     A Python wrapper for the Google GPolyline object.  For more information
     please see the Google Maps API Reference:
-     https://developers.google.com/maps/documentation/javascript/reference#Polyline
+     http://code.google.com/apis/maps/documentation/reference.html#GPolyline
     """
     def __init__(self, geom, color='#0000ff', weight=2, opacity=1):
         """
@@ -195,7 +194,7 @@ class GIcon(object):
     in turn, correspond to a subset of the attributes of the official GIcon
     javascript object:
 
-    https://developers.google.com/maps/documentation/javascript/reference#Icon
+    http://code.google.com/apis/maps/documentation/reference.html#GIcon
 
     Because a Google map often uses several different icons, a name field has
     been added to the required arguments.
@@ -239,6 +238,7 @@ class GIcon(object):
         infowindowanchor:
             The pixel coordinate relative to the top left corner of the icon
             image at which the info window is anchored to this icon.
+
     """
     def __init__(self, varname, image=None, iconsize=None,
                  shadow=None, shadowsize=None, iconanchor=None,
@@ -267,7 +267,7 @@ class GMarker(GOverlayBase):
     """
     A Python wrapper for the Google GMarker object.  For more information
     please see the Google Maps API Reference:
-     https://developers.google.com/maps/documentation/javascript/reference#Marker
+     http://code.google.com/apis/maps/documentation/reference.html#GMarker
 
     Example:
 
