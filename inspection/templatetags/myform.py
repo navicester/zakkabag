@@ -15,3 +15,4 @@ def get_field_value(inst, fieldname):
     if hasattr(inst, fieldname):
         return inst.get_field_value(fieldname)
     return None
+  

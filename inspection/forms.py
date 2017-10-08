@@ -10,7 +10,7 @@ from .models import (
     OfficeInspection,
     DailyInspection,
     shelf_inspection_record, shelf, shelf_inspection,
-    equipment,ElectricalEquipmentInspection
+    equipment,ElectricalEquipmentInspection,SprayPumpRoomInspection
 )
 
 RESULT_OPTION = (
@@ -329,3 +329,15 @@ electrical_equipment_inspection_model_formset = modelformset_factory(ElectricalE
                                             form=ElectricalEquipmentInspectionForm,
                                             #formset=ElectricalEquipmentInspectionModelFormSet,
                                             extra=1)
+
+class SprayPumpRoomInspectionForm(forms.ModelForm):
+    class Meta:
+        model = SprayPumpRoomInspection
+
+        exclude = {
+            'month',
+        }
+
+spray_pumproom_inspection_model_formset = modelformset_factory(SprayPumpRoomInspection,
+                                            form=SprayPumpRoomInspectionForm,
+                                            extra=0)

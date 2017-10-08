@@ -504,3 +504,34 @@ class ElectricalEquipmentInspection(equipment_inspection):
 
     def __unicode__(self):
         return "%s" % (self.equipment.name)
+
+month_choice = (
+    ('1jan', _('Jan')),
+    ('2feb', _('Feb')),
+    ('3mar', _('Mar')),
+    ('4apr', _('Apr')),
+)
+
+class SprayPumpRoomInspectionManager(models.Manager):
+    def get_query_set(self):
+        return models.query.QuerySet(self.model, using=self._db)
+
+    def queryset_ordered(self):
+        # queryset = []
+        # for month in month_choice:
+        #     queryset.append(self.get_query_set().filter(month=month[0]))
+        # return queryset
+
+        return self.get_query_set().all()
+
+class SprayPumpRoomInspection(models.Model):
+    month = models.CharField(_('Month'), choices=month_choice, max_length=30, blank=False,null=False)
+    voltage_and_power_normal = models.BooleanField(_('voltage and power normal'), blank=True, default=False)
+    indicator_and_instrument_normal = models.BooleanField(_('indicator and instrument normal'), blank=True, default=False)
+
+    objects = SprayPumpRoomInspectionManager()
+    def __unicode__(self):
+        return "Spray Pump Room Inspection %s" % (self.month)
+
+    class Meta:
+        ordering = ('month',)

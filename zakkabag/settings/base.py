@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 'mptt',
     # 'django_comments',       
     # 'comments',
+    'trainings',
     'authwrapper',
     'newsletter',
     'products',
