@@ -297,6 +297,10 @@ class shelfFilterForm(forms.Form):
         pass
 
 class ElectricalEquipmentInspectionForm(forms.ModelForm):
+    use_condition = forms.ChoiceField(
+        choices=ElectricalEquipmentInspection.equipment_use_condition,
+        widget=forms.RadioSelect,
+    )
 
     class Meta:
         model = ElectricalEquipmentInspection
@@ -307,6 +311,9 @@ class ElectricalEquipmentInspectionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ElectricalEquipmentInspectionForm, self).__init__(*args, **kwargs)
         self.fields['equipment'].queryset = equipment.objects.filter(type='electrical equipment')
+
+        # self.fields['use_condition'].choices = ElectricalEquipmentInspection.equipment_use_condition
+        # self.fields['use_condition'].widget = forms.RadioSelect
 
     # def clean(self, *args, **kwargs):
     #     super(ElectricalEquipmentInspectionForm, self).clean(*args, **kwargs)
