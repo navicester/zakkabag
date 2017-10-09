@@ -725,13 +725,18 @@ class SprayPumproomInspectionListView(ListView):
 
     template_name = "equipment/spray_pump_room_inspection.html"
 
+    def get_queryset(self, *args, **kwargs):  # queryset has cache
+        return SprayPumpRoomInspection.objects.all()
+
     def get_context_data(self, *args, **kwargs):
         context = super(SprayPumproomInspectionListView, self).get_context_data(*args, **kwargs)
 
-        formset = spray_pumproom_inspection_model_formset(queryset=self.queryset)
+        formset = spray_pumproom_inspection_model_formset(queryset=self.get_queryset(*args, **kwargs))
         context["formset"] = formset
+        months_exist = [_.month for _ in self.get_queryset()]
         from inspection.models import month_choice
-        context["months"] = month_choice
+        months = [_ for _ in month_choice if _[0] in months_exist]
+        context["months"] = months
 
         return context
 

@@ -506,10 +506,18 @@ class ElectricalEquipmentInspection(equipment_inspection):
         return "%s" % (self.equipment.name)
 
 month_choice = (
-    ('1jan', _('Jan')),
-    ('2feb', _('Feb')),
-    ('3mar', _('Mar')),
-    ('4apr', _('Apr')),
+    ('1jan', _('January')),
+    ('2feb', _('February')),
+    ('3mar', _('March')),
+    ('4apr', _('April')),
+    ('5may', _('May')),
+    ('6jun', _('June')),
+    ('7jul', _('July')),
+    ('8aug', _('August')),
+    ('9sep', _('September')),
+    ('aoct', _('October')),
+    ('bnov', _('November')),
+    ('cdev', _('December')),
 )
 
 class SprayPumpRoomInspectionManager(models.Manager):
