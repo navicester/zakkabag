@@ -308,7 +308,7 @@ class shelf(models.Model):
     is_gradient_measurement_mandatory = models.BooleanField(_('Gradient Measurement Mandatory'), blank=True)
 
     def __unicode__(self): 
-        return "%s %s %s %s %s" % (self.warehouse,self.compartment, self.warehouse_channel,self.group,self.number)
+        return "%s-%s-%s-%s-%s" % (self.warehouse,self.compartment, self.warehouse_channel,self.group,self.number)
 
     def get_shelf_name(self):
         return _('Shelf')
@@ -355,7 +355,7 @@ class shelf_inspection_record(models.Model):
         ('2', _('Breakdown')),
     )
 
-    shelf = models.ForeignKey(shelf)
+    shelf = models.ForeignKey(shelf, verbose_name=_('Shelf'))
     shelf_inspection = models.ForeignKey(shelf_inspection, default=None)
     use_condition = models.CharField(_('Use Condition'), choices = shelf_inspection_record_use_condition, max_length=30, blank=True) 
     is_locked = models.BooleanField(_('Locked'), blank=True)

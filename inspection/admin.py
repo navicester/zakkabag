@@ -96,10 +96,10 @@ class forkliftAdmin(admin.ModelAdmin):
 
 
 class shelfAdmin(admin.ModelAdmin):
-    list_display = ['id',"type", "warehouse",'compartment','group','number','is_gradient_measurement_mandatory']
-    list_editable = ["type", "warehouse",'compartment','group','number','is_gradient_measurement_mandatory']
-    list_filter = ["type", "warehouse",'compartment','group','is_gradient_measurement_mandatory']
-    search_fields = ["type", "warehouse",'compartment','group','number']
+    list_display = ['id',"type", "warehouse",'compartment','warehouse_channel', 'group','number','is_gradient_measurement_mandatory']
+    list_editable = ["type", "warehouse",'compartment','warehouse_channel','group','number','is_gradient_measurement_mandatory']
+    list_filter = ["type", "warehouse",'compartment','warehouse_channel','group','is_gradient_measurement_mandatory']
+    search_fields = ["type", "warehouse",'compartment','warehouse_channel','group','number']
     list_display_links = ['id']
     list_per_page = 10
     list_max_show_all = 80
@@ -151,6 +151,7 @@ class shelf_inspectionAdmin(admin.ModelAdmin):
 class equipmentAdmin(admin.ModelAdmin):
     list_display = ["name","type"]
     list_editable = ["name", "type"]
+    list_filter = [ "type"]
 
     class Meta:
         model = equipment
@@ -158,6 +159,7 @@ class equipmentAdmin(admin.ModelAdmin):
 class ElectricalEquipmentInspectionAdmin(admin.ModelAdmin):
     list_display = ["equipment","use_condition","inspector","date_of_inspection","updated"]
     list_editable = ["use_condition","inspector"]
+    list_filter = ["equipment","use_condition","inspector","date_of_inspection"]
     form = ElectricalEquipmentInspectionForm
 
     class Meta:
