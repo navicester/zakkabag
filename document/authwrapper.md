@@ -81,6 +81,9 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 上面是当前django的用户定义，User从AbstractUser继承而来。
 abstract = True，所以AbstractUser是抽象类，不能实例化
 
+### 参考文档
+- https://docs.djangoproject.com/en/dev/topics/auth/customizing/#django.contrib.auth.models.AbstractBaseUser
+
 ## 用户授权 authenticate
 当项目调用authenticate时，它会直接调用这个函数
 
