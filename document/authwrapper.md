@@ -509,7 +509,7 @@ class MyUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(username, email, phone, password, **extra_fields)
 
-    def create_superuser(self, **extra_fields):
+    def create_superuser(self, username, email, phone, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -518,22 +518,11 @@ class MyUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        if 'phone' == settings.ACCOUNT_REGISTER_TYPE:
-            #{'phone': '13500000000', u'password': '123', 'email': '', 'sex': 'male'}
-            #get usename from phone, and unpack the rest
-            return self._create_user(extra_fields.get('phone'), account_type='phone',
-                                 **extra_fields)
-        else:
-            return self._create_user(account_type='mail',
-                                 **extra_fields)
+        return self._create_user(username, email, phone, password,
+                                 **extra_fields)				 
                                  
 ```
-跟基本的class UserManager(BaseUserManager):相比，做了一下的修改
-1. \_create_user里面将is_superuser和is_staff从入参里面去掉，合进了extra_fields，调用更灵活
-2. create_superuser里面把所有的显示参数都去掉了，放进了extra_fields，改动的原因是如果不这么修改，执行```python manage.py createsuperuser```时会报参数缺失的错误，这个函数的实现中，username会copy phone的值。
-下一步是修改django\contrib\auth\management\commands\createsuperuser.py，可以指定函数参数
-
-command已修改好，？？？？？？？？？？？？
+执行```python manage.py createsuperuser```时会调用上面的函数，可以通过修改django\contrib\auth\management\commands\createsuperuser做进一步的修改
 
 # 扩展用户授权
 用户授权的实现包括以下几个方面
