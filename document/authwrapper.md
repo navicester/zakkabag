@@ -522,7 +522,7 @@ class MyUserManager(BaseUserManager):
                                  **extra_fields)				 
                                  
 ```
-执行```python manage.py createsuperuser```时会调用上面的函数，可以通过修改django\contrib\auth\management\commands\createsuperuser做进一步的修改
+执行```python manage.py createsuperuser```时会调用上面的函数，可以通过修改```django\contrib\auth\management\commands\createsuperuser```做进一步的修改
 
 # 扩展用户授权
 用户授权的实现包括以下几个方面
@@ -540,13 +540,13 @@ AUTHENTICATION_BACKENDS的顺序是有影响的，如果多个backends的用户�
  
 **注意**：如果授权成功，django会把这个授权方式保存到session里，session周期里的下一次接入还是用这种方式。如果要强迫用不同方法授权，一个简单的方法是调用Session.objects.all().delete().
  
-Settings.py
+> Settings.py
 ``` python
 AUTHENTICATION_BACKENDS = (        
     'authwrapper.backends.auth.MyBackend', 
     'django.contrib.auth.backends.ModelBackend', 
     )
-AUTH_USER_MODEL = 'personalcenter.MyUser'
+AUTH_USER_MODEL = 'authwrapper.MyUser'
 ```
 
 ## 实现authentication backend
@@ -559,8 +559,8 @@ authenticate(request, **credentials)
 遗留问题
 > 不知道为什么？username登录时的request.user是有值的，但是wechat登录永远是anonymous，这个从一开始的render就开始了
 \_cached_user为AnonymousUser: AnonymousUser  
->问题查清楚了，下面这个wechat auth backend函数没写好，之前返回None，这个函数在eclipse上打断点也进不去不知道为什么  
->好像也不是这个问题，突然就好了
+> 问题查清楚了，下面这个wechat auth backend函数没写好，之前返回None，这个函数在eclipse上打断点也进不去不知道为什么  
+> 好像也不是这个问题，突然就好了
 
 authwrapper\backends\auth.py
 ``` python
@@ -661,7 +661,7 @@ Validation规则变化之后，即使搜索135000000000（老的添加值在数�
 
 1. 定义微信用户数据模型
 
-authwrapper\models.py
+> authwrapper\models.py
 ``` python
 class WechatUserProfile(models.Model):
     user = models.OneToOneField(
@@ -706,7 +706,7 @@ AUTHENTICATION_BACKENDS = (
 3. 实现backend
 同样要实现基本的authenticate和get_user函数
 
-authwrapper\backends\auth.py
+> authwrapper\backends\auth.py
 ``` python
 class WechatBackend(object):
 
@@ -777,7 +777,7 @@ request.session['wechat_id'] = profile.id
 ```
 在middle里将wechat信息添加进request，这样在处理navbar登陆选项时能够知道wechat信息
 
-zakkabag\middleware.py
+> zakkabag\middleware.py
 ``` python
 class openidmiddleware():
 
@@ -821,7 +821,7 @@ def logout(request):
 退出时调用基本的logout函数，并删除wechat_id session
 
 ## 完整的过程
-authwrapper\login.py
+> authwrapper\login.py
 ```
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import views as auth_views
@@ -872,7 +872,7 @@ return redirect(reverse("auth_login", kwargs={}))
 
 登陆的模板如下，用户登陆成功时进行绑定
 
-templates\registration\login.html
+> templates\registration\login.html
 ``` html
 {% block content %}
 <div class = "row">
@@ -904,7 +904,7 @@ next跳转链接会根据用户状态进行设置，如果发现系统用户未�
 
 注册情况下的处理，最终激活成功时进行绑定
 
-templates.registration.activation_complete.html
+> templates.registration.activation_complete.html
 ``` html
 {% block content %}
 <p class = "lead">
@@ -918,7 +918,7 @@ templates.registration.activation_complete.html
 {% endblock %}
 ```
 
-personalcenter\login.py
+> personalcenter\login.py
 ``` python
 @login_required
 def account_link_to_wechat(request):
@@ -990,11 +990,11 @@ def account_link_to_wechat(request):
 在template里面定义好’next’网址，并通过GET/POST方法传递给后台，后台在login成功之后会重定向到该网址
 有时需要获取当前site网址，可以使用get_current_site方法
 
-__init__.py (site-packages\django\contrib\auth)
+> __init__.py (site-packages\django\contrib\auth)
 ``` python
 REDIRECT_FIELD_NAME = 'next'
 ```
-Views.py (site-packages\django\contrib\auth)
+> Views.py (site-packages\django\contrib\auth)
 ``` python
 @sensitive_post_parameters()
 @csrf_protect
@@ -1047,7 +1047,7 @@ redirect_to变量的赋值顺序
 
 顺便讲一下这儿获取网址用到了get_current_site去获取完整域名，有的地方也用了request.META.get('HTTP_REFERER')去获取带域名网址
 
-Shortcuts.py (site-packages\django\contrib\sites)
+> Shortcuts.py (site-packages\django\contrib\sites)
 ``` python
 def get_current_site(request):
     """
@@ -1091,7 +1091,7 @@ class SiteManager(models.Manager):
 
 应用举例：
 
-Login.html (site-packages\registration\templates\registration)
+> Login.html (site-packages\registration\templates\registration)
 ``` html
 <form method="post" action="">
     {% csrf_token %}
