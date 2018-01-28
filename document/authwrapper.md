@@ -116,6 +116,7 @@ def authenticate(**credentials):
     user_login_failed.send(sender=__name__,
             credentials=_clean_credentials(credentials))
 ```
+
 1. inspect.getcallargs(backend.authenticate, **credentials)
 
 首先它会遍历backend，根据参数去找到合适的authenticate函数，这个backend在settings.py文件AUTHENTICATION_BACKENDS里定义。
@@ -125,9 +126,11 @@ def authenticate(**credentials):
 当authenticate函数找到之后，它就会接下来执行授权操作，并返回用户信息
 
 ### backend
+
 backend的实现可以参考下面的例子
 
-django.contrib.auth.backends.py
+> django.contrib.auth.backends.py
+
 ``` python
 class ModelBackend(object):
     """
@@ -147,6 +150,7 @@ class ModelBackend(object):
             # difference between an existing and a non-existing user (#20760).
             UserModel().set_password(password)
 ``` 
+
 如果函数调用authenticate(username, password)或者authenticate(email, password)(如何email是USERNAME_FIELD)，那么该backend会被调用
 
 ### 参考文档
@@ -161,7 +165,7 @@ demo代码里backend的authenticate的参数包含request，调用authenticate�
 
 ## 登陆 login
 
-__init__.py (site-packages\django\contrib\auth)
+> __init__.py (site-packages\django\contrib\auth)
 
 ``` python
 SESSION_KEY = '_auth_user_id'
@@ -214,8 +218,8 @@ SESSION_KEY会在后面_get_user_session_key中使用，用于获取用户
  ```
 这两个user分别是由下面的middleware传进来的
 ``` python
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
+    'django.template.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
 ```
 
 
@@ -245,7 +249,8 @@ user赋值在这儿完成，如果是非登陆用户，则为AnonymousUser
 
 ## middleware
 
-Middleware.py (site-packages\django\contrib\auth
+> Middleware.py (site-packages\django\contrib\auth
+
 ``` python
 def get_user(request):
     if not hasattr(request, '_cached_user'):
@@ -268,7 +273,8 @@ class AuthenticationMiddleware(object):
 
 跟authenticate类似，它也会轮询多个backend找到对应的函数
 
-django/contrib/auth/__init__
+> django/contrib/auth/__init__
+
 ``` python
 def get_user(request):
     """
@@ -304,7 +310,8 @@ def get_user(request):
 - (1) \_get_user_session_key(request)
 SESSION_KEY在login中赋值了
 
-django/contrib/auth/backends.py
+> django/contrib/auth/backends.py
+
 ``` python
 class ModelBackend(object):    
     def get_user(self, user_id):
@@ -315,14 +322,16 @@ class ModelBackend(object):
             return None
 ```
 
-django/contrib/auth/forms.py
+> django/contrib/auth/forms.py
+
 ``` python
 class AuthenticationForm(forms.Form):
     def get_user(self):
         return self.user_cache
 ```
 
-django/contrib/auth/middleware.py
+> django/contrib/auth/middleware.py
+
 ``` python
 def get_user(request):
     if not hasattr(request, '_cached_user'):
@@ -386,7 +395,7 @@ def my_view(request):
 |account_type	| CharField	| | [mail, phone]	注册类型
 			
 
-authwrapper\models.py
+> authwrapper\models.py
 ``` python
 from __future__ import unicode_literals
 from authwrapper.fields import EmailNullField, PhoneNumberNullField
@@ -465,7 +474,7 @@ AUTH_USER_MODEL = 'authwrapper.MyUser'
 ## 信号
 django系统里面username是默认存在，如果用电话号码注册，这个信息一开始并不是必须的，为了通过django的验证，暂时通过设置username=phone来保证models的validation
 
-authwrapper\models.py
+> authwrapper\models.py
 ``` python
 def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
     if 'phone' == MyUser.USERNAME_FIELD:
@@ -475,7 +484,7 @@ def myuser_pre_save_receiver(sender, instance, *args, **kwargs):
 pre_save.connect(myuser_pre_save_receiver, sender=MyUser)
 
 ## 添加用户及管理
-authwrapper\models.py
+> authwrapper\models.py
 ``` python
     def _create_user(self, username, email, phone, password, **extra_fields):
         """
@@ -523,6 +532,8 @@ class MyUserManager(BaseUserManager):
 1. \_create_user里面将is_superuser和is_staff从入参里面去掉，合进了extra_fields，调用更灵活
 2. create_superuser里面把所有的显示参数都去掉了，放进了extra_fields，改动的原因是如果不这么修改，执行```python manage.py createsuperuser```时会报参数缺失的错误，这个函数的实现中，username会copy phone的值。
 下一步是修改django\contrib\auth\management\commands\createsuperuser.py，可以指定函数参数
+
+command已修改好，？？？？？？？？？？？？
 
 # 扩展用户授权
 用户授权的实现包括以下几个方面
