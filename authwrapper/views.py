@@ -17,6 +17,7 @@ from django.http import JsonResponse, Http404
 import datetime
 from .models import WechatUserProfile
 from .forms import RegistrationForgetForm
+from .backends import auth as auth_wrapper
 
 from django.utils.module_loading import import_string
 REGISTRATION_FORM_PATH = getattr(settings, 'REGISTRATION_FORM','authwrapper.forms.RegistrationForm')
@@ -195,7 +196,7 @@ class ProfileUpdateView(UpdateView):
             user.is_active = True
             user.save() 
 
-            wechat = authwrapper.backends.auth.WechatBackend().get_wechat_user(request)            
+            wechat = auth_wrapper.WechatBackend().get_wechat_user(request)            
             if wechat:
                 wechat.user = user   
                 wechat.save()

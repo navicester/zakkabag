@@ -134,7 +134,8 @@ if not 'SERVER_SOFTWARE' in os.environ:
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
