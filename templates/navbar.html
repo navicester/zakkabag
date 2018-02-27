@@ -27,7 +27,7 @@
             <li><a href="{% url 'set_language' %}?language='en'&next={{request.path}}">english</a></li>               
             {% endcomment %} 
 
-            <form class="navbar-form navbar-left" method="GET" role="search" action='{% url "dailyinspection_list" %}'>
+            <form class="navbar-form navbar-left" method="GET" role="search" action='{% url "products" %}'>
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search" name="q"  value='{{ request.GET.q }}'>
               </div>
@@ -46,10 +46,6 @@
                 {% if request.user.is_authenticated %}
                 <li><a href="{% url 'orders' %}">{% trans 'Orders' %}</a></li> 
                 {% endif %}
-                <li><a href="{% url 'dailyinspection_list' %}">{% trans 'Inspection' %}</a></li>
-                <li><a href="{% url 'shelf_inspection_list' %}">{% trans 'Shelf' %}</a></li>
-                <li><a href="{% url 'electronialequipmentinsepction_list' %}">{% trans 'Equipment' %}</a></li>
-                <li><a href="{% url 'spraypumproominspection_list' %}">{% trans 'Spray Pump' %}</a></li>
               </ul>
             </li>                
             {% if request.user.is_authenticated %}              

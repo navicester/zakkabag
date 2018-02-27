@@ -48,14 +48,12 @@ INSTALLED_APPS = [
     # 'mptt',
     # 'django_comments',       
     # 'comments',
-    'trainings',
     'authwrapper',
     'newsletter',
     'products',
     'carts',
     'orders',
     'personalcenter',
-    'inspection', # (1) 'inspection.apps.InspectionConfig', (2) or use default_app_config = 'inspection.apps.InspectionConfig' in inspection/__init__.py
     'zakkabag',
     'crispy_forms',
     'registration',
@@ -101,7 +99,6 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, "authwrapper","templates"),
                 os.path.join(BASE_DIR, "wechat","templates"),
                 os.path.join(BASE_DIR, "fileuploadwrapper","templates"),
-                os.path.join(BASE_DIR, "inspection","templates"),
                 ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -206,9 +203,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_in_env", "static_root")
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static_in_pro", "our_static"),
-    os.path.join(BASE_DIR, "inspection", "static"),
-    #os.path.join(BASE_DIR, "static_in_env"),
-    #'/var/www/static/',
 )
 
 USE_SAE_BUCKET = True if 'SERVER_SOFTWARE' in os.environ else False

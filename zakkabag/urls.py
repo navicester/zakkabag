@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from inspection.admin import my_admin_site
 if settings.USE_EXPLICIT_LANG_URL:
     from django.conf.urls.i18n import i18n_patterns as url_patterns
 else:
@@ -36,7 +35,6 @@ urlpatterns = [
 
     url(r'^admin/jsi18n', i18n_javascript),  # added for AdminDateTimeWidget
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^sino/', my_admin_site.urls),
 
     url(r'^products/', include('products.urls')),
     url(r'^categories/', include('products.urls_categories')),
@@ -56,7 +54,6 @@ urlpatterns = [
     # url(r'^crowdfundings/', include('crowdfundings.urls')),
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^auth/', include('authwrapper.urls')),
-    url(r'^inspection/', include('inspection.urls')),
     url(r'^wechat/', include('wechat.urls')),
     url(r'^fileupload/', include('fileuploadwrapper.urls')),
 
