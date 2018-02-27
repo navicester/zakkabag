@@ -121,16 +121,32 @@ WSGI_APPLICATION = 'zakkabag.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-if not 'SERVER_SOFTWARE' in os.environ: 
-	DATABASES = {
-		'default': {
-			'ENGINE': 'django.db.backends.sqlite3',
-			'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-		}
+
+import socket
+
+DB_SQLITE = False    
+DB_HEROKU = False
+DB_MYSQL = False
+DB_SAE = False
+
+
+DATABASES = {
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 	}
+}
 
-
-
+if os.getenv('DJANGO_SQL_SERVER'):
+    DB_MYSQL = True
+    MEDIA_PREFIX = "DB_SQL_" + socket.gethostname()
+elif 'SERVER_SOFTWARE' in os.environ: 
+    DB_SAE = True
+    MEDIA_PREFIX = "DB_SAE"	
+else:
+    DB_SQLITE = True
+    MEDIA_PREFIX = "DB_SQLITE"
+	
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
@@ -300,5 +316,4 @@ PHONE_LOGIN_ATTEMPTS = 100
 
 USE_EXPLICIT_LANG_URL = False
 
-USE_SAE_DB = False
-
+UUSLUGIFY = True

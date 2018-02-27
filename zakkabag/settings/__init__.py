@@ -1,18 +1,13 @@
 from .base import *
 from django.conf import settings
+import os
 
-heroku = False
-mysql = True
-sae = False
-
-
-if 'SERVER_SOFTWARE' in os.environ or settings.USE_SAE_DB == True: 
+	
+if settings.DB_SAE == True: 
 	from .sae import *
-elif sae:
-	from .sae import *
-elif mysql:
+elif settings.DB_MYSQL:
 	from .mysql import *	
-elif heroku:
+elif settings.DB_HEROKU:
 	from .production import *	
 else:
 	pass
