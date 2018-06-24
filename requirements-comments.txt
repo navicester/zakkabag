@@ -1,0 +1,19 @@
+# warning
+
+# solved by upgraded to py2.7.10+
+pyOpenSSL
+pyasn1
+ndg-httpsclient
+
+cryptography
+six
+idna
+ipaddress
+enum34
+cffi
+pycparser
+cryptograph
+
+#pyd 
+
+MySQL-python==1.2.3

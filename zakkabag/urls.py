@@ -59,7 +59,7 @@ urlpatterns = [
 
     url(r'^accounts/', include('registration.backends.default.urls')),    
     url(r'^setlang/$', set_language, name='setlang'),
-    url(r'^phone_login/', include('phone_login.urls')),    
+    url(r'^phone_login/', include('phone_login.urls')),   
     
 
     #url(r'^setlang/$', 'django.views.i18n.set_language', name = 'setlang'),

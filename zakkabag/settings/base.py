@@ -61,11 +61,12 @@ INSTALLED_APPS = [
     'pagination', # not supported since django1.9 due to error 'WSGIRequest' object has no attribute 'REQUEST', in django 1.9, Replace `request.REQUEST` with `POST` and `GET`
     'ckeditor',
     'phone_login',
-    'rest_framework'
+    'rest_framework',
 
 
     # 'django.contrib.comments',
     # 'threadedcomments',
+
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -74,7 +75,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',    
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',    
+    'authwrapper.middleware.AuthwrapperMiddleware',
     'zakkabag.middleware.openidmiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -143,6 +145,9 @@ elif 'SERVER_SOFTWARE' in os.environ:
 else:
     DB_SQLITE = True
     MEDIA_PREFIX = "DB_SQLITE"
+
+DB_SQLITE = True  
+DB_MYSQL = False
 	
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -153,7 +158,6 @@ TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
 
 USE_L10N = True
-
 
 USE_TZ = True
 if '1.8' in django.get_version():

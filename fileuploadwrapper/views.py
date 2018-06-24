@@ -24,7 +24,6 @@ def get_upload_url():
 
 # Create your views here.
 def upload_file(request):
-    #print "upload_file"
     if request.method == 'POST':
         upload_form = UploadFileForm(request.POST, request.FILES)
         if upload_form.is_valid():
@@ -47,14 +46,12 @@ def upload_file(request):
         return HttpResponse(json.dumps({'message': 'invalid form!'}))
 
 def upload_status(request):
-    #print "upload_status"
     if request.method == 'GET':
         if request.GET['key']:
             if cache.get(request.GET['key']):
                 value = cache.get(request.GET['key'])
                 return HttpResponse(json.dumps(value), content_type="application/json")
             else:
-                #print "cache %s not found" % request.GET['key']
                 return HttpResponse(json.dumps({'error':"No csrf value in cache"}), content_type="application/json")
         else:
             return HttpResponse(json.dumps({'error':'No parameter key in GET request'}), content_type="application/json")

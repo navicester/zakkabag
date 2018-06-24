@@ -8,7 +8,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib import auth
 from django.views.generic.edit import FormView, UpdateView
 from django.views.decorators.csrf import csrf_exempt
-from forms import UserUpdateForm
+from forms import ProfileUpdateForm
 from zakkabag.settings import APP_ID, APP_SECRET
 from weixin.client import WeixinMpAPI
 #from weixin.oauth2 import OAuth2AuthExchangeError
@@ -160,7 +160,7 @@ def GetVerificationCode(request):
 
 class ProfileUpdateView(UpdateView):
     model = UserModel
-    form_class = UserUpdateForm
+    form_class = ProfileUpdateForm
     template_name = 'auth/user_update_form.html'
     success_url = None
     
@@ -173,7 +173,7 @@ class ProfileUpdateView(UpdateView):
             return None
 
 
-    def get_form(self, form_class=UserUpdateForm):
+    def get_form(self, form_class=ProfileUpdateForm):
         kwargs = self.get_form_kwargs()
         kwargs.update({'instance': self.get_object()})
         form = self.form_class(**kwargs)  

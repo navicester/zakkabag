@@ -69,7 +69,7 @@ class RegistrationForm(forms.Form):
 from django.forms.extras.widgets import SelectDateWidget
 from django.contrib.admin import widgets
 
-class UserUpdateForm(forms.ModelForm):
+class ProfileUpdateForm(forms.ModelForm):
     """ actual step to update user information after verification pass"""
     required_css_class = 'required'
     phone = forms.CharField(label='phone')
@@ -83,7 +83,7 @@ class UserUpdateForm(forms.ModelForm):
 
     #can specify widget or widget attribute in init function
     def __init__(self, *args, **kwargs):
-        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         self.fields['birthday'].widget = widgets.AdminDateWidget()
         self.fields['sex'].empty_label = None
         instance = getattr(self, 'instance', None)

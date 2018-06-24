@@ -15,10 +15,11 @@ from django.core.urlresolvers import reverse
 from django_filters import FilterSet, CharFilter, NumberFilter
 # Create your views here.
 from .forms import VariationInventoryFormSet, ProductFilterForm
-from .mixins import StaffRequiredMixin
+from .mixins import StaffRequiredMixin, PermissionRequiredMixin
 
 from .models import Product, Variation, Category
 from django.utils.translation import gettext_lazy as _
+
 
 class CategoryListView(ListView):
     model = Category
@@ -232,8 +233,8 @@ def upload_to(filename, title, id):
             if not os.path.exists(photopath):
                 os.makedirs(photopath)
         return photoname
-    
-class ProductCreateView(CreateView):
+
+class ProductCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'products/product_create.html'
     form_class = ProductCreateForm
     success_url = "/products"
@@ -252,7 +253,6 @@ class ProductCreateView(CreateView):
 
         return form
 
-    
     def post(self, request, *args, **kwargs):
         postresult = super(ProductCreateView, self).post(request, *args, **kwargs)
 

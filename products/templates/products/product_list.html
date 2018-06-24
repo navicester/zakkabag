@@ -135,11 +135,14 @@ div.categorylist{
 
 	<small><a href='{% url "exchange_rule" %}'>Exchange Rule</a></small> 
 
+	{% if perms.products.add_product %}
 	<div class="row">
 		<h1 >
 		<small><a href='{% url "products_create" %}'>New Product</a></small> 
 		</h1>	
 	</div>
+	{% endif %}
+	
 	{% endblock %}
 </div>
 
