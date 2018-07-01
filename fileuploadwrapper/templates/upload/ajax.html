@@ -2,7 +2,7 @@
 
 function ShowProgress(){
 	sleep(150); 
-	url = "/fileupload/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
+	url = "{% url 'upload_status' %}?key=" + $("form#form_upload input[name=csrfmiddlewaretoken]").val();
 	progressWorker(url);
 }
 
@@ -60,8 +60,6 @@ function showError(response){
     console.log(response.responseText);
 }
 
-
-
 //$('#X-Progress-ID').val('random string');
 
 var options = {
@@ -70,7 +68,7 @@ var options = {
     error:         showError,
     // other available options:
     //url:       "/personalcenter/uploadfile",  // override for form's 'action' attribute
-    url:       "/fileupload/uploadfile",  // override for form's 'action' attribute
+    url:       "{% url 'upload_file' %}",  // override for form's 'action' attribute
     type:      "post",       // 'get' or 'post', override for form's 'method' attribute
     dataType:  "json"        // 'xml', 'script', or 'json' (expected server response type)
     //clearForm: true        // clear all form fields after successful submit
@@ -144,6 +142,11 @@ $('#form_upload').submit(function() {
     $("#buttonSubmit").prop("disabled", true);
     $(".processing-file").html("");
     $(this).ajaxSubmit(options);
+    
+    percent = 0; // for multi-times upload
+    $('.progress-bar').css('width', percent+'%').attr('aria-valuenow', percent);
+    $('.progress-bar').html(percent+"%");   
+
     $(".progress").show();
     //url = "/personalcenter/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();
     //url = "/fileupload/upload_status?key=" + $("input[name=csrfmiddlewaretoken]").val();

@@ -1,26 +1,24 @@
-from django.shortcuts import render, get_object_or_404
 from django.http import Http404, JsonResponse, HttpResponse
-from django.contrib import auth
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
+from django.utils.text import slugify
+from django.contrib import auth
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin
-from django.core.cache import cache
-#from django.core.cache.backends.memcached import MemcachedCache
-#import json
 from django.conf import settings
-from django.utils.text import slugify
 
-from .models import UserProfile
-from authwrapper.models import WechatUserProfile
-from products.models import Product
-from orders.models import Order, UserCheckout
-from .forms import MyUserForm#, UploadFileForm
 from fileuploadwrapper.forms import UploadFileForm
 
-from django.contrib.auth.decorators import login_required
+from .models import UserProfile
+from .forms import MyUserForm#, UploadFileForm
 
-from django.contrib.auth import get_user_model
+from authwrapper.models import WechatUserProfile
+
+from products.models import Product
+from orders.models import Order, UserCheckout
 
 UserModel = get_user_model()
 
@@ -30,7 +28,7 @@ import os
 # Create your views here.
 
 @login_required
-def personalcenterhome(request,id):
+def personalcenter_home(request,id):
     '''    
     try:
         myuser = UserModel.objects.get(id=id)
@@ -48,7 +46,7 @@ def personalcenterhome(request,id):
         pass
 
 
-    template = "personalcenter/personalcenterhome.html"
+    template = "personalcenter/personalcenter_home.html"
     context = {    
         "myuser": myuser,
         'wechat': wechat,

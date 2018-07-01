@@ -1,27 +1,44 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy
-
-from .views import logout, login, GetVerificationCode
-from .views import RegistrationView, ProfileUpdateView, RegistrationForgetView
+from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
-from wechat.views import wechatlogin
+from .views import (
+    logout, 
+    login, 
+    GetVerificationCode, 
+    wechat_login,
+    )
+	
+from .views import (
+    RegistrationView, 
+    ProfileUpdateView, 
+    RegistrationForgetView
+    )
 
-urlpatterns = [
 
-    url(r'^wechatlogin/$', wechatlogin, name='wechatlogin'), 
-    url(r'^logout/$', logout, name='logout'), 
-    url(r'^login/$', login, name='login'), 
+
+urlpatterns = [    
+    url(r'^logout/$', logout, name='authwrapper_logout'), 
+    url(r'^login/$', login, name='authwrapper_login'), 
+    url(r'^wechatlogin/$', wechat_login, name='wechatlogin'), 
     url(r'^register/$', RegistrationView.as_view(), name='register_phone'), 
     url(r'^completeProfile/(?P<pk>\d+)$', ProfileUpdateView.as_view(), name='profile_update'), 
     url(r'^getVerificationCode/$', GetVerificationCode, name='getVerificationCode'), 
-    url(r'^password/change/$', auth_views.password_change, {'post_change_redirect': reverse_lazy('auth_password_change_done2')}, name='auth_password_change2'), 
+    url(r'^password/change/$', auth_views.password_change, 
+                {'post_change_redirect': reverse_lazy('auth_password_change_done2')}, name='auth_password_change2'), 
     url(r'^password/change/done/$', auth_views.password_change_done, name='auth_password_change_done2'), 
-    url(r'^password/forget/$', RegistrationForgetView.as_view(), name='password_forget'), 
+    url(r'^password/forget/$', RegistrationForgetView.as_view(), name='authwrapper_password_forget'), 
 ]
+
+# if "wechat" in settings.INSTALLED_APPS:
+#     from wechat.views import wechatlogin
+#     urlpatterns +=  [
+#         url(r'^wechatlogin/$', wechatlogin, name='wechatlogin'), 
+#     ]
+
 
 '''
 registration/auth_urls.py

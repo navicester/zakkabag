@@ -1,15 +1,17 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.conf import settings
-from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, PermissionsMixin)
-from django.utils.translation import ugettext_lazy as _
-from django.core.mail import send_mail
-from django.utils import six, timezone
-from django.core import validators
-from django.core.urlresolvers import reverse
-from django.utils.text import slugify
 from django.db.models.signals import pre_save
+from django.conf import settings
+from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, PermissionsMixin, Group)
+from django.utils import six, timezone
+from django.utils.translation import ugettext_lazy as _
+from django.utils.text import slugify
+from django.core import validators
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
+
+from uuslug import slugify as uuslugify
 
 from authwrapper.fields import EmailNullField, PhoneNumberNullField
 from authwrapper.validators import (ASCIIUsernameValidator,
@@ -84,21 +86,32 @@ class MyUserManager(BaseUserManager):
 # for phone register, username will be a repalica of phone number
 # for mail register, username and mail is seperated value
 USER_TYPE = (
-    ('username', 'Username'),
-    ('mail', 'Mail'), 
-    ('phone', 'Phone'),
+    ('username', _('username')),
+    ('mail', _('mail')), 
+    ('phone', _('phone')),
     #('wechat', 'Wechat'),
 )
 
+USER_ROLE = (
+    ('admin', _('administrator')),
+    ('staff', _('staff')),
+    ('guest', _('guest')), 
+    # ('driver', _('driver')),
+)
+
 SEX_OPTION = (
-    ('male', 'Male'),
-    ('female', 'Female'),
+    ('male', _('Male')),
+    ('female', _('Female')),
 )
 
 def image_upload_to(instance, filename):
     name = instance.username
     title, file_extension = filename.split(".")
-    new_filename = "%s-%s.%s" %(slugify(title), instance.id,  file_extension)
+    if settings.UUSLUGIFY == True: # if chinese supported
+        title = uuslugify(title)
+    else:
+        title = slugify(title) # if chinese, wrong value returned
+    new_filename = "%s-%s.%s" %(title, instance.id,  file_extension)
     return "profile/%s/%s" %(name, new_filename)
 
 #Copy from AbstractUser => inherit from AbstractUser directly 
@@ -132,8 +145,8 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
             'unique': _("A user with that username already exists."),
         })
 
-    phone = PhoneNumberNullField(_('phone'), max_length=30, blank=True, unique=True,
-        help_text=_('Required. digits and + only.'),
+    phone = PhoneNumberNullField(_('phone'), max_length=30, blank=True, null=True, unique=True,
+        # help_text=_('Required. digits and + only.'),
         error_messages={
             'unique': _("A user with that phone number already exists."),
         })
@@ -164,9 +177,11 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     
     # identifier = models.CharField(max_length=50, unique=True, db_index=True, verbose_name='username')
-    account_type = models.CharField(max_length=50, blank=True, null=True, choices=USER_TYPE, default = 'username') #login account type
+    account_type = models.CharField(_('account type'),max_length=50, blank=True, null=True, choices=USER_TYPE, default = 'username') #login account type
 
-    image = models.ImageField(upload_to=image_upload_to, blank=True, null=True)
+    user_role = models.CharField(_('user role'),max_length=50, blank=False, null=False, choices=USER_ROLE, default = 'guest')
+
+    image = models.ImageField(_('image'),upload_to=image_upload_to, blank=True, null=True)
 
     # below variable is very important for createsuperuser command
     USERNAME_FIELD = 'phone' if 'phone' == settings.ACCOUNT_REGISTER_TYPE  else 'username'
@@ -179,11 +194,20 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _('users')
         abstract = True
 
+        permissions = (
+            ('access_remote', u'access remote'),
+        )
+
     def get_full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between.
         """
-        full_name = '%s %s' % (self.first_name, self.last_name)
+        # if settings.language
+        #     full_name = '%s%s' % (self.last_name, self.first_name)
+        # else:
+        #     full_name = '%s %s' % (self.first_name, self.last_name)
+
+        full_name = '%s%s' % (self.last_name, self.first_name) if self.last_name or self.first_name else self.username
         return full_name.strip()
  
     def get_short_name(self):
@@ -197,8 +221,9 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def __unicode__(self):
-        return self.username
- 
+        return self.get_full_name()
+
+
     def has_perm(self, perm, obj=None):
         return super(MyAbstractUser, self).has_perm(perm, obj)
  
@@ -206,13 +231,17 @@ class MyAbstractUser(AbstractBaseUser, PermissionsMixin):
         return super(MyAbstractUser, self).has_module_perms(app_label)
 
     def get_absolute_url(self):
-        return reverse("personalcenter", kwargs={"id": self.id })  
-
+        try:    
+            return reverse("personalcenter", kwargs={"id": self.id })  
+        except:
+            return ''
+            
     def get_image_url(self):
         if self.image:
             return self.image.url
         else:
-            return '/media/profile/bhe001/bhe001-1.jpg'
+            # return '/media/profile/defualt.jpg'
+            return None
     def is_wechatuser(self):
         try:
             WechatUserProfile.objects.get(user=self)

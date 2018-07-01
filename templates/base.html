@@ -16,9 +16,11 @@
 
     <title>{% block head_title %}CodingSOHO{% endblock %}</title>
 
+    {% block head_css_extend_before_main_css %}{% endblock %}
+
     {% include 'head_css.html' %}
 
-    {% block head_css_extend %}{% endblock %}
+    {% block head_css %}{% endblock %}
 
     <style>
     {% block style %}{% endblock %}
@@ -97,6 +99,9 @@
     {% include "javascript.html" %}   
 
     {% block javascript_extended %}
+    {% endblock %}
+
+    {% block head_js %}
     {% endblock %}
 
     <script>

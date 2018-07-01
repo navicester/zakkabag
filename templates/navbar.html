@@ -51,10 +51,9 @@
             {% if request.user.is_authenticated %}              
               {% if request.user.is_wechatuser %}
               <li><a href='{{request.user.get_absolute_url}}'}>{{request.user.get_wechatprofile}}</a></li> 
-              <li><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></li>              
               {% else %}
               <li><a href="{{request.user.get_absolute_url}}">{{request.user}}</a></li> 
-              <li><a href="{% url 'logout' %}">{% trans 'Logout' %}</a></li>
+              <li><a href="{% url 'authwrapper_logout' %}">{% trans 'Logout' %}</a></li>
               {% endif %}
 <!--- below shuold be useless -->              
             {% elif request.wechat %}            
@@ -69,7 +68,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'Login' %} <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                   <!-- <form class='navbar-form' method='POST' action='{% url "auth_login" %}'>{% csrf_token %} -->
-                  <form class='navbar-form' method='POST' action='{% url "login" %}'>{% csrf_token %}
+                  <form class='navbar-form' method='POST' action='{% url "authwrapper_login" %}'>{% csrf_token %}
                     <div class='form-group'>
                         <input type='text' class='form-control' name='username' placeholder='Username/Phone/Mail' /> 
                     </div>
@@ -80,9 +79,9 @@
                     <input type="hidden" name="next" value="{% url 'home' %}" /> <!-- add for redirection -->
                   </form>
                   {% if 'phone' == request.register_type %}
-                    <p class='text-center'><a href='{% url "password_forget" %}'>{% trans 'Forgot Password' %}</a>?</p>
+                    <p class='text-center'><a href='{% url "authwrapper_password_forget" %}'>{% trans 'Forgot Password' %}</a>?</p>
                   {% else %}
-                    <p class='text-center'><a href='{% url "auth_password_reset" %}'>{% trans 'Forgot Password' %}</a>?</p>
+                    <p class='text-center'><a href='{% url "password_reset" %}'>{% trans 'Forgot Password' %}</a>?</p>
                   {% endif %}
                 </ul>
               </li>

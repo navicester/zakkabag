@@ -1,12 +1,14 @@
 from django.contrib import admin
 
 # Register your models here.
-# Register your models here.
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import GroupAdmin
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sessions.models import Session
+
 from .models import MyUser, WechatUserProfile
 from .forms import UserCreationForm, UserChangeForm
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import Group
-
 
 #refer to django/contrib/auth/admin.py
 class UserAdmin(BaseUserAdmin):
@@ -29,7 +31,8 @@ class UserAdmin(BaseUserAdmin):
         	{'fields': 
         	('username','phone','email', 'password')}),
         ('Personal info', 
-        	{'fields': ('first_name','last_name', 'sex','birthday','nickname','account_type','image')}),
+        	# {'fields': ('first_name','last_name', 'sex','birthday','nickname','account_type','image')}),
+            {'fields': ('first_name','last_name', 'sex','birthday','nickname','user_role','image')}),
         ('Permissions', 
         	{'fields': ('is_staff','is_active', 'is_superuser','groups', 'user_permissions')}),
         ('Important dates', 
@@ -48,12 +51,33 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = ('phone','email',)
     ordering = ('username',)
-    #filter_horizontal = ('groups', 'user_permissions',) #inherit from base
+    # filter_horizontal = ('groups', 'user_permissions',) #inherit from base
+
+    view_on_site = False
 
 class WechatUserProfileAdmin(admin.ModelAdmin):
     list_display = ["openid", "unionid", "nickname"]
     class Meta:
         model = WechatUserProfile
+
+class PermissionAdmin(admin.ModelAdmin):
+    list_display = ["content_type", "name", "codename"]
+    list_filter = ["content_type"]
+    class Meta:
+        model = Permission
+
+class ContentTypeAdmin(admin.ModelAdmin):
+    list_display = ["app_label", "model"]
+    class Meta:
+        model = ContentType
+
+class SessionAdmin(admin.ModelAdmin):
+    list_display = ["session_key","expire_date" ,"session_data", ]
+    class Meta:
+        model = Session
+
+    list_per_page = 10
+    list_max_show_all = 20
 
 # Now register the new UserAdmin...
 admin.site.register(MyUser, UserAdmin)
@@ -62,3 +86,8 @@ admin.site.register(MyUser, UserAdmin)
 #admin.site.unregister(Group)
 admin.site.register(WechatUserProfile, WechatUserProfileAdmin)
 
+# admin.site.register(Group, GroupAdmin)
+admin.site.register(Permission, PermissionAdmin)
+admin.site.register(ContentType, ContentTypeAdmin)
+
+admin.site.register(Session, SessionAdmin)
