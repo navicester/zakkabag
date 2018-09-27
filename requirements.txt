@@ -18,3 +18,4 @@ Babel==2.4.0
 django-sendsms==0.2.3
 django-polymorphic==1.0.2
 Pillow==4.1.0
+django-uuslug
