@@ -48,7 +48,7 @@ div.scale-product .thumbnail :hover img{
 
 <div class="thumbnail text-center">
 	{% if product.get_image_url %} 
-		<a href='{{ product.get_absolute_url }}'><div class="pdb"><img  id='img' class= 'img-responsive' src='{{product.get_image_url}}'/></div></a><br/>
+		<a href='{{ product.get_absolute_url }}'><div class="pdb img-center"><img  id='img' class= 'img-responsive' src='{{product.get_image_url}}'/></div></a><br/>
 	{% endif %}	
 
 	{% if price == "True" %}

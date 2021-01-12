@@ -145,7 +145,11 @@ elif 'SERVER_SOFTWARE' in os.environ:
 else:
     DB_SQLITE = True
     MEDIA_PREFIX = "DB_SQLITE"
-	
+
+if socket.gethostname() == "PC-20130414CBMY":
+    DB_SQLITE = True
+    DB_MYSQL = False
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
